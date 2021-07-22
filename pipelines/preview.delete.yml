@@ -1,0 +1,14 @@
+﻿name: 3.0$(Rev:.r)
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: intelligent-thought/ops-azure-pipelines-templates
+
+pool:
+  vmImage: ubuntu-latest
+
+trigger:
+  - main
+
+pr: none

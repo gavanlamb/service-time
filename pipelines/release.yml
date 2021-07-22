@@ -1,0 +1,64 @@
+name: 1.0$(Rev:.r)
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: gavanlamb/azure-devops-templates
+      endpoint: expensely
+  pipelines:
+    - pipeline: build
+      source: 'Services\Time\Build'
+      trigger:
+        branches:
+          include:
+            - main
+
+pool:
+  vmImage: ubuntu-latest
+  
+trigger: none
+pr: none
+
+stages:
+  - stage: production
+    displayName: Production
+    variables:
+      - group: terraform_ap-southeast-2_production
+      - name: artifactName
+        value: production_ap-southeast-2
+        readonly: true
+      - name: environment
+        value: production
+        readonly: true
+    jobs:
+      - job: plan
+        displayName: Plan
+        steps:
+          - template: aws/terraform/plan.yml@templates
+            parameters:
+              artifactName: $(artifactName)
+              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(terraformRegion).tfvars -var="build_identifier=$(resources.pipeline.build.runName)"'
+              serviceConnectionName: $(terraformServiceConnectionName)
+              stateBucketName: $(terraformStateBucketName)
+              stateLockTableName: $(terraformStateLockTableName)
+              workspaceName: service-time-$(environment)
+ 
+      - template: job/approve.yml@templates
+        parameters:
+          dependsOn: plan
+          timeoutInMinutes: 60
+          notifyUsers: '[Expensely]\Expensely Team'
+
+      - deployment: apply
+        displayName: Apply
+        dependsOn: approve
+        environment: Production
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: none
+                - template: aws/terraform/apply.yml@templates
+                  parameters:
+                    artifactName: $(artifactName)
+                    serviceConnectionName: $(terraformServiceConnectionName)

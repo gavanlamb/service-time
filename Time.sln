@@ -1,0 +1,88 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2C927D98-2973-4A2E-B2E7-F0C06BE0CF5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Api", "src\Time.Api\Time.Api.csproj", "{E96348E7-8CBF-4673-9461-3DD4FAF9BB16}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D587B9B5-2365-4741-93FF-4DBBD6F56BFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Repository", "src\Time.Repository\Time.Repository.csproj", "{13C0B97A-AD3C-4511-B790-BA72EABFE37F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pipelines", "pipelines", "{A9FC12F9-2A43-4DAA-A48C-C357C253C403}"
+ProjectSection(SolutionItems) = preProject
+	pipelines\release.yml = pipelines\release.yml
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastructure", "infrastructure", "{A7416DF9-5625-4A36-BAF9-BAE461893228}"
+ProjectSection(SolutionItems) = preProject
+	infrastructure\backend.tf = infrastructure\backend.tf
+	infrastructure\data.tf = infrastructure\data.tf
+	infrastructure\main.tf = infrastructure\main.tf
+	infrastructure\providers.tf = infrastructure\providers.tf
+	infrastructure\variables.tf = infrastructure\variables.tf
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items ", "solution items ", "{4218576B-0FCF-4CE1-A9F2-58396D39920B}"
+ProjectSection(SolutionItems) = preProject
+	Dockerfile = Dockerfile
+	README.md = README.md
+	docker-compose.yml = docker-compose.yml
+	docker-compose.infrastructure.yml = docker-compose.infrastructure.yml
+EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Api.IntegrationTests", "tests\Time.Api.IntegrationTests\Time.Api.IntegrationTests.csproj", "{6622F65C-B4BE-4F45-9F3C-47F03AEB18A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Repository.UnitTests", "tests\Time.Repository.UnitTests\Time.Repository.UnitTests.csproj", "{332BC77A-2735-41D8-9072-400AF512BE1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Migrations", "src\Time.Migrations\Time.Migrations.csproj", "{5A0A6AA4-DDC3-420C-9502-589FE22BACB9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{9F234172-A4D0-4411-950C-9570C5FCF97C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "variables", "variables", "{D832FFC2-D41F-4BE2-9D5D-373B2D6E9388}"
+ProjectSection(SolutionItems) = preProject
+	infrastructure\variables\production.ap-southeast-2.tfvars = infrastructure\variables\production.ap-southeast-2.tfvars
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{48F63336-2780-4CC8-8E82-793E25C24A45}"
+ProjectSection(SolutionItems) = preProject
+	infrastructure\templates\codedeploy.yml = infrastructure\templates\codedeploy.yml
+EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E96348E7-8CBF-4673-9461-3DD4FAF9BB16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E96348E7-8CBF-4673-9461-3DD4FAF9BB16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E96348E7-8CBF-4673-9461-3DD4FAF9BB16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E96348E7-8CBF-4673-9461-3DD4FAF9BB16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13C0B97A-AD3C-4511-B790-BA72EABFE37F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13C0B97A-AD3C-4511-B790-BA72EABFE37F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13C0B97A-AD3C-4511-B790-BA72EABFE37F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13C0B97A-AD3C-4511-B790-BA72EABFE37F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6622F65C-B4BE-4F45-9F3C-47F03AEB18A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6622F65C-B4BE-4F45-9F3C-47F03AEB18A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6622F65C-B4BE-4F45-9F3C-47F03AEB18A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6622F65C-B4BE-4F45-9F3C-47F03AEB18A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{332BC77A-2735-41D8-9072-400AF512BE1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{332BC77A-2735-41D8-9072-400AF512BE1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{332BC77A-2735-41D8-9072-400AF512BE1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{332BC77A-2735-41D8-9072-400AF512BE1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A0A6AA4-DDC3-420C-9502-589FE22BACB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A0A6AA4-DDC3-420C-9502-589FE22BACB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A0A6AA4-DDC3-420C-9502-589FE22BACB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A0A6AA4-DDC3-420C-9502-589FE22BACB9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E96348E7-8CBF-4673-9461-3DD4FAF9BB16} = {2C927D98-2973-4A2E-B2E7-F0C06BE0CF5D}
+		{13C0B97A-AD3C-4511-B790-BA72EABFE37F} = {2C927D98-2973-4A2E-B2E7-F0C06BE0CF5D}
+		{6622F65C-B4BE-4F45-9F3C-47F03AEB18A0} = {D587B9B5-2365-4741-93FF-4DBBD6F56BFB}
+		{332BC77A-2735-41D8-9072-400AF512BE1C} = {D587B9B5-2365-4741-93FF-4DBBD6F56BFB}
+		{5A0A6AA4-DDC3-420C-9502-589FE22BACB9} = {2C927D98-2973-4A2E-B2E7-F0C06BE0CF5D}
+		{9F234172-A4D0-4411-950C-9570C5FCF97C} = {A9FC12F9-2A43-4DAA-A48C-C357C253C403}
+		{D832FFC2-D41F-4BE2-9D5D-373B2D6E9388} = {A7416DF9-5625-4A36-BAF9-BAE461893228}
+		{48F63336-2780-4CC8-8E82-793E25C24A45} = {A7416DF9-5625-4A36-BAF9-BAE461893228}
+	EndGlobalSection
+EndGlobal
