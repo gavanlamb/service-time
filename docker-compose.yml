@@ -1,0 +1,29 @@
+version: '3.6'
+services:
+    tests:
+        container_name: test
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: test
+        volumes:
+            - ./local/tests:/artifacts/tests
+    migration:
+        container_name: migration
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: migration
+        depends_on:
+            -   tests
+    api:
+        container_name: api
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: api
+        depends_on:
+            - migrations
+            -   tests
+        ports:
+            -   8081:80

@@ -1,0 +1,17 @@
+parameters:
+  - name: dependsOn
+    displayName: Job name that needs to happen before this job
+    type: string
+
+jobs:
+  - job: approve
+    displayName: Approve
+    dependsOn: ${{ parameters.dependsOn }}
+    pool: server
+    steps:
+      - task: ManualValidation@0
+        inputs:
+          notifyUsers: '[Expensely]\Expensely Team'
+          onTimeout: reject
+          instructions: Please validate the Terraform plan
+        timeoutInMinutes: 10080
