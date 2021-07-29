@@ -5,10 +5,6 @@ resources:
       type: github
       name: gavanlamb/azure-devops-templates
       endpoint: expensely
-    - repository: expensely-templates
-      type: github
-      name: expensely/azure-devops-templates
-      endpoint: expensely
   pipelines:
     - pipeline: build
       source: 'Services\Time\Build'
@@ -42,7 +38,11 @@ stages:
     displayName: Production
     dependsOn: output
     variables:
-      - template: variables/production.ap-southeast-2.yml@expensely-templates
+      - group: terraform_ap-southeast-2_production
+      - name: artifactName
+        value: production_ap-southeast-2
+      - name: environment
+        value: production
     jobs:
       - job: plan
         displayName: Plan
@@ -52,9 +52,9 @@ stages:
               artifactName: $(artifactName)
               initAdditionalCommandOptions: '-no-color'
               planAdditionalCommandOptions: '-var-file=$(production).$(terraformRegion).tfvars'
-              serviceConnectionName: ${{ variables.terraformServiceConnectionName }}
-              stateBucketName: ${{ variables.terraformStateBucketName }}
-              stateLockTableName: ${{ variables.terraformStateLockTableName }}
+              serviceConnectionName: $(terraformServiceConnectionName)
+              stateBucketName: $(terraformStateBucketName)
+              stateLockTableName: $(terraformStateLockTableName)
               workspaceName: service-time-$(environment)
  
       - template: ./templates/approve.yml
@@ -74,4 +74,4 @@ stages:
                   parameters:
                     applyAdditionalCommandOptions: '-no-color'
                     artifactName: $(artifactName)
-                    serviceConnectionName: ${{ variables.terraformServiceConnectionName }}
+                    serviceConnectionName: $(terraformServiceConnectionName)
