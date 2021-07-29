@@ -52,7 +52,6 @@ stages:
               echo $(resources.pipeline.build.requestedFor)
               echo $(resources.pipeline.build.requestedForID)
 
-
       - job: plan
         displayName: Plan
         dependsOn: setup
