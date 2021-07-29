@@ -79,4 +79,3 @@ stages:
                     applyAdditionalCommandOptions: '-no-color'
                     artifactName: $(artifactName)
                     serviceConnectionName: $(terraformServiceConnectionName)
-
