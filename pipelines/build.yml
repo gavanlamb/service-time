@@ -6,6 +6,9 @@ resources:
       name: gavanlamb/azure-devops-templates
       endpoint: expensely
 
+trigger: 
+  - main
+
 jobs:
   - job: build
     displayName: Build

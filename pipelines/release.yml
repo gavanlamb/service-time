@@ -17,14 +17,33 @@ trigger: none
 pr: none
 
 stages:
+  - stage: output
+    displayName: Output
+    jobs:
+      - job: plan
+        displayName: Plan
+        steps:
+          - script: |
+              echo $(resources.pipeline.build.pipelineID)
+              echo $(resources.pipeline.build.runName)
+              echo $(resources.pipeline.build.runID)
+              echo $(resources.pipeline.build.runURI)
+              echo $(resources.pipeline.build.sourceBranch)
+              echo $(resources.pipeline.build.sourceCommit)
+              echo $(resources.pipeline.build.sourceProvider)
+              echo $(resources.pipeline.build.requestedFor)
+              echo $(resources.pipeline.build.requestedForID)
+
   - stage: production
     displayName: Production
     variables:
       - group: terraform_ap-southeast-2_production
       - name: artifactName
         value: production_ap-southeast-2
+        readonly: true
       - name: environment
         value: production
+        readonly: true
     jobs:
       - job: plan
         displayName: Plan
@@ -33,7 +52,7 @@ stages:
             parameters:
               artifactName: $(artifactName)
               initAdditionalCommandOptions: '-no-color'
-              planAdditionalCommandOptions: '-var-file=$(environment).$(terraformRegion).tfvars'
+              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(terraformRegion).tfvars'
               serviceConnectionName: $(terraformServiceConnectionName)
               stateBucketName: $(terraformStateBucketName)
               stateLockTableName: $(terraformStateLockTableName)
