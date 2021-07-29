@@ -11,7 +11,7 @@ resources:
       trigger:
         branches:
           include:
-            - main
+            - refs/pull/*
           exclude:
             - '*' 
 
@@ -19,7 +19,6 @@ pool:
   vmImage: ubuntu-latest
 
 trigger: none
-
 pr: none
 
 variables:
