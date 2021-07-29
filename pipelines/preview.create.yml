@@ -27,30 +27,31 @@ variables:
     readonly: true
 
 stages:
-  - stage: build
-    displayName: Build
-    jobs:
-      - job: application
-        displayName: Application
-        steps:
-          - template: ./templates/build.yml
-
   - stage: preview
     displayName: Preview
-    dependsOn: build
     variables:
       - group: terraform_ap-southeast-2_production
+      - name: artifactName
+        value: preview_ap-southeast-2
+        readonly: true
       - name: environment
         value: preview
-        readonly: true
-      - name: region
-        value: ap-southeast-2
         readonly: true
     jobs:
       - job: setup
         displayName: Setup
         steps:
-          - 
+          - script: |
+              echo $(resources.pipeline.build.pipelineID)
+              echo $(resources.pipeline.build.runName)
+              echo $(resources.pipeline.build.runID)
+              echo $(resources.pipeline.build.runURI)
+              echo $(resources.pipeline.build.sourceBranch)
+              echo $(resources.pipeline.build.sourceCommit)
+              echo $(resources.pipeline.build.sourceProvider)
+              echo $(resources.pipeline.build.requestedFor)
+              echo $(resources.pipeline.build.requestedForID)
+
 
       - job: plan
         displayName: Plan
@@ -58,13 +59,12 @@ stages:
         steps:
           - template: aws/terraform/plan.yml@templates
             parameters:
-              artifactName: $(environment)_$(TerraformRegion)
+              artifactName: $(artifactName)
               initAdditionalCommandOptions: '-no-color'
-              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(region).tfvars'
+              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(terraformRegion).tfvars'
               serviceConnectionName: $(terraformServiceConnectionName)
               stateBucketName: $(terraformStateBucketName)
               stateLockTableName: $(terraformStateLockTableName)
-              version: $(terraformVersion)
               workspaceName: service-time-$(environment)
 
       - deployment: apply
@@ -79,7 +79,6 @@ stages:
                 - template: aws/terraform/apply.yml@templates
                   parameters:
                     applyAdditionalCommandOptions: '-no-color'
-                    artifactName: $(environment)_$(TerraformRegion)
+                    artifactName: $(artifactName)
                     serviceConnectionName: $(terraformServiceConnectionName)
-                    version: $(terraformVersion)
-                - template: templates/aws.codedeploy.yml
+                # - template: templates/aws.codedeploy.yml

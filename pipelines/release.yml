@@ -40,8 +40,10 @@ stages:
       - group: terraform_ap-southeast-2_production
       - name: artifactName
         value: production_ap-southeast-2
+        readonly: true
       - name: environment
         value: production
+        readonly: true
     jobs:
       - job: plan
         displayName: Plan
