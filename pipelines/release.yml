@@ -9,6 +9,9 @@ resources:
     - pipeline: build
       source: 'Services\Time\Build'
       trigger: true
+        branches:
+          include:
+            - main
 
 pool:
   vmImage: ubuntu-latest
