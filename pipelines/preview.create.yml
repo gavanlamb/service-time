@@ -5,11 +5,21 @@ resources:
       type: github
       name: gavanlamb/azure-devops-templates
       endpoint: expensely
+  pipelines:
+    - pipeline: build
+      source: 'Services\Time\Build'
+      trigger:
+        branches:
+          include:
+            - main
+          exclude:
+            - '*' 
 
 pool:
   vmImage: ubuntu-latest
 
 trigger: none
+pr: none
 
 variables:
   - name: terraformVersion

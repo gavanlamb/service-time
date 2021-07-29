@@ -5,3 +5,6 @@
 ## Pipelines
 
 ## Database
+
+
+`echo $(resources.pipeline.build.runName)`
