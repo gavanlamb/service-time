@@ -8,7 +8,7 @@ resources:
   pipelines:
     - pipeline: build
       source: 'Services\Time\Build'
-      trigger: true
+      trigger:
         branches:
           include:
             - main
