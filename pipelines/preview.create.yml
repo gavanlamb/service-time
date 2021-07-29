@@ -12,8 +12,6 @@ resources:
         branches:
           include:
             - refs/pull/*
-          exclude:
-            - '*' 
 
 pool:
   vmImage: ubuntu-latest
