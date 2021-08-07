@@ -12,6 +12,7 @@ resources:
         branches:
           include:
             - refs/remotes/pull*
+            - refs/pull*
 
 pool:
   vmImage: ubuntu-latest
