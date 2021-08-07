@@ -40,14 +40,11 @@ stages:
       - job: plan
         displayName: Plan
         steps:
-          - powershell: |
-              echo $(resources.pipeline.build.runName)
-              echo '##vso[task.setvariable variable=one]secondValue'
           - task: PowerShell@2
             inputs:
               targetType: inline
               script: |
-                $branchName = $(Build.SourceBranchName)
+                $branchName = "$(Build.SourceBranchName)"
                 $nameElements = $branchName.Split("/")
                 $pullRequestId = $nameElements[2]
                 write-host("##vso[task.setvariable variable=pullRequestId;isOutput=true]$pullRequestId")
