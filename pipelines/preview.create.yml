@@ -12,7 +12,6 @@ resources:
         branches:
           include:
             - refs/remotes/pull*
-            - refs/pull*
 
 pool:
   vmImage: ubuntu-latest
@@ -37,24 +36,31 @@ stages:
         value: preview
         readonly: true
     jobs:
-      - job: setup
-        displayName: Setup
-        steps:
-          - script: |
-              echo $(resources.pipeline.build.runName)
-
       - job: plan
         displayName: Plan
         dependsOn: setup
         steps:
+          - powershell: |
+              echo $(resources.pipeline.build.runName)
+              echo '##vso[task.setvariable variable=one]secondValue'
+          - task: PowerShell@2
+            inputs:
+              targetType: inline
+              script: |
+                $branchName = $(Build.SourceBranchName)
+                $nameElements = $branchName.Split("/")
+                $pullRequestId = $nameElements[2]
+                write-host("##vso[task.setvariable variable=pullRequestId;isOutput=true]$pullRequestId")
+            name: set_variables
+            displayName: Set variables
           - template: aws/terraform/plan.yml@templates
             parameters:
               artifactName: $(artifactName)
-              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(terraformRegion).tfvars'
+              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(terraformRegion).tfvars -var="build_identifier=$(resources.pipeline.build.runName)"'
               serviceConnectionName: $(terraformServiceConnectionName)
               stateBucketName: $(terraformStateBucketName)
               stateLockTableName: $(terraformStateLockTableName)
-              workspaceName: service-time-$(environment)$(System.PullRequest.PullRequestId)
+              workspaceName: service-time-$(environment)$(set_variables.pullRequestId)
 
       - deployment: apply
         displayName: Apply
