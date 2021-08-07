@@ -6,6 +6,9 @@ services:
             context: .
             dockerfile: Dockerfile
             target: test
+            args:
+                BUILD_NUMBER: 0.0.0.1
+                PAT: your-pat
         volumes:
             - ./local/tests:/artifacts/tests
     migration:
@@ -14,6 +17,9 @@ services:
             context: .
             dockerfile: Dockerfile
             target: migration
+            args:
+                BUILD_NUMBER: 0.0.0.1
+                PAT: your-pat
         depends_on:
             -   tests
     api:
@@ -22,8 +28,13 @@ services:
             context: .
             dockerfile: Dockerfile
             target: api
+            args:
+                BUILD_NUMBER: 0.0.0.1
+                PAT: your-pat
         depends_on:
             - migrations
             -   tests
         ports:
             -   8081:80
+        environment:
+            DOTNET_ENVIRONMENT: Development
