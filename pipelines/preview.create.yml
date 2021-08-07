@@ -11,13 +11,14 @@ resources:
       trigger:
         branches:
           include:
-            - refs/pull/*
-            - refs/remotes/pull/*
+            - refs/remotes/pull*
+            - refs/pull*
 
 pool:
   vmImage: ubuntu-latest
 
 trigger: none
+pr: none
 
 variables:
   - name: terraformVersion
@@ -68,4 +69,4 @@ stages:
                   parameters:
                     artifactName: $(artifactName)
                     serviceConnectionName: $(terraformServiceConnectionName)
-                - template: aws/cli/codedeploy.yml@templates
+                #- template: aws/cli/codedeploy.yml@templates
