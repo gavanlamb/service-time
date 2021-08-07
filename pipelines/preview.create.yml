@@ -39,7 +39,6 @@ stages:
     jobs:
       - job: plan
         displayName: Plan
-        dependsOn: setup
         steps:
           - powershell: |
               echo $(resources.pipeline.build.runName)
