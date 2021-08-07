@@ -1,4 +1,4 @@
-﻿# Expensely Time
+﻿# Time
 
 ## Infrastructure
 
@@ -6,5 +6,3 @@
 
 ## Database
 
-
-`echo $(resources.pipeline.build.runName)`
