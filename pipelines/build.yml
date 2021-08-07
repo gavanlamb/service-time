@@ -16,6 +16,7 @@ jobs:
       - template: ./docker/build.yml@templates
         parameters:
           target: base
+          argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber)"
     
       - template: ./docker/build.yml@templates
         parameters:
