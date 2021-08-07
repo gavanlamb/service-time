@@ -44,6 +44,7 @@ stages:
             inputs:
               targetType: inline
               script: |
+                write-host("$(Build.SourceBranchName)")
                 $branchName = "$(Build.SourceBranchName)"
                 $nameElements = $branchName.Split("/")
                 $pullRequestId = $nameElements[2]
@@ -53,7 +54,7 @@ stages:
           - template: aws/terraform/plan.yml@templates
             parameters:
               artifactName: $(artifactName)
-              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(terraformRegion).tfvars -var="build_identifier=$(resources.pipeline.build.runName)"'
+              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(terraformRegion).tfvars -var="build_identifier=$(resources.pipeline.build.runName)" -var="environment=Preview$(set_variables.pullRequestId)" -var="subdomain=time$(set_variables.pullRequestId)"'
               serviceConnectionName: $(terraformServiceConnectionName)
               stateBucketName: $(terraformStateBucketName)
               stateLockTableName: $(terraformStateLockTableName)
