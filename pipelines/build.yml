@@ -16,7 +16,7 @@ jobs:
       - template: ./docker/build.yml@templates
         parameters:
           target: base
-          argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber)"
+          argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
     
       - template: ./docker/build.yml@templates
         parameters:
