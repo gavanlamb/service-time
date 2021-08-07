@@ -12,12 +12,12 @@ resources:
         branches:
           include:
             - refs/pull/*
+            - refs/remotes/pull/*
 
 pool:
   vmImage: ubuntu-latest
 
 trigger: none
-pr: none
 
 variables:
   - name: terraformVersion
