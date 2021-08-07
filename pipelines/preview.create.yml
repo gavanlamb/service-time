@@ -44,8 +44,8 @@ stages:
             inputs:
               targetType: inline
               script: |
-                write-host("$(Build.SourceBranchName)")
-                $branchName = "$(Build.SourceBranchName)"
+                write-host("$(resources.pipeline.build.sourceBranch)")
+                $branchName = "$(resources.pipeline.build.sourceBranch)"
                 $nameElements = $branchName.Split("/")
                 $pullRequestId = $nameElements[2]
                 write-host("##vso[task.setvariable variable=pullRequestId;isOutput=true]$pullRequestId")
