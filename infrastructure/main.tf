@@ -358,7 +358,7 @@ resource "aws_alb_target_group" "api_green" {
 
 /// Cloudwatch
 resource "aws_cloudwatch_log_group" "api" {
-  name = "/${lower(var.application_name)}/${var.environment}"
+  name = "/${lower(var.application_name)}/${lower(var.environment)}"
   retention_in_days = 14
   tags = local.default_tags
 }
@@ -477,7 +477,7 @@ data "aws_iam_policy_document" "api_secrets" {
       "kms:Decrypt"
     ]
     resources = [
-      "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/${lower(var.application_name)}/${var.environment}/*",
+      "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/${lower(var.application_name)}/${lower(var.environment)}/*",
       data.aws_kms_alias.ssm_default_key.target_key_arn
     ]
   }
