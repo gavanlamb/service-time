@@ -1,6 +1,5 @@
 ﻿FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine AS base
 ARG BUILD_NUMBER=0.0.0.1
-ARG PAT
 WORKDIR /expensely-time
 COPY "Time.sln" "Time.sln"
 COPY "src/Time.Api/Time.Api.csproj" "src/Time.Api/"
@@ -8,7 +7,6 @@ COPY "src/Time.Migrations/Time.Migrations.csproj" "src/Time.Migrations/"
 COPY "src/Time.Repository/Time.Repository.csproj" "src/Time.Repository/"
 COPY "tests/Time.Api.IntegrationTests/Time.Api.IntegrationTests.csproj" "tests/Time.Api.IntegrationTests/"
 COPY "tests/Time.Repository.UnitTests/Time.Repository.UnitTests.csproj" "tests/Time.Repository.UnitTests/"
-COPY "nuget.config" "nuget.config"
 RUN dotnet restore Time.sln 
 COPY . .
 RUN dotnet build -c Release -p:Version=$BUILD_NUMBER

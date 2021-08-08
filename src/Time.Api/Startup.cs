@@ -1,10 +1,10 @@
-using Expensely.Logging.Serilog.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 namespace Time.Api
 {
@@ -13,6 +13,12 @@ namespace Time.Api
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+
+            Log.Information("Logging registered");
         }
 
         public IConfiguration Configuration { get; }
@@ -20,8 +26,6 @@ namespace Time.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSerilog(Configuration, "Logging");
-            
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

@@ -25,7 +25,7 @@ namespace Time.Api.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
-            _logger.LogCritical("ERROR");
+            _logger.LogInformation("CONTROLLER");
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
                 {
