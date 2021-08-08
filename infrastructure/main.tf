@@ -235,11 +235,12 @@ resource "aws_ecs_task_definition" "api" {
         {
           name = "DOTNET_ENVIRONMENT",
           value = var.environment
-        },
-        {
-          name = "Logging__CloudWatch__LogGroupName",
-          value = aws_cloudwatch_log_group.api.name
         }
+//      ,
+//        {
+//          name = "Logging__CloudWatch__LogGroupName",
+//          value = aws_cloudwatch_log_group.api.name
+//        }
       ]
 //      secrets = concat(
 //      [
@@ -376,8 +377,7 @@ data "aws_iam_policy_document" "api_logs" {
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
-      "logs:PutLogEvents",
-      "logs:DescribeLogStreams"
+      "logs:PutLogEvents"
     ]
     resources = [
       "arn:aws:logs:*:*:*"
