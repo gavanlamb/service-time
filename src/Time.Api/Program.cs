@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
@@ -13,7 +14,17 @@ namespace Time.Api
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    if (hostingContext.HostingEnvironment.EnvironmentName.StartsWith("Preview"))
+                    {
+                        config.AddJsonFile("appsettings.Preview.json", true, true);
+                    }
+                })
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                })
                 .UseSerilog();
     }
 }
