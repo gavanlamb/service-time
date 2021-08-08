@@ -235,6 +235,10 @@ resource "aws_ecs_task_definition" "api" {
         {
           name = "DOTNET_ENVIRONMENT",
           value = var.environment
+        },
+        {
+          name = "CloudWatch__LogGroupName",
+          value = var.environment
         }
       ]
 //      secrets = concat(
