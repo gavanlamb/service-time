@@ -238,7 +238,7 @@ resource "aws_ecs_task_definition" "api" {
         },
         {
           name = "CloudWatch__LogGroupName",
-          value = var.environment
+          value = aws_cloudwatch_log_group.api.name
         }
       ]
 //      secrets = concat(
