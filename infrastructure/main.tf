@@ -237,7 +237,7 @@ resource "aws_ecs_task_definition" "api" {
           value = var.environment
         },
         {
-          name = "Expensely.Logging.Serilog__CloudWatch__LogGroupName",
+          name = "Logging__CloudWatch__LogGroupName",
           value = aws_cloudwatch_log_group.api.name
         }
       ]

@@ -27,7 +27,7 @@ namespace Time.Api
                         
                     if (hostingContext.HostingEnvironment.EnvironmentName.StartsWith("Preview"))
                     {
-                        config.AddJsonFile("appsettings.Preview.json", false, true);
+                        config.AddJsonFile("appsettings.Preview.json", false, reloadOnChange);
                     }
                     else
                     {

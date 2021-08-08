@@ -8,10 +8,10 @@ services:
             target: test
             args:
                 BUILD_NUMBER: 0.0.0.1
-                PAT: your-pat
+                PAT: nuaa34o6tccmaj3piu7xooydafh7nwwszr472r5xvwvcdlg5bmuq
         volumes:
             - ./local/tests:/artifacts/tests
-    migration:
+    migrations:
         container_name: migration
         build:
             context: .
@@ -19,7 +19,7 @@ services:
             target: migration
             args:
                 BUILD_NUMBER: 0.0.0.1
-                PAT: your-pat
+                PAT: nuaa34o6tccmaj3piu7xooydafh7nwwszr472r5xvwvcdlg5bmuq
         depends_on:
             -   tests
     api:
@@ -30,9 +30,9 @@ services:
             target: api
             args:
                 BUILD_NUMBER: 0.0.0.1
-                PAT: your-pat
+                PAT: nuaa34o6tccmaj3piu7xooydafh7nwwszr472r5xvwvcdlg5bmuq
         depends_on:
-            - migrations
+            -   migrations
             -   tests
         ports:
             -   8081:80
