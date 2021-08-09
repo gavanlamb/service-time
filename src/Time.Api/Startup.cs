@@ -43,6 +43,8 @@ namespace Time.Api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Time.Api v1"));
             }
 
+            app.UseSerilogRequestLogging();
+
             app.UseRouting();
 
             app.UseAuthorization();
