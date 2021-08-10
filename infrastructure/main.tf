@@ -235,12 +235,15 @@ resource "aws_ecs_task_definition" "api" {
         {
           name = "DOTNET_ENVIRONMENT",
           value = var.environment
+        },
+        {
+          name = "Serilog__LogGroup",
+          value = aws_cloudwatch_log_group.api.name
+        },
+        {
+          name = "Serilog__Region",
+          value = var.region
         }
-//      ,
-//        {
-//          name = "Logging__CloudWatch__LogGroupName",
-//          value = aws_cloudwatch_log_group.api.name
-//        }
       ]
 //      secrets = concat(
 //      [
