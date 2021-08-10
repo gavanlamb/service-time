@@ -19,20 +19,26 @@ namespace Time.Api
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     config.Sources.Clear();
+                    Console.WriteLine("Cleared sources");
 
                     var env = hostingContext.HostingEnvironment;
+                    Console.WriteLine("Env:" + env.EnvironmentName);
 
                     var reloadOnChange = hostingContext.Configuration.GetValue("hostBuilder:reloadConfigOnChange", defaultValue: true);
+                    Console.WriteLine("ReloadOnChange" + reloadOnChange.ToString());
 
                     config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: reloadOnChange);
+                    Console.WriteLine("Added:appsettings.json");
 
                     if (hostingContext.HostingEnvironment.EnvironmentName.StartsWith("Preview", StringComparison.InvariantCultureIgnoreCase))
                     {
                         config.AddJsonFile("appsettings.Preview.json", true, reloadOnChange);
+                        Console.WriteLine("Added:appsettings.Preview.json");
                     }
                     else
                     {
                         config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: reloadOnChange);
+                        Console.WriteLine($"Added:appsettings.{env.EnvironmentName}.json");
                     }
 
                     if (env.IsDevelopment() && !string.IsNullOrEmpty(env.ApplicationName))
@@ -45,6 +51,7 @@ namespace Time.Api
                     }
 
                     config.AddEnvironmentVariables();
+                    Console.WriteLine($"added:env variables");
 
                     if (args != null)
                     {
