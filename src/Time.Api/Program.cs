@@ -27,17 +27,20 @@ namespace Time.Api
                     var reloadOnChange = hostingContext.Configuration.GetValue("hostBuilder:reloadConfigOnChange", defaultValue: true);
                     Console.WriteLine("ReloadOnChange" + reloadOnChange.ToString());
 
-                    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: reloadOnChange);
-                    Console.WriteLine("Added:appsettings.json");
-
                     if (hostingContext.HostingEnvironment.EnvironmentName.StartsWith("Preview", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        config.AddJsonFile("appsettings.Preview.json", true, reloadOnChange);
+                        config
+                            .AddJsonFile("appsettings.json", true, reloadOnChange)
+                            .AddJsonFile("appsettings.Preview.json", true, reloadOnChange);
+                        Console.WriteLine("Added:appsettings.json");
                         Console.WriteLine("Added:appsettings.Preview.json");
                     }
                     else
                     {
-                        config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: reloadOnChange);
+                        config
+                            .AddJsonFile("appsettings.json", true, reloadOnChange)
+                            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, reloadOnChange);
+                        Console.WriteLine("Added:appsettings.json");
                         Console.WriteLine($"Added:appsettings.{env.EnvironmentName}.json");
                     }
 

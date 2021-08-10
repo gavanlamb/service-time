@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Serilog.Configuration;
 
 namespace Time.Api
 {
@@ -16,6 +17,16 @@ namespace Time.Api
 
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
+                .Enrich.WithAssemblyName()
+                .Enrich.WithAssemblyVersion(true)
+                .Enrich.WithMachineName()
+                .Enrich.WithProperty("Environment", configuration.GetValue<string>("DOTNET_ENVIRONMENT") ?? configuration.GetValue<string>("ASPNETCORE_ENVIRONMENT") )
+                .Enrich.FromLogContext()
+                .Enrich.WithMessageTemplate()
+                .Enrich.WithProcessId()
+                .Enrich.WithProcessName()
+                .Enrich.WithThreadId()
+                .Enrich.WithThreadName()
                 .CreateLogger();
 
             Log.Information("Logging registered");
