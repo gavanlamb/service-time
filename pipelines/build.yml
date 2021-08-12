@@ -11,6 +11,8 @@ trigger:
 
 jobs:
   - job: build
+    variables:
+      - group: 'AWS Sydney Production'
     displayName: Build
     steps:
       - template: ./docker/build.yml@templates
@@ -32,8 +34,8 @@ jobs:
           argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
       - template: ./aws/cli/ecr.push.yml@templates
         parameters:
-          awsCredentials: 'AWS ap-southeast-2 production'
-          awsRegion: ap-southeast-2
+          serviceConnectionName: $(awsServiceConnectionName)
+          region: $(region)
           imageName: api
           repositoryName: time-api
     
@@ -43,7 +45,7 @@ jobs:
           argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
       - template: ./aws/cli/ecr.push.yml@templates
         parameters:
-          awsCredentials: 'AWS ap-southeast-2 production'
-          awsRegion: ap-southeast-2
+          serviceConnectionName: $(awsServiceConnectionName)
+          region: $(region)
           imageName: migration
           repositoryName: time-migration

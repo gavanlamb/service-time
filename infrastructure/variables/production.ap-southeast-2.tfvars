@@ -12,6 +12,7 @@ capacity_provider_name="linux"
 cognito_user_pool_name="expensely"
 
 codedeploy_role_name="expensely-code-deploy"
+codedeploy_bucket_name="expensely-code-deploy-production"
 
 zone_name="expensely.io"
 subdomain="time"
