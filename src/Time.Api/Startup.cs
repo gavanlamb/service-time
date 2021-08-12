@@ -19,7 +19,7 @@ namespace Time.Api
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .Enrich.WithAssemblyName()
-                .Enrich.WithAssemblyVersion(true)
+                .Enrich.WithAssemblyVersion()
                 .Enrich.WithMachineName()
                 .Enrich.WithProperty("Environment", configuration.GetValue<string>("DOTNET_ENVIRONMENT") ?? configuration.GetValue<string>("ASPNETCORE_ENVIRONMENT") )
                 .Enrich.FromLogContext()
