@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Configuration;
+using Serilog.Exceptions;
 
 namespace Time.Api
 {
@@ -27,6 +28,7 @@ namespace Time.Api
                 .Enrich.WithProcessName()
                 .Enrich.WithThreadId()
                 .Enrich.WithThreadName()
+                .Enrich.WithExceptionDetails()
                 .CreateLogger();
 
             Log.Information("Logging registered");

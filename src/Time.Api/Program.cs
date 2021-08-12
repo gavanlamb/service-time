@@ -19,6 +19,7 @@ namespace Time.Api
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     config.Sources.Clear();
+                    Console.WriteLine("Sources count:" + config.Sources.Count);
                     Console.WriteLine("Cleared sources");
 
                     var env = hostingContext.HostingEnvironment;
@@ -55,6 +56,8 @@ namespace Time.Api
 
                     config.AddEnvironmentVariables();
                     Console.WriteLine($"added:env variables");
+                    
+                    Console.WriteLine("Sources count:"+config.Sources.Count);
 
                     if (args != null)
                     {
