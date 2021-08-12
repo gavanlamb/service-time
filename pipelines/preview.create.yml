@@ -65,7 +65,9 @@ stages:
       - deployment: apply
         displayName: Apply
         dependsOn: plan
-        environment:  preview
+        environment: preview
+        variables:
+          pullRequestId: $[dependencies.plan.outputs['set_variables.pullRequestId']]
         strategy:
           runOnce:
             deploy:
@@ -80,5 +82,5 @@ stages:
                     serviceConnectionName: $(awsServiceConnectionName)
                     region: $(region)
                     sourcePath: time-$(resources.pipeline.build.runName).yaml
-                    destinationPath: time/preview$(set_variables.pullRequestId)/time-$(resources.pipeline.build.runName).yaml
+                    destinationPath: time/preview$(pullRequestId)/time-$(resources.pipeline.build.runName).yaml
                     codeDeployBucketName: $(codeDeployBucketName)
