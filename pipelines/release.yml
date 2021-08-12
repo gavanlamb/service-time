@@ -63,7 +63,7 @@ stages:
                   parameters:
                     artifactName: $(artifactName)
                     serviceConnectionName: $(terraformServiceConnectionName)
-                - template: aws/cli/codedeploy.yml
+                - template: templates/aws.codedeploy.yml
                   parameters:
                     sourcePath: time-$(resources.pipeline.build.runName).yaml
                     destinationPath: time/$(environment)/time-$(resources.pipeline.build.runName).yaml
