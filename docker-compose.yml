@@ -7,8 +7,8 @@ services:
             dockerfile: Dockerfile
             target: test
             args:
-                BUILD_NUMBER: 0.0.0.1
-                PAT: nuaa34o6tccmaj3piu7xooydafh7nwwszr472r5xvwvcdlg5bmuq
+                BUILD_NUMBER: 1.0.0.1
+                PAT:
         volumes:
             - ./local/tests:/artifacts/tests
     migrations:
@@ -18,8 +18,8 @@ services:
             dockerfile: Dockerfile
             target: migration
             args:
-                BUILD_NUMBER: 0.0.0.1
-                PAT: nuaa34o6tccmaj3piu7xooydafh7nwwszr472r5xvwvcdlg5bmuq
+                BUILD_NUMBER: 1.0.0.1
+                PAT: 
         depends_on:
             -   tests
     api:
@@ -29,8 +29,8 @@ services:
             dockerfile: Dockerfile
             target: api
             args:
-                BUILD_NUMBER: 0.0.0.1
-                PAT: nuaa34o6tccmaj3piu7xooydafh7nwwszr472r5xvwvcdlg5bmuq
+                BUILD_NUMBER: 1.0.0.1
+                PAT:
         depends_on:
             -   migrations
             -   tests

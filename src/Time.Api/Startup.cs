@@ -5,8 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Serilog.Configuration;
-using Serilog.Exceptions;
+using Expensely.Logging.Serilog;
 
 namespace Time.Api
 {
@@ -15,23 +14,6 @@ namespace Time.Api
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
-            Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
-                .Enrich.WithAssemblyName()
-                .Enrich.WithAssemblyVersion()
-                .Enrich.WithMachineName()
-                .Enrich.WithProperty("Environment", configuration.GetValue<string>("DOTNET_ENVIRONMENT") ?? configuration.GetValue<string>("ASPNETCORE_ENVIRONMENT") )
-                .Enrich.FromLogContext()
-                .Enrich.WithMessageTemplate()
-                .Enrich.WithProcessId()
-                .Enrich.WithProcessName()
-                .Enrich.WithThreadId()
-                .Enrich.WithThreadName()
-                .Enrich.WithExceptionDetails()
-                .CreateLogger();
-
-            Log.Information("Logging registered");
         }
 
         public IConfiguration Configuration { get; }
@@ -44,6 +26,8 @@ namespace Time.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Time.Api", Version = "v1"});
             });
+
+            Logging.AddSerilog(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
