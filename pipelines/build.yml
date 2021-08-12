@@ -34,8 +34,8 @@ jobs:
           argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
       - template: ./aws/cli/ecr.push.yml@templates
         parameters:
-          awsCredentials: 'AWS ap-southeast-2 production'
-          awsRegion: ap-southeast-2
+          serviceConnectionName: $(awsServiceConnectionName)
+          region: $(region)
           imageName: api
           repositoryName: time-api
     
