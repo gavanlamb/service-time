@@ -76,7 +76,7 @@ data "template_file" "code_deployment" {
 
   vars = {
     codedeploy_bucket_name = var.codedeploy_bucket_name
-    app_spec_key = "${lower(var.application_name)}/${var.environment}/${lower(var.application_name)}-${var.build_identifier}.yaml"
+    app_spec_key = "${lower(var.application_name)}/${lower(var.environment)}/${lower(var.application_name)}-${var.build_identifier}.yaml"
     deployment_group_name = aws_codedeploy_deployment_group.api.deployment_group_name
     application_name = aws_codedeploy_app.api.name
   }
