@@ -22,6 +22,8 @@ pr: none
 stages:
   - stage: production
     displayName: Production
+    pool:
+      vmImage: 'windows-latest'
     variables:
       - group: 'AWS Sydney Production'
       - name: artifactName
