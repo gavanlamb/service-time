@@ -1,0 +1,39 @@
+parameters:
+  - name: sourcePath
+    displayName: Path of the dockerfile
+    type: string
+  - name: destinationPath
+    displayName: Path of the dockerfile
+    type: string
+  - name: codedeployBucketName
+    displayName: Name of target to build
+    type: string
+  - name: workingDirectory
+    displayName: Directory where the terraform files are stored
+    type: string
+    default: $(Pipeline.Workspace)
+
+steps:
+  - task: AWSPowerShellModuleScript@1
+    name: codedeploy_push
+    displayName: Push app spec file
+    inputs:
+      awsCredentials: 'AWS ap-southeast-2 production'
+      regionName: 'ap-southeast-2'
+      scriptType: 'inline'
+      inlineScript: |
+        aws s3 cp ${{ parameters.sourcePath }} s3://${{ parameters.codedeployBucketName }}/${{ parameters.destinationPath }}
+      workingDirectory: '${{ parameters.workingDirectory }}'
+
+  - task: AWSPowerShellModuleScript@1
+    name: codedeploy
+    displayName: Deploy
+    inputs:
+      awsCredentials: 'AWS ap-southeast-2 production'
+      regionName: 'ap-southeast-2'
+      scriptType: 'inline'
+      inlineScript: |
+        $deploymentId = aws deploy create-deployment --cli-input-json file://create-deployment.json --output json --query 'deploymentId' | ConvertFrom-Json
+        Write-Host "Waiting for deployment:$deploymentId to finish"
+        aws deploy wait deployment-successful --deployment-id $deploymentId
+      workingDirectory: '${{ parameters.workingDirectory }}'

@@ -30,6 +30,7 @@ stages:
     displayName: Preview
     variables:
       - group: terraform-ap-southeast-2-production
+      - group: codedeploy-ap-southeast-2-production
       - name: artifactName
         value: preview_ap-southeast-2
         readonly: true
@@ -73,4 +74,8 @@ stages:
                   parameters:
                     artifactName: $(artifactName)
                     serviceConnectionName: $(terraformServiceConnectionName)
-                #- template: aws/cli/codedeploy.yml@templates
+                - template: aws/cli/codedeploy.yml
+                  parameters:
+                    sourcePath: time-$(resources.pipeline.build.runName).yaml
+                    destinationPath: time/$(environment)/time-$(resources.pipeline.build.runName).yaml
+                    codeDeployBucketName: $(codeDeployBucketName)
