@@ -29,8 +29,7 @@ stages:
   - stage: preview
     displayName: Preview
     variables:
-      - group: terraform-ap-southeast-2-production
-      - group: codedeploy-ap-southeast-2-production
+      - group: 'AWS Sydney Production'
       - name: artifactName
         value: preview_ap-southeast-2
         readonly: true
@@ -55,7 +54,7 @@ stages:
           - template: aws/terraform/plan.yml@templates
             parameters:
               artifactName: $(artifactName)
-              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(terraformRegion).tfvars -var="build_identifier=$(resources.pipeline.build.runName)" -var="environment=Preview$(set_variables.pullRequestId)" -var="subdomain=time$(set_variables.pullRequestId)"'
+              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(region).tfvars -var="build_identifier=$(resources.pipeline.build.runName)" -var="environment=Preview$(set_variables.pullRequestId)" -var="subdomain=time$(set_variables.pullRequestId)"'
               serviceConnectionName: $(terraformServiceConnectionName)
               stateBucketName: $(terraformStateBucketName)
               stateLockTableName: $(terraformStateLockTableName)
@@ -76,6 +75,8 @@ stages:
                     serviceConnectionName: $(terraformServiceConnectionName)
                 - template: templates/aws.codedeploy.yml
                   parameters:
+                    serviceConnectionName: $(awsServiceConnectionName)
+                    region: $(region)
                     sourcePath: time-$(resources.pipeline.build.runName).yaml
                     destinationPath: time/$(environment)/time-$(resources.pipeline.build.runName).yaml
                     codeDeployBucketName: $(codeDeployBucketName)

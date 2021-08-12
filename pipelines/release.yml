@@ -23,8 +23,7 @@ stages:
   - stage: production
     displayName: Production
     variables:
-      - group: terraform_ap-southeast-2_production
-      - group: codedeploy-ap-southeast-2-production
+      - group: 'AWS Sydney Production'
       - name: artifactName
         value: production_ap-southeast-2
         readonly: true
@@ -65,6 +64,8 @@ stages:
                     serviceConnectionName: $(terraformServiceConnectionName)
                 - template: templates/aws.codedeploy.yml
                   parameters:
+                    serviceConnectionName: $(awsServiceConnectionName)
+                    region: $(region)
                     sourcePath: time-$(resources.pipeline.build.runName).yaml
                     destinationPath: time/$(environment)/time-$(resources.pipeline.build.runName).yaml
                     codeDeployBucketName: $(codeDeployBucketName)
