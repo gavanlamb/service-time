@@ -11,7 +11,8 @@ resources:
       trigger:
         branches:
           include:
-            - refs/pull/*
+            - refs/remotes/pull*
+            - refs/pull*
 
 pool:
   vmImage: ubuntu-latest
@@ -36,24 +37,28 @@ stages:
         value: preview
         readonly: true
     jobs:
-      - job: setup
-        displayName: Setup
-        steps:
-          - script: |
-              echo $(resources.pipeline.build.runName)
-
       - job: plan
         displayName: Plan
-        dependsOn: setup
         steps:
+          - task: PowerShell@2
+            inputs:
+              targetType: inline
+              script: |
+                write-host("$(resources.pipeline.build.sourceBranch)")
+                $branchName = "$(resources.pipeline.build.sourceBranch)"
+                $nameElements = $branchName.Split("/")
+                $pullRequestId = $nameElements[2]
+                write-host("##vso[task.setvariable variable=pullRequestId;isOutput=true]$pullRequestId")
+            name: set_variables
+            displayName: Set variables
           - template: aws/terraform/plan.yml@templates
             parameters:
               artifactName: $(artifactName)
-              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(terraformRegion).tfvars'
+              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(terraformRegion).tfvars -var="build_identifier=$(resources.pipeline.build.runName)" -var="environment=Preview$(set_variables.pullRequestId)" -var="subdomain=time$(set_variables.pullRequestId)"'
               serviceConnectionName: $(terraformServiceConnectionName)
               stateBucketName: $(terraformStateBucketName)
               stateLockTableName: $(terraformStateLockTableName)
-              workspaceName: service-time-$(environment)$(System.PullRequest.PullRequestId)
+              workspaceName: service-time-$(environment)$(set_variables.pullRequestId)
 
       - deployment: apply
         displayName: Apply
@@ -68,4 +73,4 @@ stages:
                   parameters:
                     artifactName: $(artifactName)
                     serviceConnectionName: $(terraformServiceConnectionName)
-                - template: aws/cli/codedeploy.yml@templates
+                #- template: aws/cli/codedeploy.yml@templates

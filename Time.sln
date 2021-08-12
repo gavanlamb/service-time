@@ -11,6 +11,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pipelines", "pipelines", "{A9FC12F9-2A43-4DAA-A48C-C357C253C403}"
 ProjectSection(SolutionItems) = preProject
 	pipelines\release.yml = pipelines\release.yml
+	pipelines\build.yml = pipelines\build.yml
+	pipelines\preview.create.yml = pipelines\preview.create.yml
+	pipelines\preview.delete.yml = pipelines\preview.delete.yml
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastructure", "infrastructure", "{A7416DF9-5625-4A36-BAF9-BAE461893228}"
@@ -41,6 +44,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "variables", "variables", "{D832FFC2-D41F-4BE2-9D5D-373B2D6E9388}"
 ProjectSection(SolutionItems) = preProject
 	infrastructure\variables\production.ap-southeast-2.tfvars = infrastructure\variables\production.ap-southeast-2.tfvars
+	infrastructure\variables\preview.ap-southeast-2.tfvars = infrastructure\variables\preview.ap-southeast-2.tfvars
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{48F63336-2780-4CC8-8E82-793E25C24A45}"

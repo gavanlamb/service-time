@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Expensely.Time.Recorder": {
+    "Time": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,

@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Expensely.Logging.Serilog;
 
 namespace Time.Api
 {
@@ -24,6 +26,8 @@ namespace Time.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Time.Api", Version = "v1"});
             });
+
+            Logging.AddSerilog(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,7 +40,7 @@ namespace Time.Api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Time.Api v1"));
             }
 
-            //app.UseHttpsRedirection();
+            app.UseSerilogRequestLogging();
 
             app.UseRouting();
 

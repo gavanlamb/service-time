@@ -6,4 +6,8 @@
         <RootNamespace>Time.Migrations</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+        <PackageReference Include="Expensely.Logging.Serilog" Version="0.0.18" />
+    </ItemGroup>
+
 </Project>

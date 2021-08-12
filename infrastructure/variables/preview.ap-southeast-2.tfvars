@@ -1,5 +1,3 @@
-environment="Production"
-
 region="ap-southeast-2"
 
 application_name="Time"
@@ -13,8 +11,7 @@ cognito_user_pool_name="expensely"
 
 codedeploy_role_name="expensely-code-deploy"
 
-zone_name="expensely.io"
-subdomain="time"
+zone_name="preview.expensely.io"
 alb_name="expensely"
 
 api_ecs_task_cpu=512
