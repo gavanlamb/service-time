@@ -67,6 +67,21 @@ data "template_file" "api_app_spec" {
   }
 }
 
+resource "local_file" "code_deployment" {
+  content_base64 = base64encode(data.template_file.code_deployment.rendered)
+  filename = "create-deployment.json"
+}
+data "template_file" "code_deployment" {
+  template = file("./templates/create-deployment.json")
+
+  vars = {
+    codedeploy_bucket_name = var.codedeploy_bucket_name
+    app_spec_key = "${var.application_name}/${var.environment}/${var.application_name}-${var.build_identifier}.yaml"
+    deployment_group_name = aws_codedeploy_deployment_group.api.deployment_group_name
+    application_name = aws_codedeploy_app.api.name
+  }
+}
+
 // Migrations
 /// Lambda
 resource "aws_lambda_function" "migration" {
