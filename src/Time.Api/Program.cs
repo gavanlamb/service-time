@@ -1,8 +1,12 @@
 using System;
+using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.EventLog;
 using Serilog;
 
 namespace Time.Api
@@ -15,41 +19,45 @@ namespace Time.Api
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+            CreateCustomBuilder(args)
+                .UseSerilog()
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+        
+        public static IHostBuilder CreateCustomBuilder(string[] args)
+        {
+            var builder = new HostBuilder();
+
+            builder.UseContentRoot(Directory.GetCurrentDirectory());
+            builder.ConfigureHostConfiguration(config =>
+            {
+                config.AddEnvironmentVariables(prefix: "DOTNET_");
+                if (args != null)
+                {
+                    config.AddCommandLine(args);
+                }
+            });
+
+            builder
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                    Console.WriteLine("Sources count:" + config.Sources.Count);
-                    config.Sources.Clear();
-                    Console.WriteLine("Sources count:" + config.Sources.Count);
-                    Console.WriteLine("Cleared sources");
+                    IHostEnvironment env = hostingContext.HostingEnvironment;
 
-                    config.AddEnvironmentVariables(prefix: "DOTNET_");
-                    if (args != null)
-                    {
-                        config.AddCommandLine(args);
-                    }
-
-                    var env = hostingContext.HostingEnvironment;
-                    Console.WriteLine("Env:" + env.EnvironmentName);
-
-                    var reloadOnChange = hostingContext.Configuration.GetValue("hostBuilder:reloadConfigOnChange", defaultValue: true);
-                    Console.WriteLine("ReloadOnChange" + reloadOnChange.ToString());
+                    bool reloadOnChange = hostingContext.Configuration.GetValue("hostBuilder:reloadConfigOnChange", defaultValue: true);
 
                     if (hostingContext.HostingEnvironment.EnvironmentName.StartsWith("Preview", StringComparison.InvariantCultureIgnoreCase))
                     {
                         config
                             .AddJsonFile("appsettings.json", true, reloadOnChange)
                             .AddJsonFile("appsettings.Preview.json", true, reloadOnChange);
-                        Console.WriteLine("Added:appsettings.json");
-                        Console.WriteLine("Added:appsettings.Preview.json");
                     }
                     else
                     {
                         config
                             .AddJsonFile("appsettings.json", true, reloadOnChange)
                             .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, reloadOnChange);
-                        Console.WriteLine("Added:appsettings.json");
-                        Console.WriteLine($"Added:appsettings.{env.EnvironmentName}.json");
                     }
 
                     if (env.IsDevelopment() && !string.IsNullOrEmpty(env.ApplicationName))
@@ -62,19 +70,51 @@ namespace Time.Api
                     }
 
                     config.AddEnvironmentVariables();
-                    Console.WriteLine($"added:env variables");
-                    
-                    Console.WriteLine("Sources count:"+config.Sources.Count);
 
                     if (args != null)
                     {
                         config.AddCommandLine(args);
                     }
                 })
-                .UseSerilog()
-                .ConfigureWebHostDefaults(webBuilder =>
+                .ConfigureLogging((hostingContext, logging) =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+                // IMPORTANT: This needs to be added *before* configuration is loaded, this lets
+                // the defaults be overridden by the configuration.
+                if (isWindows)
+                {
+                    // Default the EventLogLoggerProvider to warning or above
+                    logging.AddFilter<EventLogLoggerProvider>(level => level >= LogLevel.Warning);
+                }
+
+                logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                logging.AddConsole();
+                logging.AddDebug();
+                logging.AddEventSourceLogger();
+
+                if (isWindows)
+                {
+                    // Add the EventLogLoggerProvider on windows machines
+                    logging.AddEventLog();
+                }
+
+                logging.Configure(options =>
+                {
+                    options.ActivityTrackingOptions = ActivityTrackingOptions.SpanId
+                                                        | ActivityTrackingOptions.TraceId
+                                                        | ActivityTrackingOptions.ParentId;
                 });
+
+            })
+                .UseDefaultServiceProvider((context, options) =>
+                {
+                    bool isDevelopment = context.HostingEnvironment.IsDevelopment();
+                    options.ValidateScopes = isDevelopment;
+                    options.ValidateOnBuild = isDevelopment;
+                });
+
+            return builder;
+        }
     }
 }
