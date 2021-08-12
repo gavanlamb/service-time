@@ -18,9 +18,16 @@ namespace Time.Api
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
+                    Console.WriteLine("Sources count:" + config.Sources.Count);
                     config.Sources.Clear();
                     Console.WriteLine("Sources count:" + config.Sources.Count);
                     Console.WriteLine("Cleared sources");
+
+                    config.AddEnvironmentVariables(prefix: "DOTNET_");
+                    if (args != null)
+                    {
+                        config.AddCommandLine(args);
+                    }
 
                     var env = hostingContext.HostingEnvironment;
                     Console.WriteLine("Env:" + env.EnvironmentName);
