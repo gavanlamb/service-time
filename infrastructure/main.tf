@@ -76,7 +76,7 @@ data "template_file" "code_deployment" {
 
   vars = {
     codedeploy_bucket_name = var.codedeploy_bucket_name
-    app_spec_key = "${var.application_name}/${var.environment}/${var.application_name}-${var.build_identifier}.yaml"
+    app_spec_key = "${lower(var.application_name)}/${var.environment}/${lower(var.application_name)}-${var.build_identifier}.yaml"
     deployment_group_name = aws_codedeploy_deployment_group.api.deployment_group_name
     application_name = aws_codedeploy_app.api.name
   }
@@ -454,25 +454,6 @@ resource "aws_iam_role_policy_attachment" "api_execution_role_policy" {
 resource "aws_iam_role_policy_attachment" "api_logs_execution" {
   role = aws_iam_role.api_execution.name
   policy_arn = aws_iam_policy.api_logs.arn
-}
-resource "aws_iam_role_policy_attachment" "api_file_server" {
-  role = aws_iam_role.api_execution.name
-  policy_arn = aws_iam_policy.api_file_server.arn
-}
-resource "aws_iam_policy" "api_file_server" {
-  name = "${local.api_name}-file-server"
-  policy = data.aws_iam_policy_document.api_file_server.json
-}
-data "aws_iam_policy_document" "api_file_server" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "fsx:DescribeFileSystems"
-    ]
-    resources = [
-      "arn:aws:fsx:${var.region}:${data.aws_caller_identity.current.account_id}:file-system/*"
-    ]
-  }
 }
 
 resource "aws_iam_role_policy_attachment" "api_secrets" {

@@ -80,5 +80,5 @@ stages:
                     serviceConnectionName: $(awsServiceConnectionName)
                     region: $(region)
                     sourcePath: time-$(resources.pipeline.build.runName).yaml
-                    destinationPath: time/$(environment)/time-$(resources.pipeline.build.runName).yaml
+                    destinationPath: time/preview$(set_variables.pullRequestId)/time-$(resources.pipeline.build.runName).yaml
                     codeDeployBucketName: $(codeDeployBucketName)
