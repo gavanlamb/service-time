@@ -28,4 +28,8 @@
         </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Time.Migrations\Time.Migrations.csproj" />
+    </ItemGroup>
+
 </Project>

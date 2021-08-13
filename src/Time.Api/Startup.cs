@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Expensely.Logging.Serilog;
+using Time.Repository.Extensions;
 
 namespace Time.Api
 {
@@ -26,6 +27,8 @@ namespace Time.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Time.Api", Version = "v1"});
             });
+            
+            services.AddTimeRepository(Configuration.GetConnectionString("Time"));
 
             Logging.AddSerilog(Configuration);
         }

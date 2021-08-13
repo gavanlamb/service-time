@@ -39,7 +39,7 @@ stages:
           - template: aws/terraform/plan.yml@templates
             parameters:
               artifactName: $(artifactName)
-              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(terraformRegion).tfvars -var="build_identifier=$(resources.pipeline.build.runName)"'
+              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(region).tfvars -var="build_identifier=$(resources.pipeline.build.runName)"'
               serviceConnectionName: $(terraformServiceConnectionName)
               stateBucketName: $(terraformStateBucketName)
               stateLockTableName: $(terraformStateLockTableName)
