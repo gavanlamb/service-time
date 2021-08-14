@@ -77,7 +77,7 @@ namespace Time.Migrations
                     var environmentName = context.HostingEnvironment.EnvironmentName;
                     builder.AddSystemsManager(configureSource =>
                     {
-                        configureSource.Path = $"Time/{environmentName}";
+                        configureSource.Path = $"/Time/{environmentName}";
                         configureSource.ReloadAfter = TimeSpan.FromMinutes(5);
                         configureSource.Optional = true;
                     });
@@ -89,7 +89,7 @@ namespace Time.Migrations
 
                     services.AddTimeDbContextForMigrations(
                         "Time.Migrations",
-                        hostContext.Configuration.GetConnectionString("Time"));
+                        hostContext.Configuration.GetConnectionString("Default"));
                 });
     }
 }
