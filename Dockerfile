@@ -5,9 +5,9 @@ WORKDIR /expensely-time
 COPY "Time.sln" "Time.sln"
 COPY "src/Time.Api/Time.Api.csproj" "src/Time.Api/"
 COPY "src/Time.Migrations/Time.Migrations.csproj" "src/Time.Migrations/"
-COPY "src/Time.DbContext/Time.DbContext.csproj" "src/Time.DbContext/"
+COPY "src/Time.Repository/Time.Repository.csproj" "src/Time.Repository/"
 COPY "tests/Time.Api.IntegrationTests/Time.Api.IntegrationTests.csproj" "tests/Time.Api.IntegrationTests/"
-COPY "tests/Time.DbContext.UnitTests/Time.DbContext.UnitTests.csproj" "tests/Time.DbContext.UnitTests/"
+COPY "tests/Time.Repository.UnitTests/Time.Repository.UnitTests.csproj" "tests/Time.Repository.UnitTests/"
 COPY "build/nuget.config" "nuget.config"
 RUN dotnet restore Time.sln 
 COPY . .
@@ -37,4 +37,10 @@ RUN dotnet publish "src/Time.Migrations/Time.Migrations.csproj" -c Release -o /a
 FROM amazon/aws-lambda-dotnet:5.0 AS migration
 WORKDIR /var/task/
 COPY --from=publish-migration /app/publish .
-CMD ["ClaimLogikDB::ClaimLogikDB.Function::Handler"]
+CMD ["Time.Migrations::Time.Migrations.Program::Handler"]
+
+
+FROM amazon/aws-lambda-dotnet:5.0 AS migration-local
+WORKDIR /var/task/
+COPY --from=publish-migration /app/publish .
+ENTRYPOINT ["dotnet", "Time.Migrations.dll"]

@@ -1,21 +1,78 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Threading.Tasks;
+using Amazon.CodeDeploy;
+using Amazon.CodeDeploy.Model;
+using Amazon.Lambda.Core;
 using Expensely.Logging.Serilog;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using Time.Repository;
 using Time.Repository.Extensions;
 
+[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 namespace Time.Migrations
 {
     public class Program
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            Run(args);
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        public async Task<PutLifecycleEventHookExecutionStatusResponse> Handler(
+            PutLifecycleEventHookExecutionStatusRequest request, 
+            ILambdaContext context)
+        {
+            try
+            {
+                Run(new string[0]);
+                
+                await PutLifecycleEventHookExecutionStatusAsync(
+                    request.DeploymentId,
+                    request.LifecycleEventHookExecutionId,
+                    LifecycleEventStatus.Succeeded);
+            }
+            catch (Exception)
+            {
+                await PutLifecycleEventHookExecutionStatusAsync(
+                    request.DeploymentId,
+                    request.LifecycleEventHookExecutionId,
+                    LifecycleEventStatus.Failed);
+            }
+        
+            return new PutLifecycleEventHookExecutionStatusResponse();
+        }
+        
+        private static async Task PutLifecycleEventHookExecutionStatusAsync(
+            string deploymentId,
+            string lifecycleEventHookExecutionId,
+            LifecycleEventStatus status)
+        {
+            var codeDeployClient = new AmazonCodeDeployClient();
+            var lifecycleRequest = new PutLifecycleEventHookExecutionStatusRequest
+            {
+                DeploymentId = deploymentId,
+                LifecycleEventHookExecutionId = lifecycleEventHookExecutionId,
+                Status = status
+            };
+            await codeDeployClient.PutLifecycleEventHookExecutionStatusAsync(lifecycleRequest);
+        }
+
+        private static void Run(string[] args)
+        {
+            var host = CreateHostBuilder(args).Build();
+
+            using var scope = host.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<TimeDbContext>();
+            db.Database.Migrate();
+        }
+        
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseSerilog()
                 .ConfigureServices((hostContext, services) =>
                 {
                     Logging.AddSerilog(hostContext.Configuration);
@@ -23,8 +80,6 @@ namespace Time.Migrations
                     services.AddTimeDbContextForMigrations(
                         "Time.Migrations",
                         hostContext.Configuration.GetConnectionString("Time"));
-
-                    services.AddHostedService<Worker>();
                 });
     }
 }

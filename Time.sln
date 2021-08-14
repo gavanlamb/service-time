@@ -35,7 +35,7 @@ EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Api.IntegrationTests", "tests\Time.Api.IntegrationTests\Time.Api.IntegrationTests.csproj", "{6622F65C-B4BE-4F45-9F3C-47F03AEB18A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.DBContext.UnitTests", "tests\Time.DBContext.UnitTests\Time.DBContext.UnitTests.csproj", "{332BC77A-2735-41D8-9072-400AF512BE1C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Repository.UnitTests", "tests\Time.Repository.UnitTests\Time.Repository.UnitTests.csproj", "{332BC77A-2735-41D8-9072-400AF512BE1C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{9F234172-A4D0-4411-950C-9570C5FCF97C}"
 EndProject

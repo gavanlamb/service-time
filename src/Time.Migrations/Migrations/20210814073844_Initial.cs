@@ -3,7 +3,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Time.Migrations.Migrations
 {
-    public partial class AddRecordsTable : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,7 +11,7 @@ namespace Time.Migrations.Migrations
                 name: "Records",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<int>(type: "integer", nullable: false),
@@ -22,6 +22,11 @@ namespace Time.Migrations.Migrations
                 {
                     table.PrimaryKey("PK_Records", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Records_UserId",
+                table: "Records",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

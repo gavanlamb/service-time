@@ -9,8 +9,8 @@ using Time.Repository;
 namespace Time.Migrations.Migrations
 {
     [DbContext(typeof(TimeDbContext))]
-    [Migration("20210813124213_AddRecordsTable")]
-    partial class AddRecordsTable
+    [Migration("20210814073844_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -22,9 +22,9 @@ namespace Time.Migrations.Migrations
 
             modelBuilder.Entity("Time.DbContext.Models.Record", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("bigint")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<int>("End")
@@ -40,6 +40,8 @@ namespace Time.Migrations.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Records");
                 });
