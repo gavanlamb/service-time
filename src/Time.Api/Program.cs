@@ -43,9 +43,9 @@ namespace Time.Api
             builder
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                    IHostEnvironment env = hostingContext.HostingEnvironment;
+                    var env = hostingContext.HostingEnvironment;
 
-                    bool reloadOnChange = hostingContext.Configuration.GetValue("hostBuilder:reloadConfigOnChange", defaultValue: true);
+                    var reloadOnChange = hostingContext.Configuration.GetValue("hostBuilder:reloadConfigOnChange", defaultValue: true);
 
                     if (hostingContext.HostingEnvironment.EnvironmentName.StartsWith("Preview", StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -75,38 +75,45 @@ namespace Time.Api
                     {
                         config.AddCommandLine(args);
                     }
+
+                    config.AddSystemsManager(configureSource =>
+                    {
+                        configureSource.Path = $"Time/{env}";
+                        configureSource.ReloadAfter = TimeSpan.FromMinutes(5);
+                        configureSource.Optional = true;
+                    });
                 })
                 .ConfigureLogging((hostingContext, logging) =>
                 {
-                bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+                    var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
-                // IMPORTANT: This needs to be added *before* configuration is loaded, this lets
-                // the defaults be overridden by the configuration.
-                if (isWindows)
-                {
-                    // Default the EventLogLoggerProvider to warning or above
-                    logging.AddFilter<EventLogLoggerProvider>(level => level >= LogLevel.Warning);
-                }
+                    // IMPORTANT: This needs to be added *before* configuration is loaded, this lets
+                    // the defaults be overridden by the configuration.
+                    if (isWindows)
+                    {
+                        // Default the EventLogLoggerProvider to warning or above
+                        logging.AddFilter<EventLogLoggerProvider>(level => level >= LogLevel.Warning);
+                    }
 
-                logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                logging.AddConsole();
-                logging.AddDebug();
-                logging.AddEventSourceLogger();
+                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                    logging.AddConsole();
+                    logging.AddDebug();
+                    logging.AddEventSourceLogger();
 
-                if (isWindows)
-                {
-                    // Add the EventLogLoggerProvider on windows machines
-                    logging.AddEventLog();
-                }
+                    if (isWindows)
+                    {
+                        // Add the EventLogLoggerProvider on windows machines
+                        logging.AddEventLog();
+                    }
 
-                logging.Configure(options =>
-                {
-                    options.ActivityTrackingOptions = ActivityTrackingOptions.SpanId
-                                                        | ActivityTrackingOptions.TraceId
-                                                        | ActivityTrackingOptions.ParentId;
-                });
+                    logging.Configure(options =>
+                    {
+                        options.ActivityTrackingOptions = ActivityTrackingOptions.SpanId
+                                                          | ActivityTrackingOptions.TraceId
+                                                          | ActivityTrackingOptions.ParentId;
+                    });
 
-            })
+                })
                 .UseDefaultServiceProvider((context, options) =>
                 {
                     bool isDevelopment = context.HostingEnvironment.IsDevelopment();

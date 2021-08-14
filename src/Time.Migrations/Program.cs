@@ -72,6 +72,16 @@ namespace Time.Migrations
         
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((context, builder) =>
+                {
+                    var environmentName = context.HostingEnvironment.EnvironmentName;
+                    builder.AddSystemsManager(configureSource =>
+                    {
+                        configureSource.Path = $"Time/{environmentName}";
+                        configureSource.ReloadAfter = TimeSpan.FromMinutes(5);
+                        configureSource.Optional = true;
+                    });
+                })
                 .UseSerilog()
                 .ConfigureServices((hostContext, services) =>
                 {
