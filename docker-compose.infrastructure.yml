@@ -4,7 +4,7 @@ services:
     platform: linux
     restart: unless-stopped
     environment:
-      POSTGRES_DB: postgres
+      POSTGRES_DB: time
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: Password21
       PGDATA: /var/lib/postgresql/data

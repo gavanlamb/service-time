@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
     <PropertyGroup>
+        <AssemblyName>Time.Migrations</AssemblyName>
         <TargetFramework>net5.0</TargetFramework>
         <UserSecretsId>dotnet-Time.Migrations-B7EBEF10-DA5F-4312-A3BE-87A0CF9C2536</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>

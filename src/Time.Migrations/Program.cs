@@ -1,3 +1,4 @@
+﻿using System.Reflection;
 using Expensely.Logging.Serilog;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +20,9 @@ namespace Time.Migrations
                 {
                     Logging.AddSerilog(hostContext.Configuration);
 
-                    services.AddTimeRepository(hostContext.Configuration.GetConnectionString("Time"));
+                    services.AddTimeDbContextForMigrations(
+                        "Time.Migrations",
+                        hostContext.Configuration.GetConnectionString("Time"));
 
                     services.AddHostedService<Worker>();
                 });
