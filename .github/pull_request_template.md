@@ -1,4 +1,4 @@
-# [AB#{{TICKET NUMBER}}] - {{TICKET TITLE}}
+# AB#{{TICKET NUMBER}} - {{TICKET TITLE}}
 ## Description
 * 
 * 
