@@ -65,7 +65,7 @@ stages:
                       write-host("##vso[task.setvariable variable=destroy;isOutput=true]false")
                     }
                   } else {
-                    write-host("##vso[task.complete result=Failed;]Pull request number not found")
+                    write-host("##vso[task.setvariable variable=destroy;isOutput=true]false")
                   }
                 }
             name: set_variables
