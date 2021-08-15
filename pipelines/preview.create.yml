@@ -43,8 +43,14 @@ stages:
         value: preview
         readonly: true
     jobs:
+      - job: create_environment_resources
+        displayName: Create environment resources
+        steps:
+          - template: terraform/environment.create.yml
+
       - job: plan
         displayName: Plan
+        dependsOn: create_environment_resources
         steps:
           - task: PowerShell@2
             inputs:
