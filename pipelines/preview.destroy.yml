@@ -4,10 +4,11 @@ resources:
     - repository: templates
       type: github
       name: intelligent-thought/ops-azure-pipelines-templates
+      endpoint: expensely
     - repository: expensely-templates
       type: github
       name: expensely/azure-devops-templates
-      endpoint: Expensely
+      endpoint: expensely
 
 pool:
   vmImage: ubuntu-latest

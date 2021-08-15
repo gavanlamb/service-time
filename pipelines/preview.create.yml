@@ -8,7 +8,7 @@ resources:
     - repository: expensely-templates
       type: github
       name: expensely/azure-devops-templates
-      endpoint: Expensely
+      endpoint: expensely
   pipelines:
     - pipeline: build
       source: 'Services\Time\Build'
