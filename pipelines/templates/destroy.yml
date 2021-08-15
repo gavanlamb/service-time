@@ -10,6 +10,10 @@ parameters:
     displayName: Additional command options for Terraform init
     type: string
     default: " "
+  - name: terraformDestroyAdditionalArguments
+    displayName: Additional command options for Terraform destroy command
+    type: string
+    default: " "
   - name: serviceConnectionName
     displayName: Service connection name, used for init & plan
     type: string
@@ -54,11 +58,11 @@ steps:
       workingDirectory: '${{ parameters.workingDirectory }}'
 
   - task: TerraformTaskV2@2
-    displayName: Delete workspace
+    displayName: Destroy
     inputs:
       provider: 'aws'
       command: 'destroy'
-      commandOptions: ''
+      commandOptions: '{{ parameters.terraformDestroyAdditionalArguments }}'
       environmentServiceNameAWS: ${{ parameters.serviceConnectionName }}
       workingDirectory: '${{ parameters.workingDirectory }}'
 

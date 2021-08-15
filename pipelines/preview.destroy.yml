@@ -45,7 +45,7 @@ stages:
               targetType: inline
               script: |
                 if(${{parameters.pullRequestNumber}} -gt 0) {
-                  write-host("##vso[task.setvariable variable=identifier;isOutput=true]${{parameters.pullRequestNumber}}")
+                  write-host("##vso[task.setvariable variable=pullRequestId;isOutput=true]${{parameters.pullRequestNumber}}")
                   write-host("##vso[task.setvariable variable=destroy;isOutput=true]true")
                 } else {
                   echo "$(Build.SourceVersionMessage)"
@@ -53,9 +53,9 @@ stages:
                   if ($found) {
                     $pullRequestNumber = $matches[1]
                     write-host("Identifier:$pullRequestNumber")
-                    write-host("##vso[task.setvariable variable=identifier;isOutput=true]$pullRequestNumber")
+                    write-host("##vso[task.setvariable variable=pullRequestId;isOutput=true]$pullRequestNumber")
                     Try {
-                      $statusCode = Invoke-WebRequest  https://time$(identifier).preview.expensely.io/health -UseBasicParsing | Select-Object statuscode
+                      $statusCode = Invoke-WebRequest  https://time$(pullRequestId).preview.expensely.io/health -UseBasicParsing | Select-Object statuscode
                       if(statusCode > 0)
                       {
                         write-host("##vso[task.setvariable variable=destroy;isOutput=true]true")
@@ -75,7 +75,7 @@ stages:
         dependsOn:
           - setup
         variables:
-          identifier: $[ dependencies.setup.outputs['set_variables.identifier'] ]
+          pullRequestId: $[ dependencies.setup.outputs['set_variables.pullRequestId'] ]
           destroy: $[ dependencies.setup.outputs['set_variables.destroy'] ]
         condition: and(succeeded(), eq(variables.destroy, true))
         environment: preview
@@ -87,6 +87,7 @@ stages:
                 - template: ./templates/destroy.yml
                   parameters:
                     serviceConnectionName: ${{variables.terraformServiceConnectionName}}
+                    terraformDestroyAdditionalArguments: '-var="build_identifier=$(Build.BuildNumber)" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(set_variables.pullRequestId)"'
                     stateBucketName: $(terraformStateBucketName)
                     stateLockTableName: $(terraformStateLockTableName)
-                    workspaceName: service-time-$(environment)$(identifier)
+                    workspaceName: service-time-$(environment)$(pullRequestId)
