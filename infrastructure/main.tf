@@ -345,7 +345,7 @@ resource "aws_alb_target_group" "api_blue" {
     interval = 180
     matcher = "200"
     timeout = 20
-    path = "/WeatherForecast/"
+    path = "/health"
   }
 
   tags = local.default_tags
