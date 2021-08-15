@@ -84,7 +84,7 @@ stages:
             deploy:
               steps:
                 - checkout: self
-                - template: ./templates/destroy.yml
+                - template: aws/terraform/destroy.yml@templates
                   parameters:
                     serviceConnectionName: ${{variables.terraformServiceConnectionName}}
                     terraformDestroyAdditionalArguments: '-var-file=variables/$(environment).$(region).tfvars  -var="build_identifier=$(Build.BuildNumber)" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)"'
