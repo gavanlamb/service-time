@@ -5,6 +5,10 @@ resources:
       type: github
       name: gavanlamb/azure-devops-templates
       endpoint: expensely
+    - repository: expensely-templates
+      type: github
+      name: expensely/azure-devops-templates
+      endpoint: Expensely
   pipelines:
     - pipeline: build
       source: 'Services\Time\Build'
