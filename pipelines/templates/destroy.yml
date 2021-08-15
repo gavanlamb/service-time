@@ -72,7 +72,6 @@ steps:
       targetType: 'inline'
       script: |
         $lowerWorkspace='${{ lower(parameters.workspaceName) }}'
-        $lowerWorkspace=${lowerWorkspace,,}
         terraform workspace select default
         terraform workspace delete $lowerWorkspace
       errorActionPreference: 'continue'
