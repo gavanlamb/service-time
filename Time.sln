@@ -13,7 +13,7 @@ ProjectSection(SolutionItems) = preProject
 	pipelines\release.yml = pipelines\release.yml
 	pipelines\build.yml = pipelines\build.yml
 	pipelines\preview.create.yml = pipelines\preview.create.yml
-	pipelines\preview.delete.yml = pipelines\preview.delete.yml
+	pipelines\preview.destroy.yml = pipelines\preview.destroy.yml
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastructure", "infrastructure", "{A7416DF9-5625-4A36-BAF9-BAE461893228}"
