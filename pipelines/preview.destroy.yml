@@ -70,6 +70,7 @@ stages:
                 }
             name: set_variables
             displayName: Set variables
+
       - deployment: destroy
         displayName: Destroy
         dependsOn:
@@ -91,3 +92,10 @@ stages:
                     stateBucketName: $(terraformStateBucketName)
                     stateLockTableName: $(terraformStateLockTableName)
                     workspaceName: service-time-$(environment)$(pullRequestId)
+
+      - job: destory_environment_resources
+        displayName: Destroy environment resources
+        dependsOn:
+          - destroy
+        steps:
+          - template: terraform/environment.destroy.yml

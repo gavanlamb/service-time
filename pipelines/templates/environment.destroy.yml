@@ -15,10 +15,10 @@ steps:
         $databaseName = "${{ lower(parameters.applicationName) }}_${{ lower(parameters.environmentName) }}"
         $username = "${{ parameters.applicationName }}_${{ lower(parameters.environmentName) }}"
         $connectionStringParameterStoreName = "/${{ parameters.applicationName }}/${{ parameters.environmentName }}/ConnectionStrings/Default"
-        
+
         $InstanceId=aws ec2 describe-instances --filters "Name=tag:Name,Values=expensely" --max-items 1 --query 'Reservations[0].Instances[0].InstanceId' 
-        
-        $CreateAdUserCommandId = aws ssm send-command --instance-ids "$InstanceId" --document-name 'CreateDatabase-expensely' --parameters databaseName=$databaseName,username=$username,connectionStringParameterStoreName=$connectionStringParameterStoreName --query 'Command.CommandId'
+
+        $CreateAdUserCommandId = aws ssm send-command --instance-ids "$InstanceId" --document-name 'DropDatabase-expensely' --parameters databaseName=$databaseName,username=$username,connectionStringParameterStoreName=$connectionStringParameterStoreName --query 'Command.CommandId'
         aws ssm wait command-executed --instance-id "$InstanceId" --command-id $CreateAdUserCommandId
-    name: create_database
-    displayName: Create database
+    name: drop_database
+    displayName: Drop database
