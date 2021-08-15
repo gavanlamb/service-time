@@ -37,4 +37,10 @@ RUN dotnet publish "src/Time.Migrations/Time.Migrations.csproj" -c Release -o /a
 FROM amazon/aws-lambda-dotnet:5.0 AS migration
 WORKDIR /var/task/
 COPY --from=publish-migration /app/publish .
-CMD ["ClaimLogikDB::ClaimLogikDB.Function::Handler"]
+CMD ["Time.Migrations::Time.Migrations.Program::Handler"]
+
+
+FROM amazon/aws-lambda-dotnet:5.0 AS migration-local
+WORKDIR /var/task/
+COPY --from=publish-migration /app/publish .
+ENTRYPOINT ["dotnet", "Time.Migrations.dll"]

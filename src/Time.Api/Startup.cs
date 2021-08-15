@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Expensely.Logging.Serilog;
+using Time.Repository.Extensions;
 
 namespace Time.Api
 {
@@ -16,7 +17,7 @@ namespace Time.Api
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -26,6 +27,8 @@ namespace Time.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Time.Api", Version = "v1"});
             });
+            
+            services.AddTimeRepository(Configuration.GetConnectionString("Default"));
 
             Logging.AddSerilog(Configuration);
         }

@@ -5,6 +5,10 @@ resources:
       type: github
       name: gavanlamb/azure-devops-templates
       endpoint: expensely
+    - repository: expensely-templates
+      type: github
+      name: expensely/azure-devops-templates
+      endpoint: expensely
 
 trigger: 
   - main
@@ -12,7 +16,7 @@ trigger:
 jobs:
   - job: build
     variables:
-      - group: 'AWS Sydney Production'
+      - template: variables/production.ap-southeast-2.yml@expensely-templates
     displayName: Build
     steps:
       - template: ./docker/build.yml@templates
@@ -34,7 +38,7 @@ jobs:
           argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
       - template: ./aws/cli/ecr.push.yml@templates
         parameters:
-          serviceConnectionName: $(awsServiceConnectionName)
+          serviceConnectionName: ${{variables.awsServiceConnectionName}}
           region: $(region)
           imageName: api
           repositoryName: time-api
@@ -45,7 +49,8 @@ jobs:
           argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
       - template: ./aws/cli/ecr.push.yml@templates
         parameters:
-          serviceConnectionName: $(awsServiceConnectionName)
+          serviceConnectionName: ${{variables.awsServiceConnectionName}}
           region: $(region)
           imageName: migration
           repositoryName: time-migration
+

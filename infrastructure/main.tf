@@ -106,6 +106,12 @@ resource "aws_lambda_function" "migration" {
       data.aws_security_group.external.id]
     subnet_ids = data.aws_subnet_ids.private.ids
   }
+  
+  environment {
+    variables = {
+      DOTNET_ENVIRONMENT = var.environment
+    }
+  }
 
   tags = local.default_tags
 }
@@ -252,14 +258,6 @@ resource "aws_ecs_task_definition" "api" {
           value = var.environment
         }
       ]
-//      secrets = concat(
-//      [
-//        {
-//          name = "ConnectionString",
-//          valueFrom = "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/${lower(var.application_name)}/${var.environment}/ConnectionStrings/Application"
-//        }
-//      ]
-//      )
       portMappings = [
         {
           protocol = "tcp"
@@ -473,7 +471,7 @@ data "aws_iam_policy_document" "api_secrets" {
       "kms:Decrypt"
     ]
     resources = [
-      "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/${lower(var.application_name)}/${lower(var.environment)}/*",
+      "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/${var.application_name}/${var.environment}/*",
       data.aws_kms_alias.ssm_default_key.target_key_arn
     ]
   }

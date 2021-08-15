@@ -24,3 +24,8 @@
 LICENSE
 README.md
 infrastructure
+local/database/data
+local/pgadmin/data
+local/tests
+.config
+pipelines

@@ -11,17 +11,19 @@ services:
                 PAT:
         volumes:
             - ./local/tests:/artifacts/tests
+
     migrations:
         container_name: migration
         build:
             context: .
             dockerfile: Dockerfile
-            target: migration
+            target: migration-local
             args:
                 BUILD_NUMBER: 1.0.0.1
                 PAT: 
-        depends_on:
-            -   tests
+        environment:
+            DOTNET_ENVIRONMENT: Development
+
     api:
         container_name: api
         build:
