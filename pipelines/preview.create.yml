@@ -61,7 +61,7 @@ stages:
             parameters:
               artifactName: $(artifactName)
               planAdditionalCommandOptions: '-var-file=variables/$(environment).$(region).tfvars -var="build_identifier=$(resources.pipeline.build.runName)" -var="environment=Preview$(set_variables.pullRequestId)" -var="subdomain=time$(set_variables.pullRequestId)"'
-              serviceConnectionName: $(terraformServiceConnectionName)
+              serviceConnectionName: ${{variables.terraformServiceConnectionName}}
               stateBucketName: $(terraformStateBucketName)
               stateLockTableName: $(terraformStateLockTableName)
               workspaceName: service-time-$(environment)$(set_variables.pullRequestId)
@@ -80,10 +80,10 @@ stages:
                 - template: aws/terraform/apply.yml@templates
                   parameters:
                     artifactName: $(artifactName)
-                    serviceConnectionName: $(terraformServiceConnectionName)
+                    serviceConnectionName: ${{variables.terraformServiceConnectionName}}
                 - template: templates/aws.codedeploy.yml
                   parameters:
-                    serviceConnectionName: $(awsServiceConnectionName)
+                    serviceConnectionName: ${{variables.awsServiceConnectionName}}
                     region: $(region)
                     sourcePath: time-$(resources.pipeline.build.runName).yaml
                     destinationPath: time/$(environment)$(pullRequestId)/time-$(resources.pipeline.build.runName).yaml
