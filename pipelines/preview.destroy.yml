@@ -55,7 +55,7 @@ stages:
                     write-host("Identifier:$pullRequestNumber")
                     write-host("##vso[task.setvariable variable=pullRequestId;isOutput=true]$pullRequestNumber")
                     Try {
-                      $statusCode = Invoke-WebRequest  https://time$(pullRequestId).preview.expensely.io/health -UseBasicParsing | Select-Object statuscode
+                      $statusCode = Invoke-WebRequest  https://time$pullRequestNumber.preview.expensely.io/health -UseBasicParsing | Select-Object statuscode
                       if(statusCode > 0)
                       {
                         write-host("##vso[task.setvariable variable=destroy;isOutput=true]true")
