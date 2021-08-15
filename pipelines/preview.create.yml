@@ -81,7 +81,7 @@ stages:
                   parameters:
                     artifactName: $(artifactName)
                     serviceConnectionName: ${{variables.terraformServiceConnectionName}}
-                - template: templates/aws.codedeploy.yml
+                - template: aws/cli/codedeploy.deploy.yml@templates
                   parameters:
                     serviceConnectionName: ${{variables.awsServiceConnectionName}}
                     region: $(region)
