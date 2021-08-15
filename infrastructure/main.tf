@@ -106,6 +106,12 @@ resource "aws_lambda_function" "migration" {
       data.aws_security_group.external.id]
     subnet_ids = data.aws_subnet_ids.private.ids
   }
+  
+  environment {
+    variables = {
+      DOTNET_ENVIRONMENT = var.environment
+    }
+  }
 
   tags = local.default_tags
 }
