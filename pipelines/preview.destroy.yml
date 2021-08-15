@@ -1,4 +1,4 @@
-name: 3.0$(Rev:.r)
+name: 1.0$(Rev:.r)
 resources:
   repositories:
     - repository: templates
@@ -54,7 +54,7 @@ stages:
                     write-host("Identifier:$pullRequestNumber")
                     write-host("##vso[task.setvariable variable=identifier;isOutput=true]$pullRequestNumber")
                     Try {
-                      $statusCode = Invoke-WebRequest  https://time(identifier).preview.expensely.io/health -UseBasicParsing | Select-Object statuscode
+                      $statusCode = Invoke-WebRequest  https://time$(identifier).preview.expensely.io/health -UseBasicParsing | Select-Object statuscode
                       if(statusCode > 0)
                       {
                         write-host("##vso[task.setvariable variable=destroy;isOutput=true]true")
@@ -83,7 +83,7 @@ stages:
             deploy:
               steps:
                 - checkout: self
-                - template: ./templates/terraform.destroy.yml
+                - template: ./templates/destroy.yml
                   parameters:
                     serviceConnectionName: ${{variables.terraformServiceConnectionName}}
                     stateBucketName: $(terraformStateBucketName)
