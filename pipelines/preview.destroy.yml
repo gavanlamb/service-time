@@ -87,7 +87,7 @@ stages:
                 - template: ./templates/destroy.yml
                   parameters:
                     serviceConnectionName: ${{variables.terraformServiceConnectionName}}
-                    terraformDestroyAdditionalArguments: '-var="build_identifier=$(Build.BuildNumber)" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)"'
+                    terraformDestroyAdditionalArguments: '-var-file=variables/$(environment).$(region).tfvars  -var="build_identifier=$(Build.BuildNumber)" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)"'
                     stateBucketName: $(terraformStateBucketName)
                     stateLockTableName: $(terraformStateLockTableName)
                     workspaceName: service-time-$(environment)$(pullRequestId)
