@@ -1,0 +1,93 @@
+name: 1.0$(Rev:.r)
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: gavanlamb/azure-devops-templates
+      endpoint: expensely
+    - repository: expensely-templates
+      type: github
+      name: expensely/azure-devops-templates
+      endpoint: expensely
+
+pool:
+  vmImage: ubuntu-latest
+
+trigger:
+  batch: false
+  branches:
+    include:
+      - main
+
+pr: none
+
+parameters:
+  - name: pullRequestNumber
+    displayName: Number of the pull request
+    type: number
+    default: 0
+
+stages:
+  - stage: preview
+    displayName: Preview
+    variables:
+      - template: variables/production.ap-southeast-2.yml@expensely-templates
+      - name: environment
+        value: preview
+        readonly: true
+    jobs:
+      - job: setup
+        displayName: Setup
+        steps:
+          - checkout: none
+          - task: PowerShell@2
+            inputs:
+              targetType: inline
+              script: |
+                if(${{parameters.pullRequestNumber}} -gt 0) {
+                  write-host("##vso[task.setvariable variable=pullRequestId;isOutput=true]${{parameters.pullRequestNumber}}")
+                  write-host("##vso[task.setvariable variable=destroy;isOutput=true]true")
+                } else {
+                  echo "$(Build.SourceVersionMessage)"
+                  $found = "$(Build.SourceVersionMessage)" -match '\(\#([0-9]*)\)'
+                  if ($found) {
+                    $pullRequestNumber = $matches[1]
+                    write-host("Identifier:$pullRequestNumber")
+                    write-host("##vso[task.setvariable variable=pullRequestId;isOutput=true]$pullRequestNumber")
+                    Try {
+                      $statusCode = Invoke-WebRequest  https://time$(pullRequestId).preview.expensely.io/health -UseBasicParsing | Select-Object statuscode
+                      if(statusCode > 0)
+                      {
+                        write-host("##vso[task.setvariable variable=destroy;isOutput=true]true")
+                      }
+                    } Catch {
+                      write-host $_.Exception.Message
+                      write-host("##vso[task.setvariable variable=destroy;isOutput=true]false")
+                    }
+                  } else {
+                    write-host("##vso[task.complete result=Failed;]Pull request number not found")
+                  }
+                }
+            name: set_variables
+            displayName: Set variables
+      - deployment: destroy
+        displayName: Destroy
+        dependsOn:
+          - setup
+        variables:
+          pullRequestId: $[ dependencies.setup.outputs['set_variables.pullRequestId'] ]
+          destroy: $[ dependencies.setup.outputs['set_variables.destroy'] ]
+        condition: and(succeeded(), eq(variables.destroy, true))
+        environment: preview
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: aws/terraform/destroy.yml@templates
+                  parameters:
+                    serviceConnectionName: ${{variables.terraformServiceConnectionName}}
+                    destroyAdditionalArguments: '-var-file=variables/$(environment).$(region).tfvars  -var="build_identifier=$(Build.BuildNumber)" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)"'
+                    stateBucketName: $(terraformStateBucketName)
+                    stateLockTableName: $(terraformStateLockTableName)
+                    workspaceName: service-time-$(environment)$(pullRequestId)

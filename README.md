@@ -36,7 +36,17 @@ docker compose -f docker-compose.infrastructure.yml rm
 ### AWS
 
 ## Pipelines
+### Build
+The build pipeline will build all assets and push them to ECR.
 
+### Release
+Will be triggered from a build and only if it is the main branch. Generally this will be reserved for predefined environments.
+
+### Create preview
+Will be triggered from a build and only if it is a pull request merge branch.
+
+### Destroy preview
+Will be triggered when there is a push to the main branch.
 
 ## Database
 
