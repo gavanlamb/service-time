@@ -31,6 +31,8 @@ namespace Time.Api
             services.AddTimeRepository(Configuration.GetConnectionString("Default"));
 
             Logging.AddSerilog(Configuration);
+
+            services.AddHealthChecks();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +50,11 @@ namespace Time.Api
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHealthChecks("/health");
+            });
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
