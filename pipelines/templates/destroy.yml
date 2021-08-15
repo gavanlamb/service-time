@@ -62,7 +62,7 @@ steps:
     inputs:
       provider: 'aws'
       command: 'destroy'
-      commandOptions: '{{ parameters.terraformDestroyAdditionalArguments }}'
+      commandOptions: '${{ parameters.terraformDestroyAdditionalArguments }}'
       environmentServiceNameAWS: ${{ parameters.serviceConnectionName }}
       workingDirectory: '${{ parameters.workingDirectory }}'
 
