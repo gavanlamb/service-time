@@ -31,7 +31,7 @@ stages:
     pool:
       vmImage: 'windows-latest'
     variables:
-      - group: 'AWS Sydney Production'
+      - template: variables/production.ap-southeast-2.yml@expensely-templates
       - name: artifactName
         value: preview_ap-southeast-2
         readonly: true
