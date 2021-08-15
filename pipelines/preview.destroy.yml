@@ -89,4 +89,4 @@ stages:
                     serviceConnectionName: ${{variables.terraformServiceConnectionName}}
                     stateBucketName: $(terraformStateBucketName)
                     stateLockTableName: $(terraformStateLockTableName)
-                    workspaceName: service-time-$(environment)$(set_variables.pullRequestId)
+                    workspaceName: service-time-$(environment)$(identifier)
