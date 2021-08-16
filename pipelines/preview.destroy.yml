@@ -57,7 +57,7 @@ stages:
                     write-host("Identifier:$pullRequestNumber")
                     write-host("##vso[task.setvariable variable=pullRequestId;isOutput=true]$pullRequestNumber")
                     Try {
-                      $url = https://time$pullRequestNumber.preview.expensely.io/health
+                      $url = "https://time$pullRequestNumber.preview.expensely.io/health"
                       write-host("Url: $url")
                       $statusCode = Invoke-WebRequest $url -UseBasicParsing | Select-Object statuscode
                       write-host("Status code: $statusCode")
@@ -108,6 +108,6 @@ stages:
         steps:
           - template: templates/environment.destroy.yml
             parameters:
-              environmentName: Preview$(set_variables.pullRequestId)
+              environmentName: Preview$(pullRequestId)
               serviceConnectionName: ${{variables.awsServiceConnectionName}}
               region: $(region)
