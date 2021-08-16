@@ -46,7 +46,7 @@ stages:
       - job: create_environment_resources
         displayName: Create environment resources
         steps:
-          - template: terraform/environment.create.yml
+          - template: templates/environment.create.yml
 
       - job: plan
         displayName: Plan

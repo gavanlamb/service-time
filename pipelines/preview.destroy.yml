@@ -98,4 +98,4 @@ stages:
         dependsOn:
           - destroy
         steps:
-          - template: terraform/environment.destroy.yml
+          - template: templates/environment.destroy.yml
