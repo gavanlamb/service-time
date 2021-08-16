@@ -97,5 +97,10 @@ stages:
         displayName: Destroy environment resources
         dependsOn:
           - destroy
+          - setup
+        variables:
+          pullRequestId: $[ dependencies.setup.outputs['set_variables.pullRequestId'] ]
         steps:
           - template: templates/environment.destroy.yml
+            parameters:
+              environmentName: Preview$(set_variables.pullRequestId)

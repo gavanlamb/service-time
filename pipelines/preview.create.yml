@@ -43,14 +43,8 @@ stages:
         value: preview
         readonly: true
     jobs:
-      - job: create_environment_resources
-        displayName: Create environment resources
-        steps:
-          - template: templates/environment.create.yml
-
-      - job: plan
-        displayName: Plan
-        dependsOn: create_environment_resources
+      - job: setup
+        displayName: Setup
         steps:
           - task: PowerShell@2
             inputs:
@@ -63,21 +57,34 @@ stages:
                 write-host("##vso[task.setvariable variable=pullRequestId;isOutput=true]$pullRequestId")
             name: set_variables
             displayName: Set variables
+          - template: templates/environment.create.yml
+            parameters:
+              environmentName: Preview$(set_variables.pullRequestId)
+
+      - job: plan
+        displayName: Plan
+        dependsOn: 
+          - setup
+        variables:
+          pullRequestId: $[dependencies.setup.outputs['set_variables.pullRequestId']]
+        steps:
           - template: aws/terraform/plan.yml@templates
             parameters:
               artifactName: $(artifactName)
-              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(region).tfvars -var="build_identifier=$(resources.pipeline.build.runName)" -var="environment=Preview$(set_variables.pullRequestId)" -var="subdomain=time$(set_variables.pullRequestId)"'
+              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(region).tfvars -var="build_identifier=$(resources.pipeline.build.runName)" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)"'
               serviceConnectionName: ${{variables.terraformServiceConnectionName}}
               stateBucketName: $(terraformStateBucketName)
               stateLockTableName: $(terraformStateLockTableName)
-              workspaceName: service-time-$(environment)$(set_variables.pullRequestId)
+              workspaceName: service-time-$(environment)$(pullRequestId)
 
       - deployment: apply
         displayName: Apply
-        dependsOn: plan
+        dependsOn: 
+          - plan
+          - setup
         environment: preview
         variables:
-          pullRequestId: $[dependencies.plan.outputs['set_variables.pullRequestId']]
+          pullRequestId: $[dependencies.setup.outputs['set_variables.pullRequestId']]
         strategy:
           runOnce:
             deploy:
