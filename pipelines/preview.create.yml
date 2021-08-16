@@ -60,6 +60,8 @@ stages:
           - template: templates/environment.create.yml
             parameters:
               environmentName: Preview$(set_variables.pullRequestId)
+              serviceConnectionName: ${{variables.awsServiceConnectionName}}
+              region: $(region)
 
       - job: plan
         displayName: Plan
