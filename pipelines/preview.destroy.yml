@@ -30,6 +30,8 @@ parameters:
 stages:
   - stage: preview
     displayName: Preview
+    pool:
+      vmImage: 'windows-latest'
     variables:
       - template: variables/production.ap-southeast-2.yml@expensely-templates
       - name: environment
@@ -55,7 +57,10 @@ stages:
                     write-host("Identifier:$pullRequestNumber")
                     write-host("##vso[task.setvariable variable=pullRequestId;isOutput=true]$pullRequestNumber")
                     Try {
-                      $statusCode = Invoke-WebRequest  https://time$pullRequestNumber.preview.expensely.io/health -UseBasicParsing | Select-Object statuscode
+                      $url = https://time$pullRequestNumber.preview.expensely.io/health
+                      write-host("Url: $url")
+                      $statusCode = Invoke-WebRequest $url -UseBasicParsing | Select-Object statuscode
+                      write-host("Status code: $statusCode")
                       if(statusCode > 0)
                       {
                         write-host("##vso[task.setvariable variable=destroy;isOutput=true]true")
