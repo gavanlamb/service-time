@@ -5,12 +5,14 @@ using Amazon.CodeDeploy.Model;
 using Amazon.Lambda.Core;
 using Expensely.Logging.Serilog;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Time.Repository;
-using Time.Repository.Extensions;
+using Time.DbContext;
+using Time.DbContext.Extensions;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 namespace Time.Migrations
@@ -68,6 +70,8 @@ namespace Time.Migrations
             using var scope = host.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<TimeDbContext>();
             db.Database.Migrate();
+            
+            
         }
         
         private static IHostBuilder CreateHostBuilder(string[] args) =>

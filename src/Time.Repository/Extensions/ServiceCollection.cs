@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Time.Repository.Extensions
+namespace Time.DbContext.Extensions
 {
     public static class ServiceCollection
     {
@@ -12,8 +12,7 @@ namespace Time.Repository.Extensions
             services.AddDbContext<TimeDbContext>(options => options.UseNpgsql(timeDbConnectionString));
             return services;
         }
-        
-        
+
         public static IServiceCollection AddTimeDbContextForMigrations(
             this IServiceCollection services,
             string migrationsAssembly,

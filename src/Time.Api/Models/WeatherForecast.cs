@@ -1,6 +1,6 @@
 using System;
 
-namespace Expensely.Time.Recorder
+namespace Time.Api.Models
 {
     public class WeatherForecast
     {

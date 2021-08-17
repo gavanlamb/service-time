@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Expensely.Logging.Serilog;
-using Time.Repository.Extensions;
+using Time.DbContext.Extensions;
 
 namespace Time.Api
 {
