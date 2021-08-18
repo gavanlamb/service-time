@@ -28,7 +28,7 @@ namespace Time.Api
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Time.Api", Version = "v1"});
             });
             
-            services.AddTimeRepository(Configuration.GetConnectionString("Default"));
+            services.AddTimeRepository(Configuration);
 
             Logging.AddSerilog(Configuration);
 
