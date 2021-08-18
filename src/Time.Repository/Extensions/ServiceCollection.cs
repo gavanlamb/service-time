@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Time.DbContext.Extensions
@@ -7,20 +9,23 @@ namespace Time.DbContext.Extensions
     {
         public static IServiceCollection AddTimeRepository(
             this IServiceCollection services,
-            string timeDbConnectionString)
+            IConfiguration configuration)
         {
-            services.AddDbContext<TimeDbContext>(options => options.UseNpgsql(timeDbConnectionString));
+            services.AddDbContext<TimeDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("Default")));
+            services.Configure<Database>(configuration.GetSection("Database"));
             return services;
         }
 
         public static IServiceCollection AddTimeDbContextForMigrations(
             this IServiceCollection services,
-            string migrationsAssembly,
-            string timeDbConnectionString)
+            IConfiguration configuration,
+            string migrationsAssembly)
         {
-            services.AddDbContext<TimeDbContext>(options => options.UseNpgsql(timeDbConnectionString,
-                o => o.MigrationsAssembly(migrationsAssembly)),
+            services.AddDbContext<TimeDbContext>(options => options.UseNpgsql(
+                    configuration.GetConnectionString("Default"),
+     o => o.MigrationsAssembly(migrationsAssembly)),
                 ServiceLifetime.Singleton);
+            services.Configure<Database>(configuration.GetSection("Database"));
             return services;
         }
     }
