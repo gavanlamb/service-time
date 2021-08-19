@@ -76,10 +76,16 @@ namespace Time.Migrations
         
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((context, builder) =>
+                .ConfigureAppConfiguration((context, config) =>
                 {
                     var environmentName = context.HostingEnvironment.EnvironmentName;
-                    builder.AddSystemsManager(configureSource =>
+                    
+                    if (environmentName.StartsWith("Preview", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        config.AddJsonFile("appsettings.Preview.json", true, true);
+                    }
+
+                    config.AddSystemsManager(configureSource =>
                     {
                         configureSource.Path = $"/Time/{environmentName}";
                         configureSource.ReloadAfter = TimeSpan.FromMinutes(5);
