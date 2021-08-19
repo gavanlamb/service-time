@@ -59,9 +59,9 @@ stages:
                     Try {
                       $url = "https://time$pullRequestNumber.preview.expensely.io/health"
                       write-host("Url: $url")
-                      $statusCode = Invoke-WebRequest $url -UseBasicParsing | Select-Object statuscode
+                      $statusCode = Invoke-WebRequest $url -UseBasicParsing | Select-Object StatusCode
                       write-host("Status code: $statusCode")
-                      if(statusCode > 0)
+                      if($statusCode > 0)
                       {
                         write-host("##vso[task.setvariable variable=destroy;isOutput=true]true")
                       }
