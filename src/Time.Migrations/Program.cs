@@ -9,8 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Time.Repository;
-using Time.Repository.Extensions;
+using Time.DbContext;
+using Time.DbContext.Extensions;
+using Time.DbContext.Seeds;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 namespace Time.Migrations
@@ -68,14 +69,23 @@ namespace Time.Migrations
             using var scope = host.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<TimeDbContext>();
             db.Database.Migrate();
+            
+            var runner = scope.ServiceProvider.GetRequiredService<Runner>();
+            runner.Run();
         }
         
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((context, builder) =>
+                .ConfigureAppConfiguration((context, config) =>
                 {
                     var environmentName = context.HostingEnvironment.EnvironmentName;
-                    builder.AddSystemsManager(configureSource =>
+                    
+                    if (environmentName.StartsWith("Preview", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        config.AddJsonFile("appsettings.Preview.json", true, true);
+                    }
+
+                    config.AddSystemsManager(configureSource =>
                     {
                         configureSource.Path = $"/Time/{environmentName}";
                         configureSource.ReloadAfter = TimeSpan.FromMinutes(5);
@@ -85,11 +95,13 @@ namespace Time.Migrations
                 .UseSerilog()
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddOptions();
+
                     Logging.AddSerilog(hostContext.Configuration);
 
-                    services.AddTimeDbContextForMigrations(
-                        "Time.Migrations",
-                        hostContext.Configuration.GetConnectionString("Default"));
+                    services.AddTimeRepository(
+                        hostContext.Configuration, 
+                        ServiceLifetime.Singleton);
                 });
     }
 }

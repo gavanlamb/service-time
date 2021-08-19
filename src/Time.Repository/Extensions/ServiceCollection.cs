@@ -1,27 +1,22 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Time.DbContext.Options;
+using Time.DbContext.Seeds;
 
-namespace Time.Repository.Extensions
+namespace Time.DbContext.Extensions
 {
     public static class ServiceCollection
     {
         public static IServiceCollection AddTimeRepository(
             this IServiceCollection services,
-            string timeDbConnectionString)
+            IConfiguration configuration,
+            ServiceLifetime contextLifeCycle = ServiceLifetime.Scoped)
         {
-            services.AddDbContext<TimeDbContext>(options => options.UseNpgsql(timeDbConnectionString));
-            return services;
-        }
-        
-        
-        public static IServiceCollection AddTimeDbContextForMigrations(
-            this IServiceCollection services,
-            string migrationsAssembly,
-            string timeDbConnectionString)
-        {
-            services.AddDbContext<TimeDbContext>(options => options.UseNpgsql(timeDbConnectionString,
-                o => o.MigrationsAssembly(migrationsAssembly)),
-                ServiceLifetime.Singleton);
+            services.AddDbContext<TimeDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("Default")), contextLifeCycle);
+            services.AddSingleton<Runner>();
+            services.AddSingleton<RecordSeeds>();
+            services.Configure<Seed>(configuration.GetSection("Data"));
             return services;
         }
     }

@@ -59,7 +59,7 @@ stages:
             displayName: Set variables
           - template: templates/environment.create.yml
             parameters:
-              environmentName: Preview$(pullRequestId)
+              environmentName: Preview$(set_variables.pullRequestId)
               serviceConnectionName: ${{variables.awsServiceConnectionName}}
               region: $(region)
 
