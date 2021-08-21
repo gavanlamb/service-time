@@ -1,3 +1,10 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Expensely.Authentication.Cognito.Jwt.Extensions;
+using Expensely.Authentication.Cognito.Jwt.Models;
+using Expensely.Logging.Serilog;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -5,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Expensely.Logging.Serilog;
 using Time.DbContext.Extensions;
 
 namespace Time.Api
@@ -23,6 +29,7 @@ namespace Time.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Time.Api", Version = "v1"});
@@ -33,6 +40,8 @@ namespace Time.Api
             Logging.AddSerilog(Configuration);
 
             services.AddHealthChecks();
+
+            services.AddCognitoJwt(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,14 +58,17 @@ namespace Time.Api
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuth();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHealthChecks("/health");
             });
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }

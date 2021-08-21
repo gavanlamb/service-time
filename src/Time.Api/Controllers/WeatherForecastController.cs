@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Time.Api.Models;
 
 namespace Time.Api.Controllers
 {
@@ -23,6 +25,7 @@ namespace Time.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize("read")]
         public IEnumerable<WeatherForecast> Get()
         {
             _logger.LogInformation("CONTROLLER");
@@ -37,3 +40,5 @@ namespace Time.Api.Controllers
         }
     }
 }
+
+

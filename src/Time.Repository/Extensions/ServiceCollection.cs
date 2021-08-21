@@ -14,8 +14,8 @@ namespace Time.DbContext.Extensions
             ServiceLifetime contextLifeCycle = ServiceLifetime.Scoped)
         {
             services.AddDbContext<TimeDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("Default")), contextLifeCycle);
-            services.AddSingleton<Runner>();
-            services.AddSingleton<RecordSeeds>();
+            services.AddScoped<Runner>();
+            services.AddScoped<RecordSeeds>();
             services.Configure<Seed>(configuration.GetSection("Data"));
             return services;
         }

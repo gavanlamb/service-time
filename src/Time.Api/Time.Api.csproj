@@ -8,6 +8,8 @@
 
     <ItemGroup>
         <PackageReference Include="Expensely.Logging.Serilog" Version="0.0.18" />
+        <PackageReference Include="Expensely.Authentication.Cognito.Jwt" Version="0.0.6" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.9" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
         <PackageReference Include="Amazon.Extensions.Configuration.SystemsManager" Version="2.1.0" />
     </ItemGroup>
