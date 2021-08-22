@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Time.Api.Mappers;
 using Time.Api.Models;
 using Time.DbContext.Repositories;
 
@@ -22,12 +23,7 @@ namespace Time.Api.Services
         {
             var records = _recordRepository.Get(userId, skip, take);
 
-            if (records.Any())
-            {
-                
-            }
-
-            return new List<RecordDto>();
+            return records.Any() ? records.Select(record => record.MapDto()) : new List<RecordDto>();
         }
     }
 }

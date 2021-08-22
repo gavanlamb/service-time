@@ -13,7 +13,7 @@ namespace Time.Api.Mappers
                 Name = record.Name,
                 End = record.End,
                 Start = record.Start,
-                Duration = record.Duration
+                Duration = record.Duration.ToString()
             };
         }
     }
