@@ -4,11 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Expensely.Authentication.Cognito.Jwt.Extensions;
-using Expensely.Authentication.Cognito.Jwt.Models;
 using Expensely.Logging.Serilog;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -17,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.Filters;
+using Time.Api.Services;
 using Time.DbContext.Extensions;
 
 namespace Time.Api
@@ -79,6 +77,8 @@ namespace Time.Api
             services.AddHealthChecks();
 
             services.AddCognitoJwt(Configuration);
+
+            services.AddScoped<IRecordService, RecordService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
