@@ -4,11 +4,12 @@ using Time.DbContext.Entities;
 
 namespace Time.DbContext.Configurations
 {
-    public class RecordConfiguration : IEntityTypeConfiguration<Record>
+    public class RecordConfiguration : IEntityTypeConfiguration<RecordEntity>
     {
         public void Configure(
-            EntityTypeBuilder<Record> builder)
+            EntityTypeBuilder<RecordEntity> builder)
         {
+            builder.ToTable("Record");
             builder.HasIndex(p => p.UserId);
         }
     }

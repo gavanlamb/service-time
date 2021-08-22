@@ -25,44 +25,64 @@ namespace Time.DbContext.Seeds
                 var userRecords = _db.Records.Any(r => r.UserId == userId);
                 if (!userRecords)
                 {
-                    _db.Records.Add(new Record
+                    var start = DateTime.UtcNow.AddMinutes(-3306);
+                    var end = DateTime.UtcNow.AddMinutes(-3246);
+                    var duration = end - start;
+                    _db.Records.Add(new RecordEntity
                     {
                         Name = "Project planning",
                         UserId = userId,
-                        Start = DateTime.UtcNow.AddMinutes(-3306),
-                        End = DateTime.UtcNow.AddMinutes(-3246)
+                        Start = start,
+                        End = end,
+                        Duration = duration
                     });
                     
-                    _db.Records.Add(new Record
+                    start = DateTime.UtcNow.AddMinutes(-3245);
+                    end = DateTime.UtcNow.AddMinutes(-3215);
+                    duration = end - start;
+                    _db.Records.Add(new RecordEntity
                     {
                         Name = "Migration implementation",
                         UserId = userId,
-                        Start = DateTime.UtcNow.AddMinutes(-3245),
-                        End = DateTime.UtcNow.AddMinutes(-3215)
+                        Start = start,
+                        End = end,
+                        Duration = duration
                     });
                     
-                    _db.Records.Add(new Record
+                    start = DateTime.UtcNow.AddMinutes(-3214);
+                    end = DateTime.UtcNow.AddMinutes(-3179);
+                    duration = end - start;
+                    _db.Records.Add(new RecordEntity
                     {
                         Name = "Seeding implementation",
                         UserId = userId,
-                        Start = DateTime.UtcNow.AddMinutes(-3214),
-                        End = DateTime.UtcNow.AddMinutes(-3179)
+                        Start = start,
+                        End = end,
+                        Duration = duration
                     });
                     
-                    _db.Records.Add(new Record
+                    start = DateTime.UtcNow.AddMinutes(-3178);
+                    end = DateTime.UtcNow.AddMinutes(-3118);
+                    duration = end - start;
+                    _db.Records.Add(new RecordEntity
                     {
                         Name = "Logging implementation",
                         UserId = userId,
                         Start = DateTime.UtcNow.AddMinutes(-3178),
-                        End = DateTime.UtcNow.AddMinutes(-3118)
+                        End = DateTime.UtcNow.AddMinutes(-3118),
+                        Duration = duration
                     });
                     
-                    _db.Records.Add(new Record
+                    start = DateTime.UtcNow.AddMinutes(-3117);
+                    end = DateTime.UtcNow.AddMinutes(-3018);
+                    duration = end - start;
+                    _db.Records.Add(new RecordEntity
                     {
                         Name = "Create scripts to create cognito user",
                         UserId = userId,
                         Start = DateTime.UtcNow.AddMinutes(-3117),
-                        End = DateTime.UtcNow.AddMinutes(-3018)
+                        End = DateTime.UtcNow.AddMinutes(-3018),
+                        Duration = duration
                     });
 
                     _db.SaveChanges();

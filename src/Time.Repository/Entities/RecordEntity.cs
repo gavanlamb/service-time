@@ -2,7 +2,7 @@ using System;
 
 namespace Time.DbContext.Entities
 {
-    public class Record
+    public class RecordEntity
     {
         public Guid Id { get; set; }
         
@@ -12,6 +12,8 @@ namespace Time.DbContext.Entities
         
         public DateTime Start { get; set; }
         
-        public DateTime End { get; set; }
+        public DateTime? End { get; set; }
+
+        public TimeSpan Duration { get; set; }
     }
 }

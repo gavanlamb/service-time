@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Time.DbContext.Options;
+using Time.DbContext.Repositories;
 using Time.DbContext.Seeds;
 
 namespace Time.DbContext.Extensions
@@ -16,6 +17,7 @@ namespace Time.DbContext.Extensions
             services.AddDbContext<TimeDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("Default")), contextLifeCycle);
             services.AddScoped<Runner>();
             services.AddScoped<RecordSeeds>();
+            services.AddScoped<IRecordRepository, RecordRepository>();
             services.Configure<Seed>(configuration.GetSection("Data"));
             return services;
         }
