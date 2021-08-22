@@ -62,7 +62,7 @@ stages:
                       $req = Invoke-WebRequest $url -UseBasicParsing
                       $statusCode = $($req.StatusCode) -as [int]
                       write-host("Status code: $statusCode")
-                      if($statusCode > 0)
+                      if($statusCode -gt 0)
                       {
                         write-host("##vso[task.setvariable variable=destroy;isOutput=true]true")
                       }
