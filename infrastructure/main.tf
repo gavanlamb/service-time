@@ -421,9 +421,13 @@ EOF
 
   tags = local.default_tags
 }
-resource "aws_iam_role_policy_attachment" "api_logs_task" {
+resource "aws_iam_role_policy_attachment" "api_task_logs_task" {
   role = aws_iam_role.api_task.name
   policy_arn = aws_iam_policy.api_logs.arn
+}
+resource "aws_iam_role_policy_attachment" "api_task_parameters" {
+  role = aws_iam_role.api_execution.name
+  policy_arn = aws_iam_policy.api_secrets.arn
 }
 
 //// Execution
@@ -452,15 +456,15 @@ resource "aws_iam_role_policy_attachment" "api_execution_role_policy" {
   role = aws_iam_role.api_execution.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
-resource "aws_iam_role_policy_attachment" "api_logs_execution" {
+resource "aws_iam_role_policy_attachment" "api_execution_logs" {
   role = aws_iam_role.api_execution.name
   policy_arn = aws_iam_policy.api_logs.arn
 }
-
-resource "aws_iam_role_policy_attachment" "api_secrets" {
+resource "aws_iam_role_policy_attachment" "api_execution_secrets" {
   role = aws_iam_role.api_execution.name
   policy_arn = aws_iam_policy.api_secrets.arn
 }
+
 resource "aws_iam_policy" "api_secrets" {
   name = "${local.api_name}-secrets-access"
   policy = data.aws_iam_policy_document.api_secrets.json
