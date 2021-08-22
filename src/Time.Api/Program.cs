@@ -29,6 +29,19 @@ namespace Time.Api
                         configureSource.Path = $"/Time/{environmentName}";
                         configureSource.ReloadAfter = TimeSpan.FromMinutes(5);
                         configureSource.Optional = true;
+                        configureSource.OnLoadException = exceptionContext =>
+                        {
+                            Console.WriteLine(exceptionContext.Exception);
+                            Console.WriteLine(exceptionContext.Exception);
+                            Console.WriteLine(exceptionContext.Exception);
+                            Console.WriteLine(exceptionContext.Exception);
+                            Console.WriteLine(exceptionContext.Exception);
+                            Console.WriteLine(exceptionContext.Exception);
+                            Console.WriteLine(exceptionContext.Exception);
+                            Console.WriteLine(exceptionContext.Exception);
+                            Console.WriteLine(exceptionContext.Exception);
+                            Console.WriteLine(exceptionContext.Exception);
+                        };
                     });
                 })
                 .UseSerilog()
