@@ -59,7 +59,8 @@ stages:
                     Try {
                       $url = "https://time$pullRequestNumber.preview.expensely.io/health"
                       write-host("Url: $url")
-                      $statusCode = Invoke-WebRequest $url -UseBasicParsing | Select-Object StatusCode
+                      $req = Invoke-WebRequest $url -UseBasicParsing
+                      $statusCode = $($req.StatusCode) -as [int]
                       write-host("Status code: $statusCode")
                       if($statusCode > 0)
                       {
