@@ -426,8 +426,8 @@ resource "aws_iam_role_policy_attachment" "api_task_logs_task" {
   policy_arn = aws_iam_policy.api_logs.arn
 }
 resource "aws_iam_role_policy_attachment" "api_task_parameters" {
-  role = aws_iam_role.api_execution.name
-  policy_arn = aws_iam_policy.api_secrets.arn
+  role = aws_iam_role.api_task.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
 }
 
 //// Execution
@@ -460,28 +460,9 @@ resource "aws_iam_role_policy_attachment" "api_execution_logs" {
   role = aws_iam_role.api_execution.name
   policy_arn = aws_iam_policy.api_logs.arn
 }
-resource "aws_iam_role_policy_attachment" "api_execution_secrets" {
-  role = aws_iam_role.api_execution.name
-  policy_arn = aws_iam_policy.api_secrets.arn
-}
-
-resource "aws_iam_policy" "api_secrets" {
-  name = "${local.api_name}-secrets-access"
-  policy = data.aws_iam_policy_document.api_secrets.json
-}
-data "aws_iam_policy_document" "api_secrets" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "ssm:GetParameters",
-      "secretsmanager:GetSecretValue",
-      "kms:Decrypt"
-    ]
-    resources = [
-      "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/${var.application_name}/${var.environment}/*",
-      data.aws_kms_alias.ssm_default_key.target_key_arn
-    ]
-  }
+resource "aws_iam_role_policy_attachment" "api_execution_parameters" {
+  role = aws_iam_role.api_task.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
 }
 
 // Cognito
