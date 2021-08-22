@@ -106,7 +106,7 @@ resource "aws_lambda_function" "migration" {
       data.aws_security_group.external.id]
     subnet_ids = concat(
       sort(data.aws_subnet_ids.database.ids), 
-      sort(data.aws_subnet_ids.private.id)
+      sort(data.aws_subnet_ids.private.ids)
     )
   }
   
