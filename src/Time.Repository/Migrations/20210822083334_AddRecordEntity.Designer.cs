@@ -10,7 +10,7 @@ using Time.DbContext;
 namespace Time.DbContext.Migrations
 {
     [DbContext(typeof(TimeDbContext))]
-    [Migration("20210819114423_AddRecordEntity")]
+    [Migration("20210822083334_AddRecordEntity")]
     partial class AddRecordEntity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,13 +21,16 @@ namespace Time.DbContext.Migrations
                 .HasAnnotation("ProductVersion", "5.0.7")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("Time.DbContext.Entities.Record", b =>
+            modelBuilder.Entity("Time.DbContext.Entities.RecordEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("End")
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("interval");
+
+                    b.Property<DateTime?>("End")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Name")
@@ -43,7 +46,7 @@ namespace Time.DbContext.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Records");
+                    b.ToTable("Record");
                 });
 #pragma warning restore 612, 618
         }

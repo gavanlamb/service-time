@@ -30,7 +30,6 @@ ProjectSection(SolutionItems) = preProject
 	Dockerfile = Dockerfile
 	README.md = README.md
 	docker-compose.yml = docker-compose.yml
-	docker-compose.infrastructure.yml = docker-compose.infrastructure.yml
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Api.IntegrationTests", "tests\Time.Api.IntegrationTests\Time.Api.IntegrationTests.csproj", "{6622F65C-B4BE-4F45-9F3C-47F03AEB18A0}"

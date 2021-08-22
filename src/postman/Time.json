@@ -1,0 +1,101 @@
+{
+	"info": {
+		"_postman_id": "10796ba4-56aa-4165-ac3a-75cd42f5edce",
+		"name": "Time",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Weather forecast",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/WeatherForecast",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"WeatherForecast"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "redirect_uri",
+				"value": "{{CallbackUrl}}",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "{{ClientId}}",
+				"type": "string"
+			},
+			{
+				"key": "authUrl",
+				"value": "{{AuthUrl}}",
+				"type": "string"
+			},
+			{
+				"key": "scope",
+				"value": "https://time.expensely.io/time:create https://time.expensely.io/time:delete https://time.expensely.io/time:read https://time.expensely.io/time:update",
+				"type": "string"
+			},
+			{
+				"key": "tokenType",
+				"value": "Bearer",
+				"type": "string"
+			},
+			{
+				"key": "accessToken",
+				"value": "eyJraWQiOiJPVjVLRW5uNk5UM2NqdjZOSmtpb0RKQVh2WUFtNFZVOTM1aDlEUDlzd2FvPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjOTczYjFiOS03NjgxLTQyNmQtYWU4Ni0zMmQ3MTY5M2M0M2EiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6Imh0dHBzOlwvXC90aW1lLmV4cGVuc2VseS5pb1wvdGltZTpjcmVhdGUiLCJhdXRoX3RpbWUiOjE2Mjk0NzU0NjcsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMi5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMl9oWkZSTzkwWHciLCJleHAiOjE2Mjk0NzkwNjcsImlhdCI6MTYyOTQ3NTQ2NywidmVyc2lvbiI6MiwianRpIjoiNjBiZTIzOTktZjM1OC00NmJhLWEzNDQtMjIyMzQxNTY4NTBiIiwiY2xpZW50X2lkIjoiM2MxaG9mY2p0ZHRyOTh0N2tjNGo4ZmM5ZWsiLCJ1c2VybmFtZSI6ImM5NzNiMWI5LTc2ODEtNDI2ZC1hZTg2LTMyZDcxNjkzYzQzYSJ9.C23I7HUNaSZcBcvktukuyW5_V8AwwzsA9fSdsYm2Vhcgcvi5WsSaAhUaLz-w8U_VFD1cMua2AYahfIGvpXhg3K3ds0R0f8VNcgDwcmRVJcMw_oGDBcSSMvs2mW1B274unvEH2ZYv4sGZu5BQWXp7rh8qA6grBUY_1En_usxU0IJ55E_0ZYh5jIeDnG-3LsaiBGdD48sKoLegie9OhqQp2cnhN7BuxWNXAo0vkrbvVnfnX6YRVXo5yn1Qu9RgWfJPk3gC9Io0hzeBInUPlEDrF6weo9Tw5p8QPQtziZoCCc20wegOOpQy0g3hMC6lTvznXw7oKaRDy1iW9m3RzHAzHw",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "implicit",
+				"type": "string"
+			},
+			{
+				"key": "useBrowser",
+				"value": false,
+				"type": "boolean"
+			},
+			{
+				"key": "tokenName",
+				"value": "Expensely",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

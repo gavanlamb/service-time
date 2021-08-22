@@ -1,0 +1,29 @@
+{
+	"id": "affe64db-a12f-4889-afcd-b6ac0fee406b",
+	"name": "Time - Development",
+	"values": [
+		{
+			"key": "CallbackUrl",
+			"value": "https://localhost",
+			"enabled": true
+		},
+		{
+			"key": "AuthUrl",
+			"value": "https://auth.expensely.app/login",
+			"enabled": true
+		},
+		{
+			"key": "ClientId",
+			"value": "3c1hofcjtdtr98t7kc4j8fc9ek",
+			"enabled": true
+		},
+		{
+			"key": "BaseUrl",
+			"value": "http://localhost:5000",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2021-08-21T15:03:09.532Z",
+	"_postman_exported_using": "Postman/8.10.0"
+}
