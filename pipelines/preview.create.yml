@@ -29,6 +29,12 @@ variables:
     value: 1.0.2
     readonly: true
 
+parameters:
+  - name: buildId
+    displayName: Build identifier
+    type: string
+    default: 0
+
 stages:
   - stage: preview
     displayName: Preview
@@ -46,12 +52,20 @@ stages:
       - job: setup
         displayName: Setup
         steps:
+          - checkout: none
           - task: PowerShell@2
             inputs:
               targetType: inline
               script: |
-                write-host("$(resources.pipeline.build.sourceBranch)")
-                $branchName = "$(resources.pipeline.build.sourceBranch)"
+                write-host("Build.SourceBranch: $(Build.SourceBranch)")
+                if("$(Build.Reason)" -eq "ResourceTrigger"){
+                  write-host("##vso[task.setvariable variable=buildId;isOutput=true]$(resources.pipeline.build.runName)")
+                } else {
+                  write-host("##vso[task.setvariable variable=buildId;isOutput=true]${{ parameters.buildId }}")
+                }
+
+                write-host("$(Build.SourceBranch)")
+                $branchName = "$(Build.SourceBranch)"
                 $nameElements = $branchName.Split("/")
                 $pullRequestId = $nameElements[2]
                 write-host("##vso[task.setvariable variable=pullRequestId;isOutput=true]$pullRequestId")
@@ -69,11 +83,12 @@ stages:
           - setup
         variables:
           pullRequestId: $[dependencies.setup.outputs['set_variables.pullRequestId']]
+          buildId: $[dependencies.setup.outputs['set_variables.buildId']]
         steps:
           - template: aws/terraform/plan.yml@templates
             parameters:
               artifactName: $(artifactName)
-              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(region).tfvars -var="build_identifier=$(resources.pipeline.build.runName)" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)"'
+              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(region).tfvars -var="build_identifier=$(buildId)" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)"'
               serviceConnectionName: ${{variables.terraformServiceConnectionName}}
               stateBucketName: $(terraformStateBucketName)
               stateLockTableName: $(terraformStateLockTableName)
@@ -87,6 +102,7 @@ stages:
         environment: preview
         variables:
           pullRequestId: $[dependencies.setup.outputs['set_variables.pullRequestId']]
+          buildId: $[dependencies.setup.outputs['set_variables.buildId']]
         strategy:
           runOnce:
             deploy:
@@ -100,6 +116,6 @@ stages:
                   parameters:
                     serviceConnectionName: ${{variables.awsServiceConnectionName}}
                     region: $(region)
-                    sourcePath: time-$(resources.pipeline.build.runName).yaml
-                    destinationPath: time/$(environment)$(pullRequestId)/time-$(resources.pipeline.build.runName).yaml
+                    sourcePath: time-$(buildId).yaml
+                    destinationPath: time/$(environment)$(pullRequestId)/time-$(buildId).yaml
                     codeDeployBucketName: $(codeDeployBucketName)

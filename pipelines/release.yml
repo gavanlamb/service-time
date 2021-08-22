@@ -23,6 +23,12 @@ pool:
 trigger: none
 pr: none
 
+parameters:
+  - name: buildId
+    displayName: Build identifier
+    type: string
+    default: $(resources.pipeline.build.runName)
+
 stages:
   - stage: production
     displayName: Production
@@ -43,7 +49,7 @@ stages:
           - template: aws/terraform/plan.yml@templates
             parameters:
               artifactName: $(artifactName)
-              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(region).tfvars -var="build_identifier=$(resources.pipeline.build.runName)"'
+              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(region).tfvars -var="build_identifier=${{ parameters.buildId }}"'
               serviceConnectionName: ${{variables.terraformServiceConnectionName}}
               stateBucketName: $(terraformStateBucketName)
               stateLockTableName: $(terraformStateLockTableName)
@@ -72,6 +78,6 @@ stages:
                   parameters:
                     serviceConnectionName: ${{variables.awsServiceConnectionName}}
                     region: $(region)
-                    sourcePath: time-$(resources.pipeline.build.runName).yaml
-                    destinationPath: time/$(environment)/time-$(resources.pipeline.build.runName).yaml
+                    sourcePath: time-${{ parameters.buildId }}.yaml
+                    destinationPath: time/$(environment)/time-${{ parameters.buildId }}.yaml
                     codeDeployBucketName: $(codeDeployBucketName)
