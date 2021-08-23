@@ -119,6 +119,13 @@ resource "aws_lambda_function" "migration" {
   tags = local.default_tags
 }
 
+/// Cloudwatch
+resource "aws_cloudwatch_log_group" "migration" {
+  name = "/aws/lambda/${aws_lambda_function.migration.function_name}"
+  retention_in_days = 14
+  tags = local.default_tags
+}
+
 /// IAM 
 resource "aws_iam_role" "migration" {
   name = local.migration_name
