@@ -53,4 +53,8 @@ data "aws_ecr_repository" "migration" {
   name = "${lower(var.application_name)}-migration"
 }
 
+data "aws_cognito_user_pools" "expensely" {
+  name = var.cognito_name
+}
+
 data "aws_caller_identity" "current" {}

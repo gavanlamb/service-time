@@ -29,6 +29,11 @@ variable "capacity_provider_name" {
   default = null
 }
 
+variable "cognito_name" {
+  type = string
+  default = null
+}
+
 variable "codedeploy_role_name" {
   type = string
   default = null
