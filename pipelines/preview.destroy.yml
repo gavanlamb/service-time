@@ -94,7 +94,6 @@ stages:
                     serviceConnectionName: ${{ variables.terraformServiceConnectionName }}
                     stateBucketName: ${{ variables.terraformStateBucketName }}
                     stateLockTableName: ${{ variables.terraformStateLockTableName }}
-                    region: ${{ variables.region }}
                     workspaceName: service-time-${{ variables.environment }}${{ variables.pullRequestId }}
 
       - job: destory_environment_resources
