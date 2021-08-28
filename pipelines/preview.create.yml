@@ -41,7 +41,7 @@ stages:
     pool:
       vmImage: 'windows-latest'
     variables:
-      - template: variables/preview.ap-southeast-2.yml@expensely-templates
+      - template: variables/$(System.StageName).ap-southeast-2.yml@expensely-templates
       - name: artifactName
         value: preview_ap-southeast-2
         readonly: true
@@ -85,11 +85,11 @@ stages:
           - template: aws/terraform/plan.yml@templates
             parameters:
               artifactName: $(artifactName)
-              planAdditionalCommandOptions: '-var-file=variables/${{ variables.environment }}.$(region).tfvars -var="build_identifier=$(buildId)" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)"'
+              planAdditionalCommandOptions: '-var-file=variables/$(System.StageName).$(region).tfvars -var="build_identifier=$(buildId)" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)"'
               serviceConnectionName: ${{variables.terraformServiceConnectionName}}
               stateBucketName: $(terraformStateBucketName)
               stateLockTableName: $(terraformStateLockTableName)
-              workspaceName: service-time-${{ variables.environment }}$(pullRequestId)
+              workspaceName: service-time-$(System.StageName)$(pullRequestId)
 
       - deployment: apply
         displayName: Apply
@@ -114,5 +114,5 @@ stages:
                     serviceConnectionName: ${{variables.awsServiceConnectionName}}
                     region: $(region)
                     sourcePath: time-$(buildId).yaml
-                    destinationPath: time/${{ variables.environment }}$(pullRequestId)/time-$(buildId).yaml
+                    destinationPath: time/$(System.StageName)$(pullRequestId)/time-$(buildId).yaml
                     codeDeployBucketName: $(codeDeployBucketName)

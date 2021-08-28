@@ -35,7 +35,7 @@ stages:
     pool:
       vmImage: 'windows-latest'
     variables:
-      - template: variables/production.ap-southeast-2.yml@expensely-templates
+      - template: variables/$(System.StageName).ap-southeast-2.yml@expensely-templates
       - name: artifactName
         value: production_ap-southeast-2
         readonly: true
@@ -46,11 +46,11 @@ stages:
           - template: aws/terraform/plan.yml@templates
             parameters:
               artifactName: $(artifactName)
-              planAdditionalCommandOptions: '-var-file=variables/${{ variables.environment }}.$(region).tfvars -var="build_identifier=${{ parameters.buildId }}"'
+              planAdditionalCommandOptions: '-var-file=variables/$(System.StageName).$(region).tfvars -var="build_identifier=${{ parameters.buildId }}"'
               serviceConnectionName: ${{variables.terraformServiceConnectionName}}
               stateBucketName: $(terraformStateBucketName)
               stateLockTableName: $(terraformStateLockTableName)
-              workspaceName: service-time-${{ variables.environment }}
+              workspaceName: service-time-$(System.StageName)
 
       - template: job/approve.yml@templates
         parameters:
@@ -76,5 +76,5 @@ stages:
                     serviceConnectionName: ${{variables.awsServiceConnectionName}}
                     region: $(region)
                     sourcePath: time-${{ parameters.buildId }}.yaml
-                    destinationPath: time/${{ variables.environment }}/time-${{ parameters.buildId }}.yaml
+                    destinationPath: time/$(System.StageName)/time-${{ parameters.buildId }}.yaml
                     codeDeployBucketName: $(codeDeployBucketName)
