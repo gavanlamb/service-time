@@ -41,7 +41,7 @@ stages:
     pool:
       vmImage: 'windows-latest'
     variables:
-      - template: variables/$(System.StageName).ap-southeast-2.yml@expensely-templates
+      - template: variables/preview.ap-southeast-2.yml@expensely-templates
       - name: artifactName
         value: preview_ap-southeast-2
         readonly: true
@@ -72,7 +72,7 @@ stages:
             parameters:
               environmentName: Preview$(set_variables.pullRequestId)
               serviceConnectionName: ${{variables.awsServiceConnectionName}}
-              region: $(region)
+              region: ${{ variables.region }}
 
       - job: plan
         displayName: Plan
@@ -84,12 +84,13 @@ stages:
         steps:
           - template: aws/terraform/plan.yml@templates
             parameters:
-              artifactName: $(artifactName)
-              planAdditionalCommandOptions: '-var-file=variables/$(System.StageName).$(region).tfvars -var="build_identifier=$(buildId)" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)"'
-              serviceConnectionName: ${{variables.terraformServiceConnectionName}}
-              stateBucketName: $(terraformStateBucketName)
-              stateLockTableName: $(terraformStateLockTableName)
-              workspaceName: service-time-$(System.StageName)$(pullRequestId)
+              artifactName: ${{ variables.artifactName }}
+              planAdditionalCommandOptions: '-var-file=variables/${{ variables.environment }}.${{ variables.region }}.tfvars -var="build_identifier=${{ variables.buildId }}" -var="environment=Preview${{ variables.pullRequestId }}" -var="subdomain=time${{ variables.pullRequestId }}"'
+              serviceConnectionName: ${{ variables.terraformServiceConnectionName }}
+              stateBucketName: ${{ variables.terraformStateBucketName }}
+              stateLockTableName: ${{ variables.terraformStateLockTableName }}
+              region: ${{ variables.region }}
+              workspaceName: service-time-${{ variables.environment }}${{ variables.pullRequestId }}
 
       - deployment: apply
         displayName: Apply
@@ -107,12 +108,13 @@ stages:
                 - download: none
                 - template: aws/terraform/apply.yml@templates
                   parameters:
-                    artifactName: $(artifactName)
+                    artifactName: ${{ variables.artifactName }}
                     serviceConnectionName: ${{variables.terraformServiceConnectionName}}
                 - template: aws/cli/codedeploy.deploy.yml@templates
                   parameters:
                     serviceConnectionName: ${{variables.awsServiceConnectionName}}
-                    region: $(region)
-                    sourcePath: time-$(buildId).yaml
-                    destinationPath: time/$(System.StageName)$(pullRequestId)/time-$(buildId).yaml
-                    codeDeployBucketName: $(codeDeployBucketName)
+                    region: ${{ variables.region }}
+                    sourcePath: time-${{ variables.buildId }}.yaml
+                    destinationPath: time/${{ variables.environment }}${{ variables.pullRequestId }}/time-${{ variables.buildId }}.yaml
+                    codeDeployBucketName: ${{ variables.codeDeployBucketName }}
+

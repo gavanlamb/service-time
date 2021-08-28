@@ -35,7 +35,7 @@ stages:
     pool:
       vmImage: 'windows-latest'
     variables:
-      - template: variables/$(System.StageName).ap-southeast-2.yml@expensely-templates
+      - template: variables/preview.ap-southeast-2.yml@expensely-templates
       - name: artifactName
         value: production_ap-southeast-2
         readonly: true
@@ -45,12 +45,12 @@ stages:
         steps:
           - template: aws/terraform/plan.yml@templates
             parameters:
-              artifactName: $(artifactName)
-              planAdditionalCommandOptions: '-var-file=variables/$(System.StageName).$(region).tfvars -var="build_identifier=${{ parameters.buildId }}"'
-              serviceConnectionName: ${{variables.terraformServiceConnectionName}}
-              stateBucketName: $(terraformStateBucketName)
-              stateLockTableName: $(terraformStateLockTableName)
-              workspaceName: service-time-$(System.StageName)
+              artifactName: ${{ variables.artifactName }}
+              planAdditionalCommandOptions: '-var-file=variables/${{ variables.environment }}.${{ variables.region }}.tfvars -var="build_identifier=${{ parameters.buildId }}"'
+              serviceConnectionName: ${{ variables.terraformServiceConnectionName }}
+              stateBucketName: ${{ variables.terraformStateBucketNam }}
+              stateLockTableName: ${{ variables.terraformStateLockTableName }}
+              workspaceName: service-time-${{ variables.environment }}
 
       - template: job/approve.yml@templates
         parameters:
@@ -69,12 +69,12 @@ stages:
                 - download: none
                 - template: aws/terraform/apply.yml@templates
                   parameters:
-                    artifactName: $(artifactName)
-                    serviceConnectionName: ${{variables.terraformServiceConnectionName}}
+                    artifactName: ${{ variables.artifactName }}
+                    serviceConnectionName: ${{ variables.terraformServiceConnectionName }}
                 - template: aws/cli/codedeploy.deploy.yml@templates
                   parameters:
-                    serviceConnectionName: ${{variables.awsServiceConnectionName}}
-                    region: $(region)
+                    serviceConnectionName: ${{ variables.awsServiceConnectionName }}
+                    region: ${{ variables.region }}
                     sourcePath: time-${{ parameters.buildId }}.yaml
-                    destinationPath: time/$(System.StageName)/time-${{ parameters.buildId }}.yaml
-                    codeDeployBucketName: $(codeDeployBucketName)
+                    destinationPath: time/${{ variables.environment }}/time-${{ parameters.buildId }}.yaml
+                    codeDeployBucketName: ${{ variables.codeDeployBucketName }}

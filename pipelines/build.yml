@@ -10,7 +10,7 @@ resources:
       name: expensely/azure-devops-templates
       endpoint: expensely
 
-trigger: 
+trigger:
   - main
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
         parameters:
           target: base
           argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
-    
+
       - template: ./docker/build.yml@templates
         parameters:
           target: test
@@ -31,7 +31,7 @@ jobs:
       - template: ./docker/test.yml@templates
         parameters:
           containerName: test
-    
+
       - template: ./docker/build.yml@templates
         parameters:
           target: api
@@ -39,10 +39,10 @@ jobs:
       - template: ./aws/cli/ecr.push.yml@templates
         parameters:
           serviceConnectionName: ${{variables.awsServiceConnectionName}}
-          region: $(region)
+          region: ${{ variables.region }}
           imageName: api
           repositoryName: time-api
-    
+
       - template: ./docker/build.yml@templates
         parameters:
           target: migration
@@ -50,7 +50,7 @@ jobs:
       - template: ./aws/cli/ecr.push.yml@templates
         parameters:
           serviceConnectionName: ${{variables.awsServiceConnectionName}}
-          region: $(region)
+          region: ${{ variables.region }}
           imageName: migration
           repositoryName: time-migration
 
