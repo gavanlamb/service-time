@@ -41,12 +41,9 @@ stages:
     pool:
       vmImage: 'windows-latest'
     variables:
-      - template: variables/production.ap-southeast-2.yml@expensely-templates
+      - template: variables/preview.ap-southeast-2.yml@expensely-templates
       - name: artifactName
         value: preview_ap-southeast-2
-        readonly: true
-      - name: environment
-        value: preview
         readonly: true
     jobs:
       - job: setup
@@ -79,7 +76,7 @@ stages:
 
       - job: plan
         displayName: Plan
-        dependsOn: 
+        dependsOn:
           - setup
         variables:
           pullRequestId: $[dependencies.setup.outputs['set_variables.pullRequestId']]
@@ -88,15 +85,15 @@ stages:
           - template: aws/terraform/plan.yml@templates
             parameters:
               artifactName: $(artifactName)
-              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(region).tfvars -var="build_identifier=$(buildId)" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)"'
+              planAdditionalCommandOptions: '-var-file=variables/${{ variables.environment }}.$(region).tfvars -var="build_identifier=$(buildId)" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)"'
               serviceConnectionName: ${{variables.terraformServiceConnectionName}}
               stateBucketName: $(terraformStateBucketName)
               stateLockTableName: $(terraformStateLockTableName)
-              workspaceName: service-time-$(environment)$(pullRequestId)
+              workspaceName: service-time-${{ variables.environment }}$(pullRequestId)
 
       - deployment: apply
         displayName: Apply
-        dependsOn: 
+        dependsOn:
           - plan
           - setup
         environment: preview
@@ -117,5 +114,5 @@ stages:
                     serviceConnectionName: ${{variables.awsServiceConnectionName}}
                     region: $(region)
                     sourcePath: time-$(buildId).yaml
-                    destinationPath: time/$(environment)$(pullRequestId)/time-$(buildId).yaml
+                    destinationPath: time/${{ variables.environment }}$(pullRequestId)/time-$(buildId).yaml
                     codeDeployBucketName: $(codeDeployBucketName)

@@ -33,10 +33,7 @@ stages:
     pool:
       vmImage: 'windows-latest'
     variables:
-      - template: variables/production.ap-southeast-2.yml@expensely-templates
-      - name: environment
-        value: preview
-        readonly: true
+      - template: variables/preview.ap-southeast-2.yml@expensely-templates
     jobs:
       - job: setup
         displayName: Setup
@@ -94,10 +91,10 @@ stages:
                 - template: aws/terraform/destroy.yml@templates
                   parameters:
                     serviceConnectionName: ${{variables.terraformServiceConnectionName}}
-                    destroyAdditionalArguments: '-var-file=variables/$(environment).$(region).tfvars  -var="build_identifier=$(Build.BuildNumber)" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)"'
+                    destroyAdditionalArguments: '-var-file=variables/${{ variables.environment }}.$(region).tfvars  -var="build_identifier=$(Build.BuildNumber)" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)"'
                     stateBucketName: $(terraformStateBucketName)
                     stateLockTableName: $(terraformStateLockTableName)
-                    workspaceName: service-time-$(environment)$(pullRequestId)
+                    workspaceName: service-time-${{ variables.environment }}$(pullRequestId)
 
       - job: destory_environment_resources
         displayName: Destroy environment resources

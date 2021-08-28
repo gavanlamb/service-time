@@ -19,7 +19,7 @@ resources:
 
 pool:
   vmImage: ubuntu-latest
-  
+
 trigger: none
 pr: none
 
@@ -39,9 +39,6 @@ stages:
       - name: artifactName
         value: production_ap-southeast-2
         readonly: true
-      - name: environment
-        value: production
-        readonly: true
     jobs:
       - job: plan
         displayName: Plan
@@ -49,12 +46,12 @@ stages:
           - template: aws/terraform/plan.yml@templates
             parameters:
               artifactName: $(artifactName)
-              planAdditionalCommandOptions: '-var-file=variables/$(environment).$(region).tfvars -var="build_identifier=${{ parameters.buildId }}"'
+              planAdditionalCommandOptions: '-var-file=variables/${{ variables.environment }}.$(region).tfvars -var="build_identifier=${{ parameters.buildId }}"'
               serviceConnectionName: ${{variables.terraformServiceConnectionName}}
               stateBucketName: $(terraformStateBucketName)
               stateLockTableName: $(terraformStateLockTableName)
-              workspaceName: service-time-$(environment)
- 
+              workspaceName: service-time-${{ variables.environment }}
+
       - template: job/approve.yml@templates
         parameters:
           dependsOn: plan
@@ -79,5 +76,5 @@ stages:
                     serviceConnectionName: ${{variables.awsServiceConnectionName}}
                     region: $(region)
                     sourcePath: time-${{ parameters.buildId }}.yaml
-                    destinationPath: time/$(environment)/time-${{ parameters.buildId }}.yaml
+                    destinationPath: time/${{ variables.environment }}/time-${{ parameters.buildId }}.yaml
                     codeDeployBucketName: $(codeDeployBucketName)
