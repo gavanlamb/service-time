@@ -9,18 +9,16 @@ resources:
       type: github
       name: expensely/azure-devops-templates
       endpoint: expensely
-  pipelines:
-    - pipeline: build
-      source: 'Services\Time\Build'
-      trigger:
-        branches:
-          include:
-            - main
 
 pool:
   vmImage: ubuntu-latest
 
-trigger: none
+trigger:
+  batch: true
+  branches:
+    include:
+      - "main"
+
 pr: none
 
 parameters:
@@ -30,14 +28,27 @@ parameters:
     default: $(resources.pipeline.build.runName)
 
 stages:
+  - stage: build
+    displayName: Build
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+      - job: build
+        displayName: Build
+        steps:
+          - template: aws/terraform/plan.yml@templates
+            parameters:
+              serviceConnectionName: ${{ variables.awsServiceConnectionName }}
+              region: ${{ variables.region }}
+
   - stage: production
     displayName: Production
     pool:
       vmImage: 'windows-latest'
     variables:
-      - template: variables/preview.ap-southeast-2.yml@expensely-templates
+      - template: variables/production.ap-southeast-2.yml@expensely-templates
       - name: artifactName
-        value: production_ap-southeast-2
+        value: production.ap-southeast-2.terraform
         readonly: true
     jobs:
       - job: plan
@@ -48,7 +59,7 @@ stages:
               artifactName: ${{ variables.artifactName }}
               planAdditionalCommandOptions: '-var-file=variables/${{ variables.environment }}.${{ variables.region }}.tfvars -var="build_identifier=${{ parameters.buildId }}"'
               serviceConnectionName: ${{ variables.terraformServiceConnectionName }}
-              stateBucketName: ${{ variables.terraformStateBucketNam }}
+              stateBucketName: ${{ variables.terraformStateBucketName }}
               stateLockTableName: ${{ variables.terraformStateLockTableName }}
               workspaceName: service-time-${{ variables.environment }}
 
@@ -58,8 +69,8 @@ stages:
           timeoutInMinutes: 60
           notifyUsers: '[Expensely]\Expensely Team'
 
-      - deployment: apply
-        displayName: Apply
+      - deployment: deploy
+        displayName: Deploy
         dependsOn: approve
         environment: Production
         strategy:

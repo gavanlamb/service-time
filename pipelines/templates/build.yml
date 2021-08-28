@@ -1,0 +1,43 @@
+parameters:
+  - name: serviceConnectionName
+    displayName: Name of the AWS service connection to use
+    type: string
+  - name: region
+    displayName: Name of the AWS region
+    type: string
+
+steps:
+  - template: ./docker/build.yml@templates
+    parameters:
+      target: base
+      argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
+
+  - template: ./docker/build.yml@templates
+    parameters:
+      target: test
+      argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
+  - template: ./docker/test.yml@templates
+    parameters:
+      containerName: test
+
+  - template: ./docker/build.yml@templates
+    parameters:
+      target: api
+      argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
+  - template: ./aws/cli/ecr.push.yml@templates
+    parameters:
+      serviceConnectionName: ${{ parameters.serviceConnectionName }}
+      region: ${{ parameters.region }}
+      imageName: api
+      repositoryName: time-api
+
+  - template: ./docker/build.yml@templates
+    parameters:
+      target: migration
+      argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
+  - template: ./aws/cli/ecr.push.yml@templates
+    parameters:
+      serviceConnectionName: ${{ parameters.serviceConnectionName }}
+      region: ${{ parameters.region }}
+      imageName: migration
+      repositoryName: time-migration

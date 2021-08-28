@@ -9,39 +9,41 @@ resources:
       type: github
       name: expensely/azure-devops-templates
       endpoint: expensely
-  pipelines:
-    - pipeline: build
-      source: 'Services\Time\Build'
-      trigger:
-        branches:
-          include:
-            - refs/remotes/pull*
-            - refs/pull*
 
 pool:
   vmImage: ubuntu-latest
 
 trigger: none
-pr: none
+
+pr:
+  branches:
+    include:
+      - 'main'
 
 variables:
-  - name: terraformVersion
-    value: 1.0.2
-    readonly: true
-
-parameters:
-  - name: buildId
-    displayName: Build identifier
-    type: string
-    default: 0
+  - template: variables/preview.ap-southeast-2.yml@expensely-templates
 
 stages:
+  - stage: build
+    displayName: Build
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+      - job: build
+        displayName: Build
+        steps:
+          - template: aws/terraform/plan.yml@templates
+            parameters:
+              serviceConnectionName: ${{ variables.awsServiceConnectionName }}
+              region: ${{ variables.region }}
+
   - stage: preview
     displayName: Preview
+    dependsOn:
+      - build
     pool:
       vmImage: 'windows-latest'
     variables:
-      - template: variables/preview.ap-southeast-2.yml@expensely-templates
       - name: artifactName
         value: preview_ap-southeast-2
         readonly: true
@@ -50,57 +52,33 @@ stages:
         displayName: Setup
         steps:
           - checkout: none
-          - task: PowerShell@2
-            inputs:
-              targetType: inline
-              script: |
-                write-host("Build.SourceBranch: $(Build.SourceBranch)")
-                if("$(Build.Reason)" -eq "ResourceTrigger"){
-                  write-host("##vso[task.setvariable variable=buildId;isOutput=true]$(resources.pipeline.build.runName)")
-                } else {
-                  write-host("##vso[task.setvariable variable=buildId;isOutput=true]${{ parameters.buildId }}")
-                }
-
-                write-host("$(Build.SourceBranch)")
-                $branchName = "$(Build.SourceBranch)"
-                $nameElements = $branchName.Split("/")
-                $pullRequestId = $nameElements[2]
-                write-host("##vso[task.setvariable variable=pullRequestId;isOutput=true]$pullRequestId")
-            name: set_variables
-            displayName: Set variables
           - template: templates/environment.create.yml
             parameters:
-              environmentName: Preview$(set_variables.pullRequestId)
-              serviceConnectionName: ${{variables.awsServiceConnectionName}}
+              environmentName: Preview$(System.PullRequest.PullRequestNumber)
+              serviceConnectionName: ${{ variables.awsServiceConnectionName }}
               region: ${{ variables.region }}
 
       - job: plan
         displayName: Plan
         dependsOn:
           - setup
-        variables:
-          pullRequestId: $[dependencies.setup.outputs['set_variables.pullRequestId']]
-          buildId: $[dependencies.setup.outputs['set_variables.buildId']]
         steps:
           - template: aws/terraform/plan.yml@templates
             parameters:
               artifactName: ${{ variables.artifactName }}
-              planAdditionalCommandOptions: '-var-file=variables/${{ variables.environment }}.${{ variables.region }}.tfvars -var="build_identifier=${{ variables.buildId }}" -var="environment=Preview${{ variables.pullRequestId }}" -var="subdomain=time${{ variables.pullRequestId }}"'
+              planAdditionalCommandOptions: '-var-file=variables/${{ variables.environment }}.${{ variables.region }}.tfvars -var="build_identifier=$(Build.BuildNumber)" -var="environment=Preview$(System.PullRequest.PullRequestNumber)" -var="subdomain=time$(System.PullRequest.PullRequestNumber)"'
               serviceConnectionName: ${{ variables.terraformServiceConnectionName }}
               stateBucketName: ${{ variables.terraformStateBucketName }}
               stateLockTableName: ${{ variables.terraformStateLockTableName }}
               region: ${{ variables.region }}
-              workspaceName: service-time-${{ variables.environment }}${{ variables.pullRequestId }}
+              workspaceName: service-time-${{ variables.environment }}$(System.PullRequest.PullRequestNumber)
 
-      - deployment: apply
-        displayName: Apply
+      - deployment: deploy
+        displayName: Deploy
         dependsOn:
           - plan
           - setup
         environment: preview
-        variables:
-          pullRequestId: $[dependencies.setup.outputs['set_variables.pullRequestId']]
-          buildId: $[dependencies.setup.outputs['set_variables.buildId']]
         strategy:
           runOnce:
             deploy:
@@ -114,7 +92,7 @@ stages:
                   parameters:
                     serviceConnectionName: ${{variables.awsServiceConnectionName}}
                     region: ${{ variables.region }}
-                    sourcePath: time-${{ variables.buildId }}.yaml
-                    destinationPath: time/${{ variables.environment }}${{ variables.pullRequestId }}/time-${{ variables.buildId }}.yaml
+                    sourcePath: time-$(Build.BuildNumber).yaml
+                    destinationPath: time/${{ variables.environment }}$(System.PullRequest.PullRequestNumber)/time-$(Build.BuildNumber).yaml
                     codeDeployBucketName: ${{ variables.codeDeployBucketName }}
 
