@@ -35,7 +35,7 @@ stages:
     pool:
       vmImage: 'windows-latest'
     variables:
-      - template: variables/preview.ap-southeast-2.yml@expensely-templates
+      - template: variables/production.ap-southeast-2.yml@expensely-templates
       - name: artifactName
         value: production_ap-southeast-2
         readonly: true
@@ -48,7 +48,7 @@ stages:
               artifactName: ${{ variables.artifactName }}
               planAdditionalCommandOptions: '-var-file=variables/${{ variables.environment }}.${{ variables.region }}.tfvars -var="build_identifier=${{ parameters.buildId }}"'
               serviceConnectionName: ${{ variables.terraformServiceConnectionName }}
-              stateBucketName: ${{ variables.terraformStateBucketNam }}
+              stateBucketName: ${{ variables.terraformStateBucketName }}
               stateLockTableName: ${{ variables.terraformStateLockTableName }}
               workspaceName: service-time-${{ variables.environment }}
 
