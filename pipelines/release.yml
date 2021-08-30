@@ -36,7 +36,7 @@ stages:
       - job: build
         displayName: Build
         steps:
-          - template: aws/terraform/plan.yml@templates
+          - template: templates/build.yml
             parameters:
               serviceConnectionName: ${{ variables.awsServiceConnectionName }}
               region: ${{ variables.region }}
