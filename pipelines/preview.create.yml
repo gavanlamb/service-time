@@ -32,7 +32,7 @@ stages:
       - job: build
         displayName: Build
         steps:
-          - template: aws/terraform/plan.yml@templates
+          - template: templates/build.yml
             parameters:
               serviceConnectionName: ${{ variables.awsServiceConnectionName }}
               region: ${{ variables.region }}
@@ -45,7 +45,7 @@ stages:
       vmImage: 'windows-latest'
     variables:
       - name: artifactName
-        value: preview_ap-southeast-2
+        value: preview.terraform
         readonly: true
     jobs:
       - job: setup
@@ -70,7 +70,6 @@ stages:
               serviceConnectionName: ${{ variables.terraformServiceConnectionName }}
               stateBucketName: ${{ variables.terraformStateBucketName }}
               stateLockTableName: ${{ variables.terraformStateLockTableName }}
-              region: ${{ variables.region }}
               workspaceName: service-time-${{ variables.environment }}$(System.PullRequest.PullRequestNumber)
 
       - deployment: deploy
