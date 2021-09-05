@@ -1,18 +1,20 @@
-using System;
-using System.IO;
-using System.Reflection;
+using System.Collections.Generic;
 using System.Text.Json;
 using Expensely.Authentication.Cognito.Jwt.Extensions;
 using Expensely.Logging.Serilog;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Swashbuckle.AspNetCore.Filters;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using Time.Api.Services;
+using Time.Api.Setup;
 using Time.DbContext.Extensions;
 
 namespace Time.Api
@@ -40,34 +42,21 @@ namespace Time.Api
             services.AddMvcCore()
                 .AddApiExplorer();
 
-            services.AddSwaggerGen(c =>
+            services.AddApiVersioning(options =>
             {
-                c.SwaggerDoc(
-                    "v1", 
-                    new OpenApiInfo
-                    {
-                        Title = "Time.Api", 
-                        Version = "v1",
-                        Description = "Time.Api"
-                    });
-
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
-                c.IncludeXmlComments(xmlPath);
-                c.CustomSchemaIds(x => x.FullName);
-                
-                c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
-                c.OperationFilter<SecurityRequirementsOperationFilter>();
-                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-                {
-                    Description = "Standard Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
-                    In = ParameterLocation.Header,
-                    Name = "Authorization",
-                    Scheme = "bearer",
-                    BearerFormat = "JWT",
-                    Type = SecuritySchemeType.Http
-                });
+                options.ReportApiVersions = true;
+                options.DefaultApiVersion = new ApiVersion(1, 0);
             });
-            
+
+            services.AddVersionedApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV";
+                options.SubstituteApiVersionInUrl = true;
+            });
+
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigureOptions>();
+            services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
+
             services.AddTimeRepository(Configuration);
 
             Logging.AddSerilog(Configuration);
@@ -79,17 +68,38 @@ namespace Time.Api
             services.AddScoped<IRecordService, RecordService>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
             if (env.IsDevelopment() ||  env.EnvironmentName.StartsWith("Preview"))
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => 
-                    c.SwaggerEndpoint(
-                        "/swagger/v1/swagger.json", 
-                        "Time.Api v1")
-                );
+                
+                app.UseSwagger(options =>
+                {
+                    options.PreSerializeFilters.Add((swagger, req) =>
+                    {
+                        swagger.Servers = new List<OpenApiServer>
+                        {
+                            new()
+                            {
+                                Url = $"https://{req.Host}"
+                            },
+                            new()
+                            {
+                                Url = $"http://{req.Host}"
+                            }
+                        };
+                    });
+                });
+
+                app.UseSwaggerUI(options =>
+                {
+                    foreach (var desc in provider.ApiVersionDescriptions)
+                    {
+                        options.SwaggerEndpoint($"/swagger/{desc.GroupName}/swagger.json", $"Version {desc.ApiVersion}");
+                        options.DefaultModelsExpandDepth(-1);
+                    }
+                });
             }
 
             app.UseSerilogRequestLogging();

@@ -1,22 +1,30 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Expensely.Authentication.Cognito.Jwt.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Time.Api.Models;
 using Time.Api.Services;
 
 namespace Time.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
     public class RecordController : ControllerBase
     {
         private readonly IRecordService _recordService;
+        private readonly ILogger<RecordController> _logger;
 
         public RecordController(
+            ILogger<RecordController> logger,
             IRecordService recordService)
         {
+            _logger = logger;
             _recordService = recordService;
         }
 
@@ -25,15 +33,34 @@ namespace Time.Api.Controllers
         /// </summary>
         /// <returns>A list of records or an empty list.</returns>
         /// <response code="200">Retrieved paginated records for user</response>
+        /// <response code="204">Retrieved paginated records for user</response>
         /// <response code="401">User is unauthorised</response>
         /// <response code="403">User is forbidden</response>
         /// <response code="500">Oops! An error occurred.</response>
         [HttpGet]
         [Authorize("read")]
-        public IEnumerable<RecordDto> Get()
+        public async Task<ActionResult<IEnumerable<RecordDto>>> Get()
         {
-            var userId = User.GetSubject();
-            return _recordService.Get(userId);
+            try
+            {
+                var userId = User.GetSubject();
+                var records = _recordService.Get(userId);
+                if (records.Any())
+                {
+                    return Ok(records);
+                }
+
+                return NoContent();
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(
+                    e, 
+                    "Error encountered while getting records for user"); 
+
+                return StatusCode(500);
+            }
         }
     }
 }
