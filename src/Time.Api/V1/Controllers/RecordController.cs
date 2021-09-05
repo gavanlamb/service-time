@@ -6,10 +6,10 @@ using Expensely.Authentication.Cognito.Jwt.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Time.Api.Models;
-using Time.Api.Services;
+using Time.Api.V1.Models;
+using Time.Api.V1.Services;
 
-namespace Time.Api.Controllers
+namespace Time.Api.V1.Controllers
 {
     [ApiController]
     [ApiVersion("1.0")]

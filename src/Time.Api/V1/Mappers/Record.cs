@@ -1,7 +1,7 @@
-using Time.Api.Models;
+using Time.Api.V1.Models;
 using Time.DbContext.Entities;
 
-namespace Time.Api.Mappers
+namespace Time.Api.V1.Mappers
 {
     public static class Record
     {

@@ -13,8 +13,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Time.Api.Services;
 using Time.Api.Setup;
+using Time.Api.V1.Services;
 using Time.DbContext.Extensions;
 
 namespace Time.Api

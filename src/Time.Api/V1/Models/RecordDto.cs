@@ -1,6 +1,6 @@
 using System;
 
-namespace Time.Api.Models
+namespace Time.Api.V1.Models
 
 {
     public class RecordDto
