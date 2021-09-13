@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using Time.Api.Mappers;
-using Time.Api.Models;
+using Time.Api.V1.Mappers;
+using Time.Api.V1.Models;
 using Time.DbContext.Repositories;
 
-namespace Time.Api.Services
+namespace Time.Api.V1.Services
 {
     public class RecordService : IRecordService
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Time.Api.Models;
+using Time.Api.V1.Models;
 
-namespace Time.Api.Services
+namespace Time.Api.V1.Services
 {
     public interface IRecordService
     {
