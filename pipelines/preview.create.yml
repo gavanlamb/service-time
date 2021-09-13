@@ -1,4 +1,3 @@
-name: 1.0$(Rev:.r)-$(System.PullRequest.PullRequestNumber)
 resources:
   repositories:
     - repository: templates
