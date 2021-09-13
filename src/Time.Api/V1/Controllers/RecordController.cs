@@ -13,7 +13,7 @@ namespace Time.Api.V1.Controllers
 {
     [ApiController]
     [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
     public class RecordController : ControllerBase
     {
