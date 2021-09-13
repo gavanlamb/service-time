@@ -154,10 +154,6 @@ resource "aws_iam_role_policy_attachment" "migration_ssm_read" {
   role = aws_iam_role.migration.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
 }
-resource "aws_iam_role_policy_attachment" "migration_vpc_exec" {
-  role = aws_iam_role.migration.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
-}
 resource "aws_iam_policy" "migration_codedeploy" {
   name = "${local.api_name}-codedeploy"
   policy = data.aws_iam_policy_document.migration_codedeploy.json
