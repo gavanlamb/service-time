@@ -57,6 +57,10 @@ stages:
               stateBucketName: ${{ variables.terraformStateBucketName }}
               stateLockTableName: ${{ variables.terraformStateLockTableName }}
               workspaceName: service-time-${{ variables.environment }}
+          - task: codecoveragecomparerbt@1
+            inputs:
+              codecoveragetarget: '85'
+              codecoveragemeasurementmethod: 'Branch'
 
       - template: job/approve.yml@templates
         parameters:
