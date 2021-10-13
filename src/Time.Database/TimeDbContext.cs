@@ -4,7 +4,7 @@ using Time.Database.Entities;
 
 namespace Time.Database
 {
-    public class TimeDbContext : Microsoft.EntityFrameworkCore.DbContext
+    public class TimeDbContext : DbContext
     {
         public TimeDbContext(
             DbContextOptions<TimeDbContext> options) : base(options)
