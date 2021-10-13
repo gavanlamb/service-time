@@ -9,9 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Time.Database;
+using Time.Database.Seeds;
 using Time.DbContext;
-using Time.DbContext.Extensions;
-using Time.DbContext.Seeds;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 namespace Time.Migrations

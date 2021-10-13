@@ -5,6 +5,7 @@ WORKDIR /expensely-time
 COPY "Time.sln" "Time.sln"
 COPY "src/Time.Api/Time.Api.csproj" "src/Time.Api/"
 COPY "src/Time.Database/Time.Database.csproj" "src/Time.Database/"
+COPY "src/Time.Database.Runner/Time.Database.Runner.csproj" "src/Time.Database.Runner/"
 COPY "tests/Time.Api.IntegrationTests/Time.Api.IntegrationTests.csproj" "tests/Time.Api.IntegrationTests/"
 COPY "tests/Time.Repository.UnitTests/Time.Repository.UnitTests.csproj" "tests/Time.Repository.UnitTests/"
 COPY "build/nuget.config" "nuget.config"
@@ -22,7 +23,6 @@ dotnet test --no-build --configuration Release --logger trx --results-directory 
 FROM base AS publish-api
 RUN dotnet publish "src/Time.Api/Time.Api.csproj" -c Release -o /app/publish --no-build
 
-
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-alpine AS api
 WORKDIR /app
 COPY --from=publish-api /app/publish .
@@ -30,16 +30,15 @@ ENTRYPOINT ["dotnet", "Time.Api.dll"]
 
 
 FROM base AS publish-migration
-RUN dotnet publish "src/Time.Migrations/Time.Migrations.csproj" -c Release -o /app/publish --no-build 
+RUN dotnet publish "src/Time.Database.Runner/Time.Database.Runner.csproj" -c Release -o /app/publish --no-build 
 
 
 FROM amazon/aws-lambda-dotnet:5.0 AS migration
 WORKDIR /var/task/
 COPY --from=publish-migration /app/publish .
-CMD ["Time.Migrations::Time.Migrations.Program::Handler"]
-
+CMD ["Time.Database.Runner::Time.Database.Runner.Program::Handler"]
 
 FROM amazon/aws-lambda-dotnet:5.0 AS migration-local
 WORKDIR /var/task/
 COPY --from=publish-migration /app/publish .
-ENTRYPOINT ["dotnet", "Time.Migrations.dll"]
+ENTRYPOINT ["dotnet", "Time.Database.Runner.dll"]
