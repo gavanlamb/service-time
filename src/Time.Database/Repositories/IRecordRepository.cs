@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using Time.DbContext.Entities;
+using Time.Database.Entities;
 
-namespace Time.DbContext.Repositories
+namespace Time.Database.Repositories
 {
     public interface IRecordRepository
     {
-        IEnumerable<RecordEntity> Get(
+        IEnumerable<Record> Get(
             string userId,
             int skip,
             int take);

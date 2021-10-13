@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Time.DbContext.Options
+namespace Time.Database.Options
 {
     public class Seed
     {

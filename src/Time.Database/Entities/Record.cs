@@ -1,8 +1,8 @@
 using System;
 
-namespace Time.DbContext.Entities
+namespace Time.Database.Entities
 {
-    public class RecordEntity
+    public class Record
     {
         public Guid Id { get; set; }
         

@@ -4,8 +4,7 @@ ARG PAT
 WORKDIR /expensely-time
 COPY "Time.sln" "Time.sln"
 COPY "src/Time.Api/Time.Api.csproj" "src/Time.Api/"
-COPY "src/Time.Migrations/Time.Migrations.csproj" "src/Time.Migrations/"
-COPY "src/Time.Repository/Time.Repository.csproj" "src/Time.Repository/"
+COPY "src/Time.Database/Time.Database.csproj" "src/Time.Database/"
 COPY "tests/Time.Api.IntegrationTests/Time.Api.IntegrationTests.csproj" "tests/Time.Api.IntegrationTests/"
 COPY "tests/Time.Repository.UnitTests/Time.Repository.UnitTests.csproj" "tests/Time.Repository.UnitTests/"
 COPY "build/nuget.config" "nuget.config"

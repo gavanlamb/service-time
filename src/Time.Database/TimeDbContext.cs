@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Time.DbContext.Configurations;
-using Time.DbContext.Entities;
+using Time.Database.Configurations;
+using Time.Database.Entities;
 
-namespace Time.DbContext
+namespace Time.Database
 {
     public class TimeDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
@@ -17,6 +17,6 @@ namespace Time.DbContext
             modelBuilder.ApplyConfiguration(new RecordConfiguration());
         }  
         
-        public DbSet<RecordEntity> Records { get; set; }
+        public DbSet<Record> Records { get; set; }
     }
 }

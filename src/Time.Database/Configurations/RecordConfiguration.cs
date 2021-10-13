@@ -1,13 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Time.DbContext.Entities;
+using Time.Database.Entities;
 
-namespace Time.DbContext.Configurations
+namespace Time.Database.Configurations
 {
-    public class RecordConfiguration : IEntityTypeConfiguration<RecordEntity>
+    public class RecordConfiguration : IEntityTypeConfiguration<Record>
     {
         public void Configure(
-            EntityTypeBuilder<RecordEntity> builder)
+            EntityTypeBuilder<Record> builder)
         {
             builder.ToTable("Record");
             builder.HasIndex(p => p.UserId);

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
-using Time.DbContext.Options;
+using Time.Database.Options;
 
-namespace Time.DbContext.Seeds
+namespace Time.Database.Seeds
 {
     public class Runner
     {

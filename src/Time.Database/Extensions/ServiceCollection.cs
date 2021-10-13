@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Time.DbContext.Options;
-using Time.DbContext.Repositories;
-using Time.DbContext.Seeds;
+using Time.Database.Options;
+using Time.Database.Repositories;
+using Time.Database.Seeds;
 
-namespace Time.DbContext.Extensions
+namespace Time.Database.Extensions
 {
     public static class ServiceCollection
     {

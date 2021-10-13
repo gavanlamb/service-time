@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using Time.DbContext.Entities;
+using Time.Database.Entities;
 
-namespace Time.DbContext.Repositories
+namespace Time.Database.Repositories
 {
     public class RecordRepository : IRecordRepository
     {
@@ -13,7 +13,7 @@ namespace Time.DbContext.Repositories
             _context = context;
         }
 
-        public IEnumerable<RecordEntity> Get(
+        public IEnumerable<Record> Get(
             string userId,
             int skip,
             int take)
