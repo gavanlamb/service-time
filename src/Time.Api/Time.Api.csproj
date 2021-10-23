@@ -35,7 +35,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Time.Repository\Time.Repository.csproj" />
+      <ProjectReference Include="..\Time.Database\Time.Database.csproj" />
     </ItemGroup>
 
 </Project>

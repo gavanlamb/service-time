@@ -11,7 +11,6 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Time.Database;
 using Time.Database.Seeds;
-using Time.DbContext;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 namespace Time.Migrations
@@ -67,7 +66,7 @@ namespace Time.Migrations
             var host = CreateHostBuilder(args).Build();
 
             using var scope = host.Services.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<TimeDbContext>();
+            var db = scope.ServiceProvider.GetRequiredService<TimeContext>();
             db.Database.Migrate();
             
             var runner = scope.ServiceProvider.GetRequiredService<Runner>();

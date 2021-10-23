@@ -4,10 +4,10 @@ using Time.Database.Entities;
 
 namespace Time.Database
 {
-    public class TimeDbContext : DbContext
+    public class TimeContext : DbContext
     {
-        public TimeDbContext(
-            DbContextOptions<TimeDbContext> options) : base(options)
+        public TimeContext(
+            DbContextOptions<TimeContext> options) : base(options)
         {
         }
         
@@ -15,7 +15,7 @@ namespace Time.Database
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new RecordConfiguration());
-        }  
+        }
         
         public DbSet<Record> Records { get; set; }
     }

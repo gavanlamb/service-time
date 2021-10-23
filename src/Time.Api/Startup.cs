@@ -15,7 +15,7 @@ using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Time.Api.Setup;
 using Time.Api.V1.Services;
-using Time.DbContext.Extensions;
+using Time.Database.Extensions;
 
 namespace Time.Api
 {

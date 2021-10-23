@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Time.Database.Options;
-using Time.Database.Repositories;
 using Time.Database.Seeds;
 
 namespace Time.Database.Extensions
@@ -14,10 +13,9 @@ namespace Time.Database.Extensions
             IConfiguration configuration,
             ServiceLifetime contextLifeCycle = ServiceLifetime.Scoped)
         {
-            services.AddDbContext<TimeDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("Default")), contextLifeCycle);
+            services.AddDbContext<TimeContext>(options => options.UseNpgsql(configuration.GetConnectionString("Default")), contextLifeCycle);
             services.AddScoped<Runner>();
             services.AddScoped<RecordSeeds>();
-            services.AddScoped<IRecordRepository, RecordRepository>();
             services.Configure<Seed>(configuration.GetSection("Data"));
             return services;
         }
