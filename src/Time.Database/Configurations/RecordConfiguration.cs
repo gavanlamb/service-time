@@ -9,8 +9,10 @@ namespace Time.Database.Configurations
         public void Configure(
             EntityTypeBuilder<Record> builder)
         {
-            builder.ToTable("Record");
             builder.HasIndex(p => p.UserId);
+            builder.Property(p => p.UserId).IsRequired();
+            
+            builder.Property(p => p.Name).IsRequired();
         }
     }
 }
