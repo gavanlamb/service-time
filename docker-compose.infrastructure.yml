@@ -1,0 +1,31 @@
+version: '3.6'
+services:
+  db:
+    container_name: db
+    restart: unless-stopped
+    image: postgis/postgis:10-3.0-alpine
+    environment:
+      POSTGRES_DB: time
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: Password21
+      PGPORT: 7010
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - ../local/database/data:/var/lib/postgresql/data
+    ports:
+      - 7010:7010
+
+  pgadmin:
+    container_name: pgadmin
+    restart: unless-stopped
+    image: dpage/pgadmin4:5.6
+    environment:
+      PGADMIN_DEFAULT_EMAIL: time@expensely.co
+      PGADMIN_DEFAULT_PASSWORD: Password21
+      PGADMIN_LISTEN_PORT: 80
+    depends_on:
+      - db
+    volumes:
+      - ../local/pgadmin/data:/var/lib/pgadmin
+    ports:
+      - 7011:80
