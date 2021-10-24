@@ -8,7 +8,7 @@ namespace Time.Database.Extensions
 {
     public static class ServiceCollection
     {
-        public static IServiceCollection AddTimeRepository(
+        public static IServiceCollection AddTimeContext(
             this IServiceCollection services,
             IConfiguration configuration,
             ServiceLifetime contextLifeCycle = ServiceLifetime.Scoped)

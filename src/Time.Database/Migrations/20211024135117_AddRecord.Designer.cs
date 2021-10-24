@@ -10,7 +10,7 @@ using Time.Database;
 namespace Time.Database.Migrations
 {
     [DbContext(typeof(TimeContext))]
-    [Migration("20211023062337_AddRecord")]
+    [Migration("20211024135117_AddRecord")]
     partial class AddRecord
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -18,7 +18,7 @@ namespace Time.Database.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.7")
+                .HasAnnotation("ProductVersion", "5.0.10")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
             modelBuilder.Entity("Time.Database.Entities.Record", b =>
@@ -29,7 +29,9 @@ namespace Time.Database.Migrations
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("timestamp without time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("current_timestamp at time zone 'UTC'");
 
                     b.Property<TimeSpan?>("Duration")
                         .HasColumnType("interval");
@@ -38,7 +40,9 @@ namespace Time.Database.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime?>("Modified")
-                        .HasColumnType("timestamp without time zone");
+                        .ValueGeneratedOnUpdate()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("current_timestamp at time zone 'UTC'");
 
                     b.Property<string>("Name")
                         .IsRequired()

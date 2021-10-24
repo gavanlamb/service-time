@@ -19,8 +19,8 @@ namespace Time.Database.Migrations
                     Start = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     End = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Duration = table.Column<TimeSpan>(type: "interval", nullable: true),
-                    Created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    Modified = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    Created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValueSql: "current_timestamp at time zone 'UTC'"),
+                    Modified = table.Column<DateTime>(type: "timestamp without time zone", nullable: true, defaultValueSql: "current_timestamp at time zone 'UTC'")
                 },
                 constraints: table =>
                 {

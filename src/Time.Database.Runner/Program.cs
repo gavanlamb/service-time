@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Time.Database;
+using Time.Database.Extensions;
 using Time.Database.Seeds;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
@@ -98,7 +99,7 @@ namespace Time.Migrations
 
                     Logging.AddSerilog(hostContext.Configuration);
 
-                    services.AddTimeRepository(
+                    services.AddTimeContext(
                         hostContext.Configuration, 
                         ServiceLifetime.Singleton);
                 });
