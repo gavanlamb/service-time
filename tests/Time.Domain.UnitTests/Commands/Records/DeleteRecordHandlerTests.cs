@@ -1,9 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 using Time.Database;
 using Time.Domain.Commands.Records;
 using Xunit;
@@ -14,31 +12,11 @@ namespace Time.Domain.UnitTests.Commands.Records
 {
     public class DeleteRecordHandlerTests
     {
-        private readonly Mock<IMapper> _mapper;
         private readonly TimeContext _context;
         private readonly DeleteRecordHandler _handler;
 
         public DeleteRecordHandlerTests()
         {
-            _mapper = new Mock<IMapper>();
-            _mapper.Setup(x => x.Map<RecordEntity>(It.IsAny<CreateRecordCommand>()))
-                .Returns((CreateRecordCommand a) => new RecordEntity
-                {
-                    Name = a.Name, 
-                    Start = a.Start, 
-                    UserId = a.UserId
-                });
-            _mapper.Setup(x => x.Map<RecordDomain>(It.IsAny<RecordEntity>()))
-                .Returns((RecordEntity a) => new RecordDomain
-                {
-                    Id = a.Id, 
-                    Duration = a.Duration,
-                    Name = a.Name, 
-                    Start = a.Start, 
-                    UserId = a.UserId,
-                    End = a.End
-                });
-            
             var options = new DbContextOptionsBuilder<TimeContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;

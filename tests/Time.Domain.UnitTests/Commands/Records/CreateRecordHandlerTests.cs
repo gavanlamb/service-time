@@ -3,9 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 using Time.Database;
 using Time.Domain.Commands.Records;
+using Time.Domain.Profiles;
 using Xunit;
 using RecordDomain = Time.Domain.Models.Record;
 using RecordEntity = Time.Database.Entities.Record;
@@ -14,29 +14,12 @@ namespace Time.Domain.UnitTests.Commands.Records
 {
     public class CreateRecordHandlerTests
     {
-        private readonly Mock<IMapper> _mapper;
+        private readonly IMapper _mapper;
         private readonly TimeContext _context;
         private readonly CreateRecordHandler _handler;
         public CreateRecordHandlerTests()
         {
-            _mapper = new Mock<IMapper>();
-            _mapper.Setup(x => x.Map<RecordEntity>(It.IsAny<CreateRecordCommand>()))
-                .Returns((CreateRecordCommand a) => new RecordEntity
-                {
-                    Name = a.Name, 
-                    Start = a.Start, 
-                    UserId = a.UserId
-                });
-            _mapper.Setup(x => x.Map<RecordDomain>(It.IsAny<RecordEntity>()))
-                .Returns((RecordEntity a) => new RecordDomain
-                {
-                    Id = a.Id, 
-                    Duration = a.Duration,
-                    Name = a.Name, 
-                    Start = a.Start, 
-                    UserId = a.UserId,
-                    End = a.End
-                });
+            _mapper = new MapperConfiguration(opts => opts.AddProfile(typeof(RecordProfile))).CreateMapper();
             
             var options = new DbContextOptionsBuilder<TimeContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
@@ -67,7 +50,7 @@ namespace Time.Domain.UnitTests.Commands.Records
             });
             _context.SaveChanges();
                 
-            _handler = new CreateRecordHandler(_context, _mapper.Object);
+            _handler = new CreateRecordHandler(_context, _mapper);
         }
 
         [Fact]
