@@ -31,10 +31,6 @@ ProjectSection(SolutionItems) = preProject
 	docker-compose.yml = docker-compose.yml
 EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Api.IntegrationTests", "tests\Time.Api.IntegrationTests\Time.Api.IntegrationTests.csproj", "{6622F65C-B4BE-4F45-9F3C-47F03AEB18A0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Repository.UnitTests", "tests\Time.Repository.UnitTests\Time.Repository.UnitTests.csproj", "{332BC77A-2735-41D8-9072-400AF512BE1C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "variables", "variables", "{D832FFC2-D41F-4BE2-9D5D-373B2D6E9388}"
 ProjectSection(SolutionItems) = preProject
 	infrastructure\variables\production.ap-southeast-2.tfvars = infrastructure\variables\production.ap-southeast-2.tfvars
@@ -52,7 +48,7 @@ ProjectSection(SolutionItems) = preProject
 	build\nuget.config = build\nuget.config
 EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Migrations", "src\Time.Migrations\Time.Migrations.csproj", "{D3689F9B-8DD9-4A22-A3B3-600A8B310270}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Database.Runner", "src\Time.Database.Runner\Time.Database.Runner.csproj", "{D3689F9B-8DD9-4A22-A3B3-600A8B310270}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{8F0DA939-E41B-47DA-8545-60FA2524BC91}"
 ProjectSection(SolutionItems) = preProject
@@ -62,7 +58,7 @@ EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Domain", "src\Time.Domain\Time.Domain.csproj", "{5B0AB0AE-47BD-4BDE-A68A-A02BD6B10AC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Services", "src\Time.Services\Time.Services.csproj", "{35E8562A-EA80-4268-B51F-265715F58880}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Domain.UnitTests", "tests\Time.Domain.UnitTests\Time.Domain.UnitTests.csproj", "{2056D836-C10F-40B9-800C-16958208180A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,14 +74,6 @@ Global
 		{13C0B97A-AD3C-4511-B790-BA72EABFE37F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13C0B97A-AD3C-4511-B790-BA72EABFE37F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13C0B97A-AD3C-4511-B790-BA72EABFE37F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6622F65C-B4BE-4F45-9F3C-47F03AEB18A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6622F65C-B4BE-4F45-9F3C-47F03AEB18A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6622F65C-B4BE-4F45-9F3C-47F03AEB18A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6622F65C-B4BE-4F45-9F3C-47F03AEB18A0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{332BC77A-2735-41D8-9072-400AF512BE1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{332BC77A-2735-41D8-9072-400AF512BE1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{332BC77A-2735-41D8-9072-400AF512BE1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{332BC77A-2735-41D8-9072-400AF512BE1C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D3689F9B-8DD9-4A22-A3B3-600A8B310270}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D3689F9B-8DD9-4A22-A3B3-600A8B310270}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3689F9B-8DD9-4A22-A3B3-600A8B310270}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -94,21 +82,19 @@ Global
 		{5B0AB0AE-47BD-4BDE-A68A-A02BD6B10AC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B0AB0AE-47BD-4BDE-A68A-A02BD6B10AC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B0AB0AE-47BD-4BDE-A68A-A02BD6B10AC3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{35E8562A-EA80-4268-B51F-265715F58880}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{35E8562A-EA80-4268-B51F-265715F58880}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{35E8562A-EA80-4268-B51F-265715F58880}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{35E8562A-EA80-4268-B51F-265715F58880}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2056D836-C10F-40B9-800C-16958208180A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2056D836-C10F-40B9-800C-16958208180A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2056D836-C10F-40B9-800C-16958208180A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2056D836-C10F-40B9-800C-16958208180A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E96348E7-8CBF-4673-9461-3DD4FAF9BB16} = {2C927D98-2973-4A2E-B2E7-F0C06BE0CF5D}
 		{13C0B97A-AD3C-4511-B790-BA72EABFE37F} = {2C927D98-2973-4A2E-B2E7-F0C06BE0CF5D}
-		{6622F65C-B4BE-4F45-9F3C-47F03AEB18A0} = {D587B9B5-2365-4741-93FF-4DBBD6F56BFB}
-		{332BC77A-2735-41D8-9072-400AF512BE1C} = {D587B9B5-2365-4741-93FF-4DBBD6F56BFB}
 		{D832FFC2-D41F-4BE2-9D5D-373B2D6E9388} = {A7416DF9-5625-4A36-BAF9-BAE461893228}
 		{48F63336-2780-4CC8-8E82-793E25C24A45} = {A7416DF9-5625-4A36-BAF9-BAE461893228}
 		{D3689F9B-8DD9-4A22-A3B3-600A8B310270} = {2C927D98-2973-4A2E-B2E7-F0C06BE0CF5D}
 		{8F0DA939-E41B-47DA-8545-60FA2524BC91} = {A9FC12F9-2A43-4DAA-A48C-C357C253C403}
 		{5B0AB0AE-47BD-4BDE-A68A-A02BD6B10AC3} = {2C927D98-2973-4A2E-B2E7-F0C06BE0CF5D}
-		{35E8562A-EA80-4268-B51F-265715F58880} = {2C927D98-2973-4A2E-B2E7-F0C06BE0CF5D}
+		{2056D836-C10F-40B9-800C-16958208180A} = {D587B9B5-2365-4741-93FF-4DBBD6F56BFB}
 	EndGlobalSection
 EndGlobal
