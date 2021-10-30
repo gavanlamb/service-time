@@ -1,13 +1,12 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Time.Database;
 
 namespace Time.Domain.Commands.Records
 {
-    public class DeleteRecordHandler : IRequestHandler<DeleteRecordCommand, bool>
+    public class DeleteRecordHandler : ICommandHandler<DeleteRecordCommand, bool>
     {
         private readonly TimeContext _context;
         

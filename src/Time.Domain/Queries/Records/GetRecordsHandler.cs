@@ -11,7 +11,7 @@ using Time.Domain.Models;
 
 namespace Time.Domain.Queries.Records
 {
-    public class GetRecordsHandler: IRequestHandler<GetRecordsQuery, Paged<Record>>
+    public class GetRecordsHandler: IQueryHandler<GetRecordsQuery, Paged<Record>>
     {
         private readonly TimeContext _context;
         private readonly IMapper _mapper;

@@ -1,9 +1,8 @@
-using MediatR;
 using Time.Domain.Models;
 
 namespace Time.Domain.Queries.Records
 {
-    public class GetRecordsQuery : IQuery, IRequest<Paged<Record>>
+    public class GetRecordsQuery : IQuery<Paged<Record>>
     {
         public int PageNumber { get; init; }
 

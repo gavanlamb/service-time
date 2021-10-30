@@ -11,7 +11,7 @@ using RecordEntity = Time.Database.Entities.Record;
 
 namespace Time.Domain.Queries.Records
 {
-    public class GetRecordByIdHandler : IRequestHandler<GetRecordByIdQuery, Record>
+    public class GetRecordByIdHandler : IQueryHandler<GetRecordByIdQuery, Record>
     {
         private readonly TimeContext _context;
         private readonly IMapper _mapper;

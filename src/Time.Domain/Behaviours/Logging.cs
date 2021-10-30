@@ -6,7 +6,7 @@ using Time.Domain.Commands;
 
 namespace Time.Domain.Behaviours
 {
-    public class Logging<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : ICommand
+    public class Logging<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : ICommand<TResponse>
     {
         private readonly ILogger<Logging<TRequest, TResponse>> _logger;
         

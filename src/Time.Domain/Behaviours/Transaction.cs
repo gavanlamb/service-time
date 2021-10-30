@@ -6,7 +6,7 @@ using Time.Domain.Commands;
 
 namespace Time.Domain.Behaviours
 {
-    public class Transaction<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : ICommand
+    public class Transaction<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : ICommand<TResponse>
     {
         private readonly TimeContext _timeContext;
 

@@ -1,17 +1,18 @@
 using System;
-using MediatR;
 using Time.Domain.Models;
 
 namespace Time.Domain.Commands.Records
 {
-    public class UpdateRecordCommand: ICommand, IRequest<Record>
+    public class UpdateRecordCommand: ICommand<Record>
     {
-        public long Id { get; set; }
+        public long Id { get; init; }
 
-        public string Name { get; set; }
+        public string UserId { get; init; }
         
-        public DateTime Start { get; set; }
+        public string Name { get; init; }
         
-        public DateTime? End { get; set; }
+        public DateTime Start { get; init; }
+        
+        public DateTime? End { get; init; }
     }
 }

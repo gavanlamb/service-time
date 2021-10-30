@@ -1,14 +1,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using MediatR;
 using Time.Database;
 using Time.Domain.Models;
 using RecordEntity = Time.Database.Entities.Record;
 
 namespace Time.Domain.Commands.Records
 {
-    public class CreateRecordHandler : IRequestHandler<CreateRecordCommand, Record>
+    public class CreateRecordHandler : ICommandHandler<CreateRecordCommand, Record>
     {
         private readonly TimeContext _context;
         private readonly IMapper _mapper;
