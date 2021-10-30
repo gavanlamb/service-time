@@ -14,7 +14,6 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Time.Api.Setup;
-using Time.Api.V1.Services;
 using Time.Database.Extensions;
 
 namespace Time.Api
@@ -57,15 +56,13 @@ namespace Time.Api
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigureOptions>();
             services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
 
-            services.AddTimeRepository(Configuration);
+            services.AddTimeContext(Configuration);
 
             Logging.AddSerilog(Configuration);
 
             services.AddHealthChecks();
 
             services.AddCognitoJwt(Configuration);
-
-            services.AddScoped<IRecordService, RecordService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)

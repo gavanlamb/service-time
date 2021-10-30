@@ -1,7 +1,6 @@
 using System;
 
 namespace Time.Api.V1.Models
-
 {
     public class RecordDto
     {

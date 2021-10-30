@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Expensely.Authentication.Cognito.Jwt.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Time.Api.V1.Models;
-using Time.Api.V1.Services;
 
 namespace Time.Api.V1.Controllers
 {
@@ -17,15 +14,12 @@ namespace Time.Api.V1.Controllers
     [Produces("application/json")]
     public class RecordController : ControllerBase
     {
-        private readonly IRecordService _recordService;
         private readonly ILogger<RecordController> _logger;
 
         public RecordController(
-            ILogger<RecordController> logger,
-            IRecordService recordService)
+            ILogger<RecordController> logger)
         {
             _logger = logger;
-            _recordService = recordService;
         }
 
         /// <summary>
@@ -43,15 +37,7 @@ namespace Time.Api.V1.Controllers
         {
             try
             {
-                var userId = User.GetSubject();
-                var records = _recordService.Get(userId);
-                if (records.Any())
-                {
-                    return Ok(records);
-                }
-
                 return NoContent();
-
             }
             catch (Exception e)
             {
