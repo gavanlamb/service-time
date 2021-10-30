@@ -6,7 +6,7 @@ using Xunit;
 using RecordDomain = Time.Domain.Models.Record;
 using RecordEntity = Time.Database.Entities.Record;
 
-namespace Time.Domain.UnitTests.Profile
+namespace Time.Domain.UnitTests.Profiles
 {
     public class RecordProfileTests
     {
