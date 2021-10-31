@@ -12,6 +12,8 @@ namespace Time.Domain.Extensions
             this IServiceCollection services,
             IConfiguration configuration)
         {
+            services.AddAutoMapper(typeof(ServiceCollection));
+            
             services.AddTimeContext(configuration);
             services.AddMediatR(typeof(ServiceCollection));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Validation<,>));
