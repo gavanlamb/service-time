@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Text.Json;
 using Expensely.Authentication.Cognito.Jwt.Extensions;
 using Expensely.Logging.Serilog;
@@ -10,11 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Time.Api.Setup;
-using Time.Database.Extensions;
+using Time.Domain.Extensions;
 
 namespace Time.Api
 {
@@ -56,7 +54,7 @@ namespace Time.Api
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigureOptions>();
             services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
 
-            services.AddTimeContext(Configuration);
+            services.AddTimeDomain(Configuration);
 
             Logging.AddSerilog(Configuration);
 
@@ -71,23 +69,7 @@ namespace Time.Api
             {
                 app.UseDeveloperExceptionPage();
                 
-                app.UseSwagger(options =>
-                {
-                    options.PreSerializeFilters.Add((swagger, req) =>
-                    {
-                        swagger.Servers = new List<OpenApiServer>
-                        {
-                            new()
-                            {
-                                Url = $"https://{req.Host}"
-                            },
-                            new()
-                            {
-                                Url = $"http://{req.Host}"
-                            }
-                        };
-                    });
-                });
+                app.UseSwagger();
 
                 app.UseSwaggerUI(options =>
                 {
@@ -108,10 +90,6 @@ namespace Time.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHealthChecks("/health");
-            });
-
-            app.UseEndpoints(endpoints =>
-            {
                 endpoints.MapControllers();
             });
         }
