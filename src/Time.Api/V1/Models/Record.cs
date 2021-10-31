@@ -32,6 +32,6 @@ namespace Time.Api.V1.Models
         /// The duration for this record. This might be null if the end date and time is not set.
         /// </summary>
         /// <example></example>
-        public string Duration { get; set; }
+        public TimeSpan Duration { get; set; }
     }
 }
