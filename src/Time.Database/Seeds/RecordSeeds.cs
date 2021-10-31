@@ -34,7 +34,9 @@ namespace Time.Database.Seeds
                         UserId = userId,
                         Start = start,
                         End = end,
-                        Duration = duration
+                        Duration = duration,
+                        Created = start,
+                        Modified = end
                     });
                     
                     start = DateTime.UtcNow.AddMinutes(-3245);
@@ -46,7 +48,9 @@ namespace Time.Database.Seeds
                         UserId = userId,
                         Start = start,
                         End = end,
-                        Duration = duration
+                        Duration = duration,
+                        Created = start,
+                        Modified = end
                     });
                     
                     start = DateTime.UtcNow.AddMinutes(-3214);
@@ -58,7 +62,9 @@ namespace Time.Database.Seeds
                         UserId = userId,
                         Start = start,
                         End = end,
-                        Duration = duration
+                        Duration = duration,
+                        Created = start,
+                        Modified = end
                     });
                     
                     start = DateTime.UtcNow.AddMinutes(-3178);
@@ -68,9 +74,11 @@ namespace Time.Database.Seeds
                     {
                         Name = "Logging implementation",
                         UserId = userId,
-                        Start = DateTime.UtcNow.AddMinutes(-3178),
-                        End = DateTime.UtcNow.AddMinutes(-3118),
-                        Duration = duration
+                        Start = start,
+                        End = end,
+                        Duration = duration,
+                        Created = start,
+                        Modified = end
                     });
                     
                     start = DateTime.UtcNow.AddMinutes(-3117);
@@ -80,9 +88,11 @@ namespace Time.Database.Seeds
                     {
                         Name = "Create scripts to create cognito user",
                         UserId = userId,
-                        Start = DateTime.UtcNow.AddMinutes(-3117),
-                        End = DateTime.UtcNow.AddMinutes(-3018),
-                        Duration = duration
+                        Start = start,
+                        End = end,
+                        Duration = duration,
+                        Created = start,
+                        Modified = end
                     });
 
                     _db.SaveChanges();
