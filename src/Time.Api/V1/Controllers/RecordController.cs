@@ -30,7 +30,6 @@ namespace Time.Api.V1.Controllers
         // Post
         [HttpPost]
         // TODO attributes
-        
         public async Task<ActionResult<Record>> Post(
             [FromBody] CreateRecord createRecord)
         {
@@ -38,6 +37,25 @@ namespace Time.Api.V1.Controllers
             {
                 Name = createRecord.Name,
                 Start = createRecord.Start,
+                UserId = "user id"
+            };
+            var record = await _mediatr.Send(command);
+            return Ok(record);
+        }
+
+        // Put
+        [HttpPut("{id:long}")]
+        // TODO attributes
+        public async Task<ActionResult<Record>> Put(
+            [FromRoute] long id,
+            [FromBody] UpdateRecord updateRecord)
+        {
+            var command = new UpdateRecordCommand
+            {
+                Id = id,
+                Name = updateRecord.Name,
+                Start = updateRecord.Start,
+                End = updateRecord.End,
                 UserId = "user id"
             };
             var record = await _mediatr.Send(command);

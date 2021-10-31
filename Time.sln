@@ -29,6 +29,7 @@ ProjectSection(SolutionItems) = preProject
 	Dockerfile = Dockerfile
 	README.md = README.md
 	docker-compose.yml = docker-compose.yml
+	docker-compose.infrastructure.yml = docker-compose.infrastructure.yml
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "variables", "variables", "{D832FFC2-D41F-4BE2-9D5D-373B2D6E9388}"
