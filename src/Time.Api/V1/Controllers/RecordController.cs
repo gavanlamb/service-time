@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Time.Api.V1.Models;
+using Time.Domain.Commands.Records;
 
 namespace Time.Api.V1.Controllers
 {
@@ -15,12 +17,41 @@ namespace Time.Api.V1.Controllers
     public class RecordController : ControllerBase
     {
         private readonly ILogger<RecordController> _logger;
+        private readonly IMediator _mediatr;
 
         public RecordController(
-            ILogger<RecordController> logger)
+            ILogger<RecordController> logger,
+            IMediator mediatr)
         {
             _logger = logger;
+            _mediatr = mediatr;
         }
+
+        // Post
+        [HttpPost]
+        // TODO attributes
+        
+        public async Task<ActionResult<Record>> Post(
+            [FromBody] CreateRecord createRecord)
+        {
+            var command = new CreateRecordCommand
+            {
+                Name = createRecord.Name,
+                Start = createRecord.Start,
+                UserId = "user id"
+            };
+            var record = await _mediatr.Send(command);
+            return Ok(record);
+        }
+
+        // Put
+        
+        // Delete
+        
+        // Get by Id
+        
+        // Fetch - paged
+
 
         /// <summary>
         /// Get the time records for the authorised user. This endpoint implements pagination
@@ -33,7 +64,7 @@ namespace Time.Api.V1.Controllers
         /// <response code="500">Oops! An error occurred.</response>
         [HttpGet]
         [Authorize("read")]
-        public async Task<ActionResult<IEnumerable<RecordDto>>> Get()
+        public async Task<ActionResult<IEnumerable<Record>>> Get()
         {
             try
             {

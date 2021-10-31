@@ -36,6 +36,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Time.Database\Time.Database.csproj" />
+      <ProjectReference Include="..\Time.Domain\Time.Domain.csproj" />
     </ItemGroup>
 
 </Project>
