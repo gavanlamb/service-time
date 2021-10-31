@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -25,6 +26,7 @@ namespace Time.Domain.Commands.Records
             CancellationToken cancellationToken)
         {
             var recordEntity = _mapper.Map<RecordEntity>(request);
+            recordEntity.Created = DateTime.UtcNow;
             
             await _context.Records.AddAsync(
                 recordEntity, 

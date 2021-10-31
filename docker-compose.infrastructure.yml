@@ -11,7 +11,7 @@ services:
       PGPORT: 7010
       PGDATA: /var/lib/postgresql/data
     volumes:
-      - ../local/database/data:/var/lib/postgresql/data
+      - ./local/database/data:/var/lib/postgresql/data
     ports:
       - 7010:7010
 
@@ -26,6 +26,6 @@ services:
     depends_on:
       - db
     volumes:
-      - ../local/pgadmin/data:/var/lib/pgadmin
+      - ./local/pgadmin/data:/var/lib/pgadmin
     ports:
       - 7011:80
