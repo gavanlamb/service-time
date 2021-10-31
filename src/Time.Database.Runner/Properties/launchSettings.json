@@ -1,6 +1,6 @@
 ﻿{
   "profiles": {
-    "Time.Migrations": {
+    "Time.Database.Runner": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "environmentVariables": {
