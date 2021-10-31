@@ -7,8 +7,8 @@ namespace Time.Api.V1.Models
         /// <summary>
         /// Identifier for the time record. This is globally unique.
         /// </summary>
-        /// <example></example>
-        public Guid Id { get; set; }
+        /// <example>213</example>
+        public long Id { get; set; }
         
         /// <summary>
         /// Name of the time record.
@@ -19,17 +19,17 @@ namespace Time.Api.V1.Models
         /// <summary>
         /// The start date and time, in UTC, for this record.
         /// </summary>
-        /// <example></example>
+        /// <example>2021-10-31T04:46:32.3044710Z</example>
         public DateTime Start { get; set; }
         
         /// <summary>
         /// The end date and time, in UTC for, this record. This value might be null if the record is still active.
         /// </summary>
-        /// <example></example>
+        /// <example>2021-10-31T06:46:32.3044710Z</example>
         public DateTime? End { get; set; }
 
         /// <summary>
-        /// The duration for this record. This might be null if the end date and time is not set.
+        /// The duration for this record. This might be null if the end time is not set.
         /// </summary>
         /// <example></example>
         public TimeSpan Duration { get; set; }
