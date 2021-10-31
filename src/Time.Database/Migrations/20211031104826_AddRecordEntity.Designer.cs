@@ -10,8 +10,8 @@ using Time.Database;
 namespace Time.Database.Migrations
 {
     [DbContext(typeof(TimeContext))]
-    [Migration("20211024135117_AddRecord")]
-    partial class AddRecord
+    [Migration("20211031104826_AddRecordEntity")]
+    partial class AddRecordEntity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,9 +29,7 @@ namespace Time.Database.Migrations
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<DateTime>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("current_timestamp at time zone 'UTC'");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<TimeSpan?>("Duration")
                         .HasColumnType("interval");
@@ -40,9 +38,7 @@ namespace Time.Database.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime?>("Modified")
-                        .ValueGeneratedOnUpdate()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("current_timestamp at time zone 'UTC'");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -27,9 +27,7 @@ namespace Time.Database.Migrations
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<DateTime>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("current_timestamp at time zone 'UTC'");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<TimeSpan?>("Duration")
                         .HasColumnType("interval");
@@ -38,9 +36,7 @@ namespace Time.Database.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime?>("Modified")
-                        .ValueGeneratedOnUpdate()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("current_timestamp at time zone 'UTC'");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
