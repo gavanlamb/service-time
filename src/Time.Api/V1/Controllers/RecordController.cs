@@ -34,6 +34,7 @@ namespace Time.Api.V1.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesErrorResponseType(typeof(void))]
         public async Task<ActionResult<Record>> Post(
             [FromBody] CreateRecord createRecord)
         {

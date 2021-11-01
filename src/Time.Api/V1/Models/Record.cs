@@ -2,6 +2,9 @@ using System;
 
 namespace Time.Api.V1.Models
 {
+    /// <summary>
+    /// Record item
+    /// </summary>
     public class Record
     {
         /// <summary>
