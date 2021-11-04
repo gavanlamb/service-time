@@ -9,7 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="Expensely.Logging.Serilog" Version="0.0.19" />
-        <PackageReference Include="Expensely.Authentication.Cognito.Jwt" Version="0.0.8" />
+        <PackageReference Include="Expensely.Authentication.Cognito.Jwt" Version="0.0.10" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.10" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
