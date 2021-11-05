@@ -28,8 +28,7 @@ namespace Time.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-                .AddControllers()
+            services.AddControllers()
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
@@ -38,29 +37,28 @@ namespace Time.Api
 
             services.AddMvcCore()
                 .AddApiExplorer();
-
             services.AddApiVersioning(options =>
             {
                 options.ReportApiVersions = true;
                 options.DefaultApiVersion = new ApiVersion(1, 0);
             });
-
             services.AddVersionedApiExplorer(options =>
             {
                 options.GroupNameFormat = "'v'VVV";
                 options.SubstituteApiVersionInUrl = true;
             });
-
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigureOptions>();
             services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
-
-            services.AddTimeDomain(Configuration);
-
-            Logging.AddSerilog(Configuration);
-
+            
             services.AddHealthChecks();
-
+            
             services.AddCognitoJwt(Configuration);
+            
+            Logging.AddSerilog(Configuration);
+            
+            services.AddAutoMapper(typeof(Startup));
+            
+            services.AddTimeDomain(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
