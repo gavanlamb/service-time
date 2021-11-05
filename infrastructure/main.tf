@@ -259,7 +259,35 @@ resource "aws_ecs_task_definition" "api" {
         {
           name = "DOTNET_ENVIRONMENT",
           value = var.environment
-        }
+        },
+        {
+          name = "Auth__UserPoolId",
+          value = local.user_pool_id
+        },
+        {
+          name = "Auth__JwtKeySetUrl",
+          value = local.jwt_key_set_url
+        },
+        {
+          name = "Auth__Issuer",
+          value = local.issuer
+        },
+#        {
+#          name = "Auth__Scopes__create__0",
+#          value = aws_cognito_resource_server.time.scope_identifiers.create
+#        },
+#        {
+#          name = "Auth__Scopes__update__0",
+#          value = aws_cognito_resource_server.time.scope_identifiers.update
+#        },
+#        {
+#          name = "Auth__Scopes__delete__0",
+#          value = aws_cognito_resource_server.time.scope_identifiers.delete
+#        },
+#        {
+#          name = "Auth__Scopes__read__0",
+#          value = aws_cognito_resource_server.time.scope_identifiers
+#        }
       ]
       portMappings = [
         {
@@ -487,5 +515,5 @@ resource "aws_cognito_resource_server" "time" {
     scope_description = "Permission to update records for Time API"
   }
 
-  user_pool_id = sort(data.aws_cognito_user_pools.expensely.ids)[0]
+  user_pool_id = local.user_pool_id
 }

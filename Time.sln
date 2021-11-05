@@ -22,6 +22,7 @@ ProjectSection(SolutionItems) = preProject
 	infrastructure\main.tf = infrastructure\main.tf
 	infrastructure\providers.tf = infrastructure\providers.tf
 	infrastructure\variables.tf = infrastructure\variables.tf
+	infrastructure\outputs.tf = infrastructure\outputs.tf
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items ", "solution items ", "{4218576B-0FCF-4CE1-A9F2-58396D39920B}"

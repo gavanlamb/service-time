@@ -95,10 +95,14 @@ locals {
   migration_name = "${lower(var.application_name)}-migration-${lower(var.environment)}"
 
   api_url = "${var.subdomain}.${trimsuffix(data.aws_route53_zone.expensely_io.name, ".")}"
+  
+  user_pool_id = sort(data.aws_cognito_user_pools.expensely.ids)[0]
+  jwt_key_set_url = "https://cognito-idp.${var.region}.amazonaws.com/${local.user_pool_id}/.well-known/jwks.json"
+  issuer = "https://cognito-idp.${var.region}.amazonaws.com/${local.user_pool_id}"
 
   default_tags = {
     Application = "Expensely"
-    Team = "Tracker"
+    Team = "Time"
     ManagedBy = "Terraform"
     Environment = var.environment
   }
