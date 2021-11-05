@@ -67,19 +67,19 @@ namespace Time.Api
             if (env.IsDevelopment() || env.EnvironmentName.StartsWith("Preview"))
             {
                 app.UseDeveloperExceptionPage();
-                
-                app.UseSwagger();
-
-                app.UseSwaggerUI(options =>
-                {
-                    foreach (var desc in provider.ApiVersionDescriptions)
-                    {
-                        options.SwaggerEndpoint($"/swagger/{desc.GroupName}/swagger.json", $"Version {desc.ApiVersion}");
-                        options.DefaultModelsExpandDepth(-1);
-                    }
-                });
             }
 
+            app.UseSwagger();
+
+            app.UseSwaggerUI(options =>
+            {
+                foreach (var desc in provider.ApiVersionDescriptions)
+                {
+                    options.SwaggerEndpoint($"/swagger/{desc.GroupName}/swagger.json", $"Version {desc.ApiVersion}");
+                    options.DefaultModelsExpandDepth(-1);
+                }
+            });
+            
             app.UseSerilogRequestLogging();
 
             app.UseMiddleware(typeof(ErrorHandling));
