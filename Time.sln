@@ -55,6 +55,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{
 ProjectSection(SolutionItems) = preProject
 	pipelines\templates\environment.create.yml = pipelines\templates\environment.create.yml
 	pipelines\templates\environment.destroy.yml = pipelines\templates\environment.destroy.yml
+	pipelines\templates\build.yml = pipelines\templates\build.yml
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Domain", "src\Time.Domain\Time.Domain.csproj", "{5B0AB0AE-47BD-4BDE-A68A-A02BD6B10AC3}"
