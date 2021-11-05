@@ -58,7 +58,8 @@ namespace Time.Domain.UnitTests.Queries.Records
         {
             var command = new GetRecordByIdQuery
             {
-                Id = 1
+                Id = 1,
+                UserId = "user-id0"
             };
             
             var record = await _handler.Handle(command, CancellationToken.None);
