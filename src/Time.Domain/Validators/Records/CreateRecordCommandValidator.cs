@@ -1,7 +1,7 @@
 using FluentValidation;
 using Time.Domain.Commands.Records;
 
-namespace Time.Domain.Validators
+namespace Time.Domain.Validators.Records
 {
     public class CreateRecordCommandValidator : AbstractValidator<CreateRecordCommand>
     {

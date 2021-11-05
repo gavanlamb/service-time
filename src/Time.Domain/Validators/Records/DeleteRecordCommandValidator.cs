@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Time.Database;
 using Time.Domain.Commands.Records;
 
-namespace Time.Domain.Validators
+namespace Time.Domain.Validators.Records
 {
     public class DeleteRecordCommandValidator : AbstractValidator<DeleteRecordCommand>
     {
