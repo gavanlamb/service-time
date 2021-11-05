@@ -5,7 +5,7 @@
         <UserSecretsId>dotnet-Time.Migrations-B7EBEF10-DA5F-4312-A3BE-87A0CF9C2536</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <PackageId>Time.Database.Runner</PackageId>
-        <RootNamespace>Time.Migrations</RootNamespace>
+        <RootNamespace>Time.Database.Runner</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

@@ -9,12 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Time.Database;
 using Time.Database.Extensions;
-using Time.Database.Seeds;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
-namespace Time.Migrations
+namespace Time.Database.Runner
 {
     public class Program
     {
@@ -70,7 +68,7 @@ namespace Time.Migrations
             var db = scope.ServiceProvider.GetRequiredService<TimeContext>();
             db.Database.Migrate();
             
-            var runner = scope.ServiceProvider.GetRequiredService<Runner>();
+            var runner = scope.ServiceProvider.GetRequiredService<Seeds.Runner>();
             runner.Run();
         }
         
