@@ -20,6 +20,10 @@ namespace Time.Api.V1.Controllers
     [ApiVersion("1.0")]
     [Route("v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(GeneralException), StatusCodes.Status500InternalServerError)]
+    [ProducesErrorResponseType(typeof(void))]
     public class RecordController : ControllerBase
     {
         private readonly ILogger<RecordController> _logger;
@@ -44,11 +48,7 @@ namespace Time.Api.V1.Controllers
         [HttpPost]
         [Authorize("create")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesErrorResponseType(typeof(void))]
+        [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Record>> Post(
             [FromBody] CreateRecord createRecord)
         {
@@ -72,11 +72,7 @@ namespace Time.Api.V1.Controllers
         [HttpPut("{id:long}")]
         [Authorize("update")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesErrorResponseType(typeof(void))]
+        [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Record>> Put(
             [FromRoute] long id,
             [FromBody] UpdateRecord updateRecord)
@@ -105,11 +101,7 @@ namespace Time.Api.V1.Controllers
         [HttpDelete("{id:long}")]
         [Authorize("delete")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesErrorResponseType(typeof(void))]
+        [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Delete(
             [FromRoute] long id)
         {
@@ -130,11 +122,6 @@ namespace Time.Api.V1.Controllers
         [HttpGet("{id:long}")]
         [Authorize("read")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesErrorResponseType(typeof(void))]
         public async Task<ActionResult<Record>> Get(
             [FromRoute] long id)
         {
@@ -157,26 +144,22 @@ namespace Time.Api.V1.Controllers
         /// Get records
         /// </summary>
         /// <param name="pageNumber">Page number to retrieve</param>
-        /// <param name="PageSize">Amount of items to retrieve</param>
+        /// <param name="pageSize">Amount of items to retrieve</param>
         /// <returns>A collection of records</returns>
         [HttpGet]
         [Authorize("read")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesErrorResponseType(typeof(void))]
         public async Task<ActionResult<IEnumerable<Record>>> Fetch(
             [FromQuery] int pageNumber,
-            [FromQuery] int PageSize)
+            [FromQuery] int pageSize)
         {
             var userId = HttpContext.User.GetSubject();
             
             var query = new GetRecordsQuery
             {
                 PageNumber = pageNumber,
-                PageSize = PageSize,
+                PageSize = pageSize,
                 UserId = userId
             };
             

@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Time.Api.Middleware;
 using Time.Api.Setup;
 using Time.Domain.Extensions;
 
@@ -81,6 +82,8 @@ namespace Time.Api
 
             app.UseSerilogRequestLogging();
 
+            app.UseMiddleware(typeof(ErrorHandling));
+            
             app.UseRouting();
 
             app.UseAuth();
