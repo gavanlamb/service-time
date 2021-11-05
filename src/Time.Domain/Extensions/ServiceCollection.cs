@@ -16,8 +16,8 @@ namespace Time.Domain.Extensions
             
             services.AddTimeContext(configuration);
             services.AddMediatR(typeof(ServiceCollection));
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Validation<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Logging<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Validation<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Transaction<,>));
             
             return services;
