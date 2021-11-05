@@ -16,7 +16,7 @@ namespace Time.Api.V1.Models
         /// <summary>
         /// Name of the time record.
         /// </summary>
-        /// <example></example>
+        /// <example>Meeting</example>
         public string Name { get; set; }
         
         /// <summary>
