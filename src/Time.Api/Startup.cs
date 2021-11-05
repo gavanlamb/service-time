@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Text.Json;
 using Expensely.Authentication.Cognito.Jwt.Extensions;
 using Expensely.Logging.Serilog;
@@ -10,12 +9,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Time.Api.Middleware;
 using Time.Api.Setup;
-using Time.Api.V1.Services;
-using Time.DbContext.Extensions;
+using Time.Domain.Extensions;
 
 namespace Time.Api
 {
@@ -31,8 +29,7 @@ namespace Time.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-                .AddControllers()
+            services.AddControllers()
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
@@ -41,56 +38,37 @@ namespace Time.Api
 
             services.AddMvcCore()
                 .AddApiExplorer();
-
             services.AddApiVersioning(options =>
             {
                 options.ReportApiVersions = true;
                 options.DefaultApiVersion = new ApiVersion(1, 0);
             });
-
             services.AddVersionedApiExplorer(options =>
             {
                 options.GroupNameFormat = "'v'VVV";
                 options.SubstituteApiVersionInUrl = true;
             });
-
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigureOptions>();
             services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
-
-            services.AddTimeRepository(Configuration);
-
-            Logging.AddSerilog(Configuration);
-
+            
             services.AddHealthChecks();
-
+            
             services.AddCognitoJwt(Configuration);
-
-            services.AddScoped<IRecordService, RecordService>();
+            
+            Logging.AddSerilog(Configuration);
+            
+            services.AddAutoMapper(typeof(Startup));
+            
+            services.AddTimeDomain(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
-            if (env.IsDevelopment() ||  env.EnvironmentName.StartsWith("Preview"))
+            if (env.IsDevelopment() || env.EnvironmentName.StartsWith("Preview"))
             {
                 app.UseDeveloperExceptionPage();
                 
-                app.UseSwagger(options =>
-                {
-                    options.PreSerializeFilters.Add((swagger, req) =>
-                    {
-                        swagger.Servers = new List<OpenApiServer>
-                        {
-                            new()
-                            {
-                                Url = $"https://{req.Host}"
-                            },
-                            new()
-                            {
-                                Url = $"http://{req.Host}"
-                            }
-                        };
-                    });
-                });
+                app.UseSwagger();
 
                 app.UseSwaggerUI(options =>
                 {
@@ -104,6 +82,8 @@ namespace Time.Api
 
             app.UseSerilogRequestLogging();
 
+            app.UseMiddleware(typeof(ErrorHandling));
+            
             app.UseRouting();
 
             app.UseAuth();
@@ -111,10 +91,6 @@ namespace Time.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHealthChecks("/health");
-            });
-
-            app.UseEndpoints(endpoints =>
-            {
                 endpoints.MapControllers();
             });
         }

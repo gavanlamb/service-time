@@ -259,6 +259,34 @@ resource "aws_ecs_task_definition" "api" {
         {
           name = "DOTNET_ENVIRONMENT",
           value = var.environment
+        },
+        {
+          name = "Auth__UserPoolId",
+          value = local.user_pool_id
+        },
+        {
+          name = "Auth__JwtKeySetUrl",
+          value = local.jwt_key_set_url
+        },
+        {
+          name = "Auth__Issuer",
+          value = local.issuer
+        },
+        {
+          name = "Auth__Scopes__create__0",
+          value = sort(aws_cognito_resource_server.time.scope_identifiers)[0]
+        },
+        {
+          name = "Auth__Scopes__delete__0",
+          value = sort(aws_cognito_resource_server.time.scope_identifiers)[1]
+        },
+        {
+          name = "Auth__Scopes__read__0",
+          value = sort(aws_cognito_resource_server.time.scope_identifiers)[2]
+        },
+        {
+          name = "Auth__Scopes__update__0",
+          value = sort(aws_cognito_resource_server.time.scope_identifiers)[3]
         }
       ]
       portMappings = [
@@ -429,6 +457,10 @@ resource "aws_iam_role_policy_attachment" "api_task_parameters" {
   role = aws_iam_role.api_task.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
 }
+resource "aws_iam_role_policy_attachment" "api_task_cognito" {
+  role = aws_iam_role.api_task.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonCognitoReadOnly"
+}
 
 //// Execution
 resource "aws_iam_role" "api_execution" {
@@ -487,5 +519,5 @@ resource "aws_cognito_resource_server" "time" {
     scope_description = "Permission to update records for Time API"
   }
 
-  user_pool_id = sort(data.aws_cognito_user_pools.expensely.ids)[0]
+  user_pool_id = local.user_pool_id
 }

@@ -22,6 +22,7 @@ steps:
   - template: ./docker/test.yml@templates
     parameters:
       containerName: test
+      coverageThreshold: 15
 
   - template: ./docker/build.yml@templates
     parameters:

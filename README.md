@@ -32,7 +32,7 @@ Any dotnet tools used in the development of this application must be specified i
 Run the migration from the `src` folder 
 ```bash
 cd src
-dotnet ef migrations add { migration name } --output-dir Migrations --startup-project .\Time.Migrations\ --project .\Time.Repository\
+dotnet ef migrations add { migration name } --output-dir Migrations --startup-project ./Time.Database.Runner --project ./Time.Database
 ```
 
 
