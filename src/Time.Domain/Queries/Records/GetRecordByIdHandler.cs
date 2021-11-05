@@ -30,6 +30,7 @@ namespace Time.Domain.Queries.Records
                 _context
                 .Records
                 .AsNoTracking()
+                .Where(r => r.UserId == request.UserId)
                 .Where(r => r.Id == request.Id)
                 .ProjectTo<Record>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
