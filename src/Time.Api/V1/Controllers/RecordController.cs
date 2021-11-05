@@ -37,10 +37,10 @@ namespace Time.Api.V1.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create a record
         /// </summary>
-        /// <param name="createRecord"></param>
-        /// <returns></returns>
+        /// <param name="createRecord">Record details</param>
+        /// <returns>Created record</returns>
         [HttpPost]
         [Authorize("create")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -63,11 +63,11 @@ namespace Time.Api.V1.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Update a record
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="updateRecord"></param>
-        /// <returns></returns>
+        /// <param name="id">Identifier of the record to update</param>
+        /// <param name="updateRecord">Record details</param>
+        /// <returns>Update record</returns>
         [HttpPut("{id:long}")]
         [Authorize("update")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -97,10 +97,9 @@ namespace Time.Api.V1.Controllers
         }
         
         /// <summary>
-        /// 
+        /// Delete a record
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Identifier of the record to delete</param>
         [HttpDelete("{id:long}")]
         [Authorize("delete")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -108,7 +107,7 @@ namespace Time.Api.V1.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesErrorResponseType(typeof(void))]
-        public async Task<ActionResult<Record>> Delete(
+        public async Task<ActionResult> Delete(
             [FromRoute] long id)
         {
             var userId = HttpContext.User.GetSubject();
@@ -121,10 +120,10 @@ namespace Time.Api.V1.Controllers
         }
         
         /// <summary>
-        /// 
+        /// Get a record
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Identifier of the record to get</param>
+        /// <returns>Found record</returns>
         [HttpGet("{id:long}")]
         [Authorize("read")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -151,9 +150,11 @@ namespace Time.Api.V1.Controllers
         }
         
         /// <summary>
-        /// 
+        /// Get records
         /// </summary>
-        /// <returns></returns>
+        /// <param name="pageNumber">Page number to retrieve</param>
+        /// <param name="PageSize">Amount of items to retrieve</param>
+        /// <returns>A collection of records</returns>
         [HttpGet]
         [Authorize("read")]
         [ProducesResponseType(StatusCodes.Status200OK)]
