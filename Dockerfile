@@ -6,8 +6,8 @@ COPY "Time.sln" "Time.sln"
 COPY "src/Time.Api/Time.Api.csproj" "src/Time.Api/"
 COPY "src/Time.Database/Time.Database.csproj" "src/Time.Database/"
 COPY "src/Time.Database.Runner/Time.Database.Runner.csproj" "src/Time.Database.Runner/"
-COPY "tests/Time.Api.IntegrationTests/Time.Api.IntegrationTests.csproj" "tests/Time.Api.IntegrationTests/"
-COPY "tests/Time.Repository.UnitTests/Time.Repository.UnitTests.csproj" "tests/Time.Repository.UnitTests/"
+COPY "src/Time.Domain/Time.Domain.csproj" "src/Time.Domain/"
+COPY "tests/Time.Domain.UnitTests/Time.Domain.UnitTests.csproj" "tests/Time.Domain.UnitTests/"
 COPY "build/nuget.config" "nuget.config"
 RUN dotnet restore Time.sln 
 COPY . .

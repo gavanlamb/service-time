@@ -65,7 +65,7 @@ namespace Time.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
-            if (env.IsDevelopment() ||  env.EnvironmentName.StartsWith("Preview"))
+            if (env.IsDevelopment() || env.EnvironmentName.StartsWith("Preview"))
             {
                 app.UseDeveloperExceptionPage();
                 
