@@ -26,16 +26,13 @@ namespace Time.Api.V1.Controllers
     [ProducesErrorResponseType(typeof(void))]
     public class RecordController : ControllerBase
     {
-        private readonly ILogger<RecordController> _logger;
         private readonly IMapper _mapper;
         private readonly IMediator _mediatr;
 
         public RecordController(
-            ILogger<RecordController> logger,
             IMapper mapper,
             IMediator mediatr)
         {
-            _logger = logger;
             _mapper = mapper;
             _mediatr = mediatr;
         }
