@@ -16,8 +16,7 @@ RUN dotnet build -c Release /p:Version=$BUILD_NUMBER /p:AssemblyVersion=$BUILD_N
 
 FROM base AS test
 WORKDIR /expensely-time
-ENTRYPOINT dotnet test --collect:"XPlat Code Coverage" --no-build --configuration Release --logger trx --results-directory /artifacts/tests/Time.Repository.UnitTests tests/Time.Repository.UnitTests/Time.Repository.UnitTests.csproj && \
-dotnet test --no-build --configuration Release --logger trx --results-directory /artifacts/tests/Time.Api.IntegrationTests tests/Time.Api.IntegrationTests/Time.Api.IntegrationTests.csproj
+ENTRYPOINT dotnet test --collect:"XPlat Code Coverage" --no-build --configuration Release --logger trx --results-directory /artifacts/tests/Time.Domain.UnitTests tests/Time.Domain.UnitTests/Time.Domain.UnitTests.csproj
 
 
 FROM base AS publish-api
