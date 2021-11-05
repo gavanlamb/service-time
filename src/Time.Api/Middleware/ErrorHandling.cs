@@ -38,7 +38,6 @@ namespace Time.Api.Middleware
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 var response = exception.Errors
                     .GroupBy(e => e.PropertyName)
-                    //.Select(g => new KeyValuePair<string, IEnumerable<string>>(g.Key, g.Select(i => i.ErrorMessage)))
                     .ToDictionary(g => g.Key, g=> g.Select(i => i.ErrorMessage));
                 var serialisedResponse = JsonSerializer.Serialize(
                     response,
