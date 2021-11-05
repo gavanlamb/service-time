@@ -24,12 +24,12 @@ namespace Time.Api.V1.Controllers
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(GeneralException), StatusCodes.Status500InternalServerError)]
     [ProducesErrorResponseType(typeof(void))]
-    public class RecordController : ControllerBase
+    public class RecordsController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediatr;
 
-        public RecordController(
+        public RecordsController(
             IMapper mapper,
             IMediator mediatr)
         {
