@@ -457,6 +457,10 @@ resource "aws_iam_role_policy_attachment" "api_task_parameters" {
   role = aws_iam_role.api_task.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
 }
+resource "aws_iam_role_policy_attachment" "api_task_cognito" {
+  role = aws_iam_role.api_task.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonCognitoReadOnly"
+}
 
 //// Execution
 resource "aws_iam_role" "api_execution" {
