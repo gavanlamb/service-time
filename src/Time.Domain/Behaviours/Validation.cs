@@ -27,17 +27,9 @@ namespace Time.Domain.Behaviours
             var validationErrors = _validators
                 .Select(x => x.Validate(context))
                 .SelectMany(x => x.Errors)
-                .Where(x => x != null);
-                // .GroupBy(
-                //     x => x.PropertyName,
-                //     x => x.ErrorMessage,
-                //     (propertyName, errorMessages) => new
-                //     {
-                //         Key = propertyName,
-                //         Values = errorMessages.Distinct().ToArray()
-                //     })
-                // .ToDictionary(x => x.Key, x => x.Values);
-            
+                .Where(x => x != null)
+                .ToList();
+
             if (validationErrors.Any())
             {
                 throw new ValidationException(validationErrors);
