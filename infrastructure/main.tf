@@ -496,28 +496,3 @@ resource "aws_iam_role_policy_attachment" "api_execution_parameters" {
   role = aws_iam_role.api_task.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
 }
-
-// Cognito
-resource "aws_cognito_resource_server" "time" {
-  identifier = aws_route53_record.api.fqdn
-  name = "time"
-
-  scope {
-    scope_name = "time:create"
-    scope_description = "Permission to create records for Time API"
-  }
-  scope {
-    scope_name = "time:delete"
-    scope_description = "Permission to delete records for Time API"
-  }
-  scope {
-    scope_name = "time:read"
-    scope_description = "Permission to read records for Time API"
-  }
-  scope {
-    scope_name = "time:update"
-    scope_description = "Permission to update records for Time API"
-  }
-
-  user_pool_id = local.user_pool_id
-}
