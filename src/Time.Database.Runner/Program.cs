@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Amazon.CodeDeploy;
 using Amazon.CodeDeploy.Model;
 using Amazon.Lambda.Core;
-using Expensely.Logging.Serilog;
+using Expensely.Logging.Serilog.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
