@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Expensely.Authentication.Cognito.Jwt.Extensions;
-using Expensely.Logging.Serilog;
+using Expensely.Logging.Serilog.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
