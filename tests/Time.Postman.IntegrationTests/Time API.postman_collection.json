@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7b883891-7dcb-4a01-8b22-0c6bb9c92eb0",
+		"_postman_id": "dd381cb5-c372-47e5-b215-c41e7d73f1bd",
 		"name": "Time API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -17,16 +17,6 @@
 								{
 									"name": "Update a record (Auth policies: update)",
 									"request": {
-										"auth": {
-											"type": "bearer",
-											"bearer": [
-												{
-													"key": "token",
-													"value": "<Bearer Token>",
-													"type": "string"
-												}
-											]
-										},
 										"method": "PUT",
 										"header": [
 											{
@@ -283,16 +273,6 @@
 								{
 									"name": "Delete a record (Auth policies: delete)",
 									"request": {
-										"auth": {
-											"type": "bearer",
-											"bearer": [
-												{
-													"key": "token",
-													"value": "<Bearer Token>",
-													"type": "string"
-												}
-											]
-										},
 										"method": "DELETE",
 										"header": [],
 										"url": {
@@ -520,16 +500,6 @@
 								{
 									"name": "Get a record (Auth policies: read)",
 									"request": {
-										"auth": {
-											"type": "bearer",
-											"bearer": [
-												{
-													"key": "token",
-													"value": "<Bearer Token>",
-													"type": "string"
-												}
-											]
-										},
 										"method": "GET",
 										"header": [],
 										"url": {
@@ -759,16 +729,6 @@
 						{
 							"name": "Create a record (Auth policies: create)",
 							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "<Bearer Token>",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [
 									{
@@ -987,20 +947,10 @@
 						{
 							"name": "Get records (Auth policies: read)",
 							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "<Bearer Token>",
-											"type": "string"
-										}
-									]
-								},
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/v1/Records?pageNumber=41582973&pageSize=41582973",
+									"raw": "{{baseUrl}}/v1/Records?pageNumber=1&pageSize=14",
 									"host": [
 										"{{baseUrl}}"
 									],
@@ -1011,12 +961,12 @@
 									"query": [
 										{
 											"key": "pageNumber",
-											"value": "41582973",
+											"value": "1",
 											"description": "Page number to retrieve"
 										},
 										{
 											"key": "pageSize",
-											"value": "41582973",
+											"value": "14",
 											"description": "Amount of items to retrieve"
 										}
 									]
@@ -1250,6 +1200,9 @@
 				{
 					"name": "Get service information",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -1325,66 +1278,76 @@
 						}
 					]
 				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{cognitoAccessToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
 			]
 		}
 	],
-	"auth": {
-		"type": "oauth2",
-		"oauth2": [
-			{
-				"key": "client_authentication",
-				"value": "body",
-				"type": "string"
-			},
-			{
-				"key": "accessTokenUrl",
-				"value": "https://auth.expensely.app/token",
-				"type": "string"
-			},
-			{
-				"key": "grant_type",
-				"value": "authorization_code",
-				"type": "string"
-			},
-			{
-				"key": "clientId",
-				"value": "7oil4p7oa8mou55scekn8fqr3i",
-				"type": "string"
-			},
-			{
-				"key": "authUrl",
-				"value": "https://auth.expensely.app/login",
-				"type": "string"
-			},
-			{
-				"key": "redirect_uri",
-				"value": "https://localhost",
-				"type": "string"
-			},
-			{
-				"key": "tokenName",
-				"value": "Cognito",
-				"type": "string"
-			},
-			{
-				"key": "useBrowser",
-				"value": false,
-				"type": "boolean"
-			},
-			{
-				"key": "addTokenTo",
-				"value": "header",
-				"type": "string"
-			}
-		]
-	},
 	"event": [
 		{
 			"listen": "prerequest",
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					""
+					"var clientId = pm.environment.get(\"cognitoClientId\");",
+					"var username = pm.environment.get(\"cognitoUserName\");",
+					"var password = pm.environment.get(\"cognitoUserPassword\");",
+					"pm.sendRequest({",
+					"    url: \"https://cognito-idp.ap-southeast-2.amazonaws.com/\",",
+					"    method: 'POST',",
+					"    header: {",
+					"        'X-Amz-Target':   'AWSCognitoIdentityProviderService.InitiateAuth',",
+					"        'Content-Type': 'application/x-amz-json-1.1'",
+					"    },",
+					"    body: {",
+					"        mode: 'raw',",
+					"        raw: JSON.stringify({",
+					"            \"AuthParameters\": {",
+					"                \"USERNAME\": username,",
+					"                \"PASSWORD\": password",
+					"            },",
+					"            \"AuthFlow\": \"USER_PASSWORD_AUTH\",",
+					"            \"ClientId\": clientId",
+					"        }),",
+					"        options: {",
+					"            raw: {",
+					"                language: 'json'",
+					"            }",
+					"        }",
+					"    }",
+					"}, function (error, response) {",
+					"    console.log(response.json());",
+					"    pm.environment.set(\"cognitoAccessToken\", response.json().AuthenticationResult.AccessToken);",
+					"    pm.environment.set(\"cognitoIdToken\", response.json().AuthenticationResult.IdToken);",
+					"});"
 				]
 			}
 		},

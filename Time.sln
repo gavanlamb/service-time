@@ -63,6 +63,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Domain", "src\Time.Dom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Domain.UnitTests", "tests\Time.Domain.UnitTests\Time.Domain.UnitTests.csproj", "{2056D836-C10F-40B9-800C-16958208180A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Time.Postman.IntegrationTests", "Time.Postman.IntegrationTests", "{5167A528-7507-4D0F-995F-A8E1FE042E65}"
+ProjectSection(SolutionItems) = preProject
+	tests\Time.Postman.IntegrationTests\Time API.postman_collection.json = tests\Time.Postman.IntegrationTests\Time API.postman_collection.json
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,5 +104,6 @@ Global
 		{8F0DA939-E41B-47DA-8545-60FA2524BC91} = {A9FC12F9-2A43-4DAA-A48C-C357C253C403}
 		{5B0AB0AE-47BD-4BDE-A68A-A02BD6B10AC3} = {2C927D98-2973-4A2E-B2E7-F0C06BE0CF5D}
 		{2056D836-C10F-40B9-800C-16958208180A} = {D587B9B5-2365-4741-93FF-4DBBD6F56BFB}
+		{5167A528-7507-4D0F-995F-A8E1FE042E65} = {D587B9B5-2365-4741-93FF-4DBBD6F56BFB}
 	EndGlobalSection
 EndGlobal
