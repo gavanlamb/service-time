@@ -46,6 +46,7 @@ namespace Time.Domain.UnitTests.Commands.Records
             {
                 Id = 1,
                 Name = "Next",
+                UserId = "user-id0",
                 Start = DateTime.UtcNow.AddDays(-3),
                 End = DateTime.UtcNow
             };

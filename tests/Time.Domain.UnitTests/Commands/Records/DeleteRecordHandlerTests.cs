@@ -43,7 +43,8 @@ namespace Time.Domain.UnitTests.Commands.Records
         {
             var command = new DeleteRecordCommand
             {
-                Id = 1
+                Id = 1,
+                UserId = "user-id0"
             };
             
             var hasDeleted = await _handler.Handle(command, CancellationToken.None);

@@ -59,7 +59,7 @@ namespace Time.Domain.UnitTests.Commands.Records
             var command = new CreateRecordCommand
             {
                 Name = "Next",
-                UserId = "user-id:0",
+                UserId = "user-id0",
                 Start = DateTime.UtcNow
             };
             

@@ -259,34 +259,6 @@ resource "aws_ecs_task_definition" "api" {
         {
           name = "DOTNET_ENVIRONMENT",
           value = var.environment
-        },
-        {
-          name = "Auth__UserPoolId",
-          value = local.user_pool_id
-        },
-        {
-          name = "Auth__JwtKeySetUrl",
-          value = local.jwt_key_set_url
-        },
-        {
-          name = "Auth__Issuer",
-          value = local.issuer
-        },
-        {
-          name = "Auth__Scopes__create__0",
-          value = sort(aws_cognito_resource_server.time.scope_identifiers)[0]
-        },
-        {
-          name = "Auth__Scopes__delete__0",
-          value = sort(aws_cognito_resource_server.time.scope_identifiers)[1]
-        },
-        {
-          name = "Auth__Scopes__read__0",
-          value = sort(aws_cognito_resource_server.time.scope_identifiers)[2]
-        },
-        {
-          name = "Auth__Scopes__update__0",
-          value = sort(aws_cognito_resource_server.time.scope_identifiers)[3]
         }
       ]
       portMappings = [
@@ -495,29 +467,4 @@ resource "aws_iam_role_policy_attachment" "api_execution_logs" {
 resource "aws_iam_role_policy_attachment" "api_execution_parameters" {
   role = aws_iam_role.api_task.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
-}
-
-// Cognito
-resource "aws_cognito_resource_server" "time" {
-  identifier = aws_route53_record.api.fqdn
-  name = "time"
-
-  scope {
-    scope_name = "time:create"
-    scope_description = "Permission to create records for Time API"
-  }
-  scope {
-    scope_name = "time:delete"
-    scope_description = "Permission to delete records for Time API"
-  }
-  scope {
-    scope_name = "time:read"
-    scope_description = "Permission to read records for Time API"
-  }
-  scope {
-    scope_name = "time:update"
-    scope_description = "Permission to update records for Time API"
-  }
-
-  user_pool_id = local.user_pool_id
 }

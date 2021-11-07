@@ -1,0 +1,1370 @@
+{
+	"info": {
+		"_postman_id": "dd381cb5-c372-47e5-b215-c41e7d73f1bd",
+		"name": "Time API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "v1",
+			"item": [
+				{
+					"name": "Records",
+					"item": [
+						{
+							"name": "{id}",
+							"item": [
+								{
+									"name": "Update a record (Auth policies: update)",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Meeting\",\n    \"start\": \"2021-10-31T04:46:32.3044710Z\",\n    \"end\": \"2021-10-31T06:46:32.3044710Z\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v1/Records/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"Records",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "1",
+													"description": "(Required) Identifier of the record to update"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: bearer",
+														"key": "Authorization",
+														"value": "Bearer <token>"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"name\": \"Meeting\",\n    \"start\": \"2021-10-31T04:46:32.3044710Z\",\n    \"end\": \"2021-10-31T06:46:32.3044710Z\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1/Records/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1",
+														"Records",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n \"id\": 213,\n \"name\": \"Meeting\",\n \"start\": \"2021-10-31T04:46:32.3044710Z\",\n \"end\": \"2021-10-31T06:46:32.3044710Z\",\n \"duration\": {\n  \"ticks\": -22972562,\n  \"days\": -12688552,\n  \"hours\": -24254478,\n  \"milliseconds\": 25802424,\n  \"minutes\": 36216022,\n  \"seconds\": -29509695,\n  \"totalDays\": 90022944.22579974,\n  \"totalHours\": -5834785.502474874,\n  \"totalMilliseconds\": 70950344.63514996,\n  \"totalMinutes\": -72441973.19509551,\n  \"totalSeconds\": -55838873.87287887\n }\n}"
+										},
+										{
+											"name": "Bad Request",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: bearer",
+														"key": "Authorization",
+														"value": "Bearer <token>"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"name\": \"Meeting\",\n    \"start\": \"2021-10-31T04:46:32.3044710Z\",\n    \"end\": \"2021-10-31T06:46:32.3044710Z\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1/Records/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1",
+														"Records",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{}"
+										},
+										{
+											"name": "Unauthorized",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: bearer",
+														"key": "Authorization",
+														"value": "Bearer <token>"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"name\": \"Meeting\",\n    \"start\": \"2021-10-31T04:46:32.3044710Z\",\n    \"end\": \"2021-10-31T06:46:32.3044710Z\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1/Records/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1",
+														"Records",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Forbidden",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: bearer",
+														"key": "Authorization",
+														"value": "Bearer <token>"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"name\": \"Meeting\",\n    \"start\": \"2021-10-31T04:46:32.3044710Z\",\n    \"end\": \"2021-10-31T06:46:32.3044710Z\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1/Records/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1",
+														"Records",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Server Error",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: bearer",
+														"key": "Authorization",
+														"value": "Bearer <token>"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"name\": \"Meeting\",\n    \"start\": \"2021-10-31T04:46:32.3044710Z\",\n    \"end\": \"2021-10-31T06:46:32.3044710Z\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1/Records/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1",
+														"Records",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Internal Server Error",
+											"code": 500,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n \"message\": \"consequat\"\n}"
+										}
+									]
+								},
+								{
+									"name": "Delete a record (Auth policies: delete)",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/v1/Records/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"Records",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "1",
+													"description": "(Required) Identifier of the record to delete"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: bearer",
+														"key": "Authorization",
+														"value": "Bearer <token>"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1/Records/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1",
+														"Records",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad Request",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: bearer",
+														"key": "Authorization",
+														"value": "Bearer <token>"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1/Records/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1",
+														"Records",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{}"
+										},
+										{
+											"name": "Unauthorized",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: bearer",
+														"key": "Authorization",
+														"value": "Bearer <token>"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1/Records/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1",
+														"Records",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Forbidden",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: bearer",
+														"key": "Authorization",
+														"value": "Bearer <token>"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1/Records/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1",
+														"Records",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Server Error",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: bearer",
+														"key": "Authorization",
+														"value": "Bearer <token>"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1/Records/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1",
+														"Records",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Internal Server Error",
+											"code": 500,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n \"message\": \"consequat\"\n}"
+										}
+									]
+								},
+								{
+									"name": "Get a record (Auth policies: read)",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/v1/Records/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"Records",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "1",
+													"description": "(Required) Identifier of the record to get"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: bearer",
+														"key": "Authorization",
+														"value": "Bearer <token>"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1/Records/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1",
+														"Records",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n \"id\": 213,\n \"name\": \"Meeting\",\n \"start\": \"2021-10-31T04:46:32.3044710Z\",\n \"end\": \"2021-10-31T06:46:32.3044710Z\",\n \"duration\": {\n  \"ticks\": -22972562,\n  \"days\": -12688552,\n  \"hours\": -24254478,\n  \"milliseconds\": 25802424,\n  \"minutes\": 36216022,\n  \"seconds\": -29509695,\n  \"totalDays\": 90022944.22579974,\n  \"totalHours\": -5834785.502474874,\n  \"totalMilliseconds\": 70950344.63514996,\n  \"totalMinutes\": -72441973.19509551,\n  \"totalSeconds\": -55838873.87287887\n }\n}"
+										},
+										{
+											"name": "Unauthorized",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: bearer",
+														"key": "Authorization",
+														"value": "Bearer <token>"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1/Records/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1",
+														"Records",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Forbidden",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: bearer",
+														"key": "Authorization",
+														"value": "Bearer <token>"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1/Records/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1",
+														"Records",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Not Found",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: bearer",
+														"key": "Authorization",
+														"value": "Bearer <token>"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1/Records/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1",
+														"Records",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Server Error",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: bearer",
+														"key": "Authorization",
+														"value": "Bearer <token>"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1/Records/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1",
+														"Records",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Internal Server Error",
+											"code": 500,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n \"message\": \"consequat\"\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Create a record (Auth policies: create)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Meeting\",\n    \"start\": \"2021-10-31T04:46:32.3044710Z\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v1/Records",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"Records"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: bearer",
+												"key": "Authorization",
+												"value": "Bearer <token>"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Meeting\",\n    \"start\": \"2021-10-31T04:46:32.3044710Z\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v1/Records",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"Records"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"id\": 213,\n \"name\": \"Meeting\",\n \"start\": \"2021-10-31T04:46:32.3044710Z\",\n \"end\": \"2021-10-31T06:46:32.3044710Z\",\n \"duration\": {\n  \"ticks\": -22972562,\n  \"days\": -12688552,\n  \"hours\": -24254478,\n  \"milliseconds\": 25802424,\n  \"minutes\": 36216022,\n  \"seconds\": -29509695,\n  \"totalDays\": 90022944.22579974,\n  \"totalHours\": -5834785.502474874,\n  \"totalMilliseconds\": 70950344.63514996,\n  \"totalMinutes\": -72441973.19509551,\n  \"totalSeconds\": -55838873.87287887\n }\n}"
+								},
+								{
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: bearer",
+												"key": "Authorization",
+												"value": "Bearer <token>"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Meeting\",\n    \"start\": \"2021-10-31T04:46:32.3044710Z\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v1/Records",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"Records"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{}"
+								},
+								{
+									"name": "Unauthorized",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: bearer",
+												"key": "Authorization",
+												"value": "Bearer <token>"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Meeting\",\n    \"start\": \"2021-10-31T04:46:32.3044710Z\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v1/Records",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"Records"
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Forbidden",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: bearer",
+												"key": "Authorization",
+												"value": "Bearer <token>"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Meeting\",\n    \"start\": \"2021-10-31T04:46:32.3044710Z\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v1/Records",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"Records"
+											]
+										}
+									},
+									"status": "Forbidden",
+									"code": 403,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Server Error",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: bearer",
+												"key": "Authorization",
+												"value": "Bearer <token>"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Meeting\",\n    \"start\": \"2021-10-31T04:46:32.3044710Z\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v1/Records",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"Records"
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"message\": \"consequat\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Get records (Auth policies: read)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/v1/Records?pageNumber=1&pageSize=14",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"Records"
+									],
+									"query": [
+										{
+											"key": "pageNumber",
+											"value": "1",
+											"description": "Page number to retrieve"
+										},
+										{
+											"key": "pageSize",
+											"value": "14",
+											"description": "Amount of items to retrieve"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: bearer",
+												"key": "Authorization",
+												"value": "Bearer <token>"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v1/Records?pageNumber=41582973&pageSize=41582973",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"Records"
+											],
+											"query": [
+												{
+													"key": "pageNumber",
+													"value": "41582973"
+												},
+												{
+													"key": "pageSize",
+													"value": "41582973"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n {\n  \"id\": 213,\n  \"name\": \"Meeting\",\n  \"start\": \"2021-10-31T04:46:32.3044710Z\",\n  \"end\": \"2021-10-31T06:46:32.3044710Z\",\n  \"duration\": {\n   \"ticks\": 39481806,\n   \"days\": 86106137,\n   \"hours\": -71880555,\n   \"milliseconds\": 58330782,\n   \"minutes\": -78089549,\n   \"seconds\": 53989793,\n   \"totalDays\": -75402021.88572022,\n   \"totalHours\": 74547426.39743066,\n   \"totalMilliseconds\": 36808887.5172354,\n   \"totalMinutes\": -38982429.626466565,\n   \"totalSeconds\": -38358918.97469157\n  }\n },\n {\n  \"id\": 213,\n  \"name\": \"Meeting\",\n  \"start\": \"2021-10-31T04:46:32.3044710Z\",\n  \"end\": \"2021-10-31T06:46:32.3044710Z\",\n  \"duration\": {\n   \"ticks\": -10721401,\n   \"days\": 2374701,\n   \"hours\": 27284855,\n   \"milliseconds\": -32133454,\n   \"minutes\": 84829029,\n   \"seconds\": 85632385,\n   \"totalDays\": 40328069.29276788,\n   \"totalHours\": -54249529.20543733,\n   \"totalMilliseconds\": 14415780.429429233,\n   \"totalMinutes\": 70460921.781598,\n   \"totalSeconds\": 69286276.25875133\n  }\n }\n]"
+								},
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: bearer",
+												"key": "Authorization",
+												"value": "Bearer <token>"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v1/Records?pageNumber=41582973&pageSize=41582973",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"Records"
+											],
+											"query": [
+												{
+													"key": "pageNumber",
+													"value": "41582973"
+												},
+												{
+													"key": "pageSize",
+													"value": "41582973"
+												}
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Unauthorized",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: bearer",
+												"key": "Authorization",
+												"value": "Bearer <token>"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v1/Records?pageNumber=41582973&pageSize=41582973",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"Records"
+											],
+											"query": [
+												{
+													"key": "pageNumber",
+													"value": "41582973"
+												},
+												{
+													"key": "pageSize",
+													"value": "41582973"
+												}
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Forbidden",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: bearer",
+												"key": "Authorization",
+												"value": "Bearer <token>"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v1/Records?pageNumber=41582973&pageSize=41582973",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"Records"
+											],
+											"query": [
+												{
+													"key": "pageNumber",
+													"value": "41582973"
+												},
+												{
+													"key": "pageSize",
+													"value": "41582973"
+												}
+											]
+										}
+									},
+									"status": "Forbidden",
+									"code": 403,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Server Error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: bearer",
+												"key": "Authorization",
+												"value": "Bearer <token>"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v1/Records?pageNumber=41582973&pageSize=41582973",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"Records"
+											],
+											"query": [
+												{
+													"key": "pageNumber",
+													"value": "41582973"
+												},
+												{
+													"key": "pageSize",
+													"value": "41582973"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"message\": \"consequat\"\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Get service information",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/Service/Info",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"Service",
+								"Info"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/v1/Service/Info",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"Service",
+										"Info"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"name\": \"laboris et est\",\n \"version\": \"eu tempor nostrud ullamco\"\n}"
+						},
+						{
+							"name": "Server Error",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/v1/Service/Info",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"Service",
+										"Info"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"message\": \"consequat\"\n}"
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{cognitoAccessToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"var clientId = pm.environment.get(\"cognitoClientId\");",
+					"var username = pm.environment.get(\"cognitoUserName\");",
+					"var password = pm.environment.get(\"cognitoUserPassword\");",
+					"pm.sendRequest({",
+					"    url: \"https://cognito-idp.ap-southeast-2.amazonaws.com/\",",
+					"    method: 'POST',",
+					"    header: {",
+					"        'X-Amz-Target':   'AWSCognitoIdentityProviderService.InitiateAuth',",
+					"        'Content-Type': 'application/x-amz-json-1.1'",
+					"    },",
+					"    body: {",
+					"        mode: 'raw',",
+					"        raw: JSON.stringify({",
+					"            \"AuthParameters\": {",
+					"                \"USERNAME\": username,",
+					"                \"PASSWORD\": password",
+					"            },",
+					"            \"AuthFlow\": \"USER_PASSWORD_AUTH\",",
+					"            \"ClientId\": clientId",
+					"        }),",
+					"        options: {",
+					"            raw: {",
+					"                language: 'json'",
+					"            }",
+					"        }",
+					"    }",
+					"}, function (error, response) {",
+					"    console.log(response.json());",
+					"    pm.environment.set(\"cognitoAccessToken\", response.json().AuthenticationResult.AccessToken);",
+					"    pm.environment.set(\"cognitoIdToken\", response.json().AuthenticationResult.IdToken);",
+					"});"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "/"
+		}
+	]
+}
