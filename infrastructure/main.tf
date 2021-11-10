@@ -511,7 +511,7 @@ resource "aws_iam_role" "integration_tests" {
 }
 EOF
 }
-resource "aws_iam_role_policy_attachment" "migration_vpc" {
+resource "aws_iam_role_policy_attachment" "integration_tests_vpc" {
   role = aws_iam_role.integration_tests.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
