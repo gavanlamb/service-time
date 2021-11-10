@@ -125,7 +125,7 @@ resource "aws_cloudwatch_log_group" "migration" {
 
 /// IAM 
 resource "aws_iam_role" "migration" {
-  name = local.migration_name
+  name = "${local.migration_name}-12"
 
   assume_role_policy = <<EOF
 {
