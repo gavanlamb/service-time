@@ -42,6 +42,7 @@ stages:
           - setup
         steps:
           - template: templates/build.api.yml
+          - template: templates/push.api.yml
             parameters:
               serviceConnectionName: ${{ variables.awsServiceConnectionName }}
               region: ${{ variables.region }}
@@ -53,6 +54,9 @@ stages:
           NPMBuildNumber: $[ dependencies.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
         steps:
           - template: templates/build.integration-tests.yml
+            parameters:
+              buildNumber: $(NPMBuildNumber)
+          - template: templates/push.integration-tests.yml
             parameters:
               serviceConnectionName: ${{ variables.awsServiceConnectionName }}
               region: ${{ variables.region }}

@@ -7,6 +7,6 @@ RUN npm ci
 RUN npm run build
 RUN npm run package
 
-FROM amazon/aws-lambda-nodejs:14 as lambda
+FROM amazon/aws-lambda-nodejs:14 as integration-tests
 COPY --from=base /app/webpack /var/task
 CMD [ "index.handler" ]
