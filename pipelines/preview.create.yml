@@ -28,10 +28,31 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
-      - job: build
-        displayName: Build
+      - job: setup
+        displayName: Setup
+        steps:
+          - script: echo "##vso[build.updatebuildnumber]1.0.$(build.buildid).$(System.StageAttempt)"
+            displayName: Set build identifier
+          - script: echo "##vso[task.setvariable variable=NPMBuildNumber;isOutput=true]1.0.$(build.buildid)-$(System.StageAttempt)"
+            displayName: Set NPM build identifier
+            name: setNPMBuildIdentifier
+      - job: api
+        displayName: Api
+        dependsOn:
+          - setup
         steps:
           - template: templates/build.api.yml
+            parameters:
+              serviceConnectionName: ${{ variables.awsServiceConnectionName }}
+              region: ${{ variables.region }}
+      - job: integration_tests
+        displayName: Integration Tests
+        dependsOn:
+          - setup
+        variables:
+          NPMBuildNumber: $[ dependencies.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
+        steps:
+          - template: templates/build.integration-tests.yml
             parameters:
               serviceConnectionName: ${{ variables.awsServiceConnectionName }}
               region: ${{ variables.region }}

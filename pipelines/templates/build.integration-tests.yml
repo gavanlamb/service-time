@@ -1,0 +1,25 @@
+parameters:
+  - name: serviceConnectionName
+    displayName: Name of the AWS service connection to use
+    type: string
+  - name: region
+    displayName: Name of the AWS region
+    type: string
+  - name: buildNumber
+    displayName: NPM build number
+    type: string
+
+steps:
+  - template: ./docker/build.yml@templates
+    parameters:
+      target: base
+      dockerfilePath: tests/Time.IntegrationTests/Dockerfile
+      argument: "--build-arg BUILD_NUMBER=$(buildNumber)"
+      tag: $(buildNumber)
+
+  - template: ./docker/build.yml@templates
+    parameters:
+      target: lambda
+      dockerfilePath: tests/Time.IntegrationTests/Dockerfile
+      argument: "--build-arg BUILD_NUMBER=$(buildNumber)"
+      tag: $(buildNumber)
