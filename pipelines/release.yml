@@ -31,7 +31,7 @@ stages:
       - job: build
         displayName: Build
         steps:
-          - template: templates/build.yml
+          - template: templates/build.api.yml
             parameters:
               serviceConnectionName: ${{ variables.awsServiceConnectionName }}
               region: ${{ variables.region }}
