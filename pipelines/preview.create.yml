@@ -31,6 +31,7 @@ stages:
       - job: setup
         displayName: Setup
         steps:
+          - checkout: none
           - script: echo "##vso[build.updatebuildnumber]1.0.$(build.buildid).$(System.StageAttempt)"
             displayName: Set build identifier
           - script: echo "##vso[task.setvariable variable=NPMBuildNumber;isOutput=true]1.0.$(build.buildid)-$(System.StageAttempt)"
