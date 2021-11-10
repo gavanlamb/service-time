@@ -1,14 +1,37 @@
 version: '3.6'
 services:
-    tests:
-        container_name: test
+    invoke-api-tests:
+        container_name: invoke-api-tests
+        image: curlimages/curl:latest
+        entrypoint: ["/bin/sh", "-c", "curl --location --request POST 'http://api-tests:8080/2015-03-31/functions/function/invocations' --header 'Content-Type: application/json' --data-raw '{\"DeploymentId\":1,\"LifecycleEventHookExecutionId\":1}'" ]
+        depends_on:
+            - api-tests
+    
+    api-tests:
+        container_name: api-tests
+        build:
+            context: .\tests\Time.IntegrationTests\
+            dockerfile: Dockerfile
+            target: lambda
+            args:
+                BUILD_NUMBER: 1.0.0
+                ENVIRONMENT: Local
+        depends_on:
+            -   api
+        ports:
+            -   7081:8080
+        volumes:
+            - ./local/api-tests:/tests
+    
+    unit-tests:
+        container_name: unit-tests
         build:
             context: .
             dockerfile: Dockerfile
             target: test
             args:
                 BUILD_NUMBER: 1.0.0.1
-                PAT:
+                PAT: 6rzymwvztaprsyyorvstaudcyyzbf4p55ajhxtfyjl5rpmkijona
         volumes:
             - ./local/tests:/artifacts/tests
 
@@ -20,7 +43,7 @@ services:
             target: migration-local
             args:
                 BUILD_NUMBER: 1.0.0.1
-                PAT: 
+                PAT: 6rzymwvztaprsyyorvstaudcyyzbf4p55ajhxtfyjl5rpmkijona
         environment:
             DOTNET_ENVIRONMENT: Development
             ConnectionStrings__Default: Host=db;Port=7010;Database=time;Username=admin;Password=Password21
@@ -33,12 +56,12 @@ services:
             target: api
             args:
                 BUILD_NUMBER: 1.0.0.1
-                PAT:
+                PAT: 6rzymwvztaprsyyorvstaudcyyzbf4p55ajhxtfyjl5rpmkijona
         depends_on:
             -   migrations
-            -   tests
+            -   unit-tests
         ports:
-            -   8081:80
+            -   7080:80
         environment:
             DOTNET_ENVIRONMENT: Development
             ConnectionStrings__Default: Host=db;Port=7010;Database=time;Username=admin;Password=Password21
