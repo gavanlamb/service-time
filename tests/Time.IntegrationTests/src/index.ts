@@ -1,24 +1,27 @@
 import { run } from 'newman';
-import aws from 'aws-sdk';
+import * as aws from 'aws-sdk';
+import * as fs from "fs";
 import apiCollection from './collections/Time.API.postman_collection.json';
 import localEnvironmentVariables from './environments/Time.Local.postman_environment.json';
 import previewEnvironmentVariables from './environments/Time.Preview.postman_environment.json';
 import productionEnvironmentVariables from './environments/Time.Production.postman_environment.json';
 
 const codeDeploy = new aws.CodeDeploy({apiVersion: '2014-10-06'});
+const s3 = new aws.S3();
 
 const variableMap: {[key: string]: any } = {
     Local: localEnvironmentVariables,
     Preview: previewEnvironmentVariables,
     Production: productionEnvironmentVariables
 }
-const environment = (process.env.Environment ?? "Local") as string;
-const buildNumber = process.env.BuildNumber as string;
-const resultsBucket = process.env.ResultsBucket as string;
+const environment = (process.env.ENVIRONMENT ?? "Local") as string;
+const buildNumber = process.env.BUILD_NUMBER as string;
+const resultsBucket = process.env.RESULT_BUCKET as string;
 
 export const handler = async (event: { DeploymentId: any; LifecycleEventHookExecutionId: any; }, context: any, callback: any) => {
     const deploymentId = event.DeploymentId;
     const lifecycleEventHookExecutionId = event.LifecycleEventHookExecutionId;
+    const resultsFile = `results.${buildNumber}.xml`;
     run(
         {
             // @ts-ignore
@@ -28,12 +31,20 @@ export const handler = async (event: { DeploymentId: any; LifecycleEventHookExec
             reporters: ['cli', 'junitfull'],
             reporter: {
                 junitfull: {
-                    export: `/tests/results.${buildNumber}.xml`,
+                    export: `/tests/${resultsFile}`,
                 },
             },
         },
-        (error: any, data: any) => {
-            // TODO Upload results file to s3 if not local
+        async (error: any, data: any) => {
+            if (resultsBucket) {
+                const testResultsData = fs.readFileSync(`/tests/${resultsFile}`, 'utf8');
+                await s3.upload({
+                    ContentType: "application/xml",
+                    Bucket: resultsBucket,
+                    Body: testResultsData,
+                    Key: `/${environment}/Time.Api/${resultsFile}`
+                }).promise()
+            }
             if (error) {
                 console.error(error)
                 const params = {
