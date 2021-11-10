@@ -494,7 +494,7 @@ resource "aws_cloudwatch_log_group" "integration_tests" {
 }
 /// IAM
 resource "aws_iam_role" "integration_tests" {
-  name = local.migration_name
+  name = local.integration_tests_name
 
   assume_role_policy = <<EOF
 {
@@ -520,7 +520,7 @@ resource "aws_iam_role_policy_attachment" "integration_tests_codedeploy" {
   policy_arn = aws_iam_policy.codedeploy.arn
 }
 
-// IAM 
+// Shared IAM 
 resource "aws_iam_policy" "codedeploy" {
   name = "${local.api_name}-codedeploy"
   policy = data.aws_iam_policy_document.codedeploy.json
