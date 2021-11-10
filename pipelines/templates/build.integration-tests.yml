@@ -14,12 +14,12 @@ steps:
     parameters:
       target: base
       dockerfilePath: tests/Time.IntegrationTests/Dockerfile
-      argument: "--build-arg BUILD_NUMBER=$(buildNumber)"
+      argument: "--build-arg BUILD_NUMBER=${{ parameters.buildNumber }}"
       tag: ${{ parameters.buildNumber }}
 
   - template: ./docker/build.yml@templates
     parameters:
       target: lambda
       dockerfilePath: tests/Time.IntegrationTests/Dockerfile
-      argument: "--build-arg BUILD_NUMBER=$(buildNumber)"
+      argument: "--build-arg BUILD_NUMBER=${{ parameters.buildNumber }}"
       tag: ${{ parameters.buildNumber }}
