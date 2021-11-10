@@ -90,7 +90,6 @@ stages:
         displayName: Plan
         dependsOn:
           - setup
-        variables:
         steps:
           - template: aws/terraform/plan.yml@templates
             parameters:
