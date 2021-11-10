@@ -28,7 +28,7 @@ export const handler = async (event: { DeploymentId: any; LifecycleEventHookExec
             reporters: ['cli', 'junitfull'],
             reporter: {
                 junitfull: {
-                    export: '/tests/results.xml',
+                    export: `/tests/results.${buildNumber}.xml`,
                 },
             },
         },
