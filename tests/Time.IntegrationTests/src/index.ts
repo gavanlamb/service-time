@@ -5,6 +5,8 @@ import localEnvironmentVariables from './environments/Time.Local.postman_environ
 import previewEnvironmentVariables from './environments/Time.Preview.postman_environment.json';
 import productionEnvironmentVariables from './environments/Time.Production.postman_environment.json';
 
+const codeDeploy = new aws.CodeDeploy({apiVersion: '2014-10-06'});
+
 const variableMap: {[key: string]: any } = {
     Local: localEnvironmentVariables,
     Preview: previewEnvironmentVariables,
@@ -15,11 +17,8 @@ const buildNumber = process.env.BuildNumber as string;
 const resultsBucket = process.env.ResultsBucket as string;
 
 export const handler = async (event: { DeploymentId: any; LifecycleEventHookExecutionId: any; }, context: any, callback: any) => {
-
-    const codedeploy = new aws.CodeDeploy({apiVersion: '2014-10-06'});
     const deploymentId = event.DeploymentId;
     const lifecycleEventHookExecutionId = event.LifecycleEventHookExecutionId;
-
     run(
         {
             // @ts-ignore
@@ -42,7 +41,7 @@ export const handler = async (event: { DeploymentId: any; LifecycleEventHookExec
                     lifecycleEventHookExecutionId,
                     status: 'Failed'
                 };
-                codedeploy.putLifecycleEventHookExecutionStatus(params, () => {
+                codeDeploy.putLifecycleEventHookExecutionStatus(params, () => {
                     callback("Error encountered during test run");
                 });
             } else {
@@ -52,7 +51,7 @@ export const handler = async (event: { DeploymentId: any; LifecycleEventHookExec
                     lifecycleEventHookExecutionId,
                     status: 'Succeeded'
                 };
-                codedeploy.putLifecycleEventHookExecutionStatus(params, () => {
+                codeDeploy.putLifecycleEventHookExecutionStatus(params, () => {
                     callback();
                 });
             }
