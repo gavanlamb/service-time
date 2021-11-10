@@ -10,7 +10,7 @@ services:
     api-tests:
         container_name: api-tests
         build:
-            context: .\tests\Time.IntegrationTests\
+            context: ./tests/Time.IntegrationTests/
             dockerfile: Dockerfile
             target: lambda
             args:
