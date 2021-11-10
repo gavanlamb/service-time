@@ -146,28 +146,13 @@ resource "aws_iam_role_policy_attachment" "migration_vpc" {
   role = aws_iam_role.migration.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
-resource "aws_iam_role_policy_attachment" "migration_codedeploy" {
-  role = aws_iam_role.migration.name
-  policy_arn = aws_iam_policy.migration_codedeploy.arn
-}
 resource "aws_iam_role_policy_attachment" "migration_ssm_read" {
   role = aws_iam_role.migration.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
 }
-resource "aws_iam_policy" "migration_codedeploy" {
-  name = "${local.api_name}-codedeploy"
-  policy = data.aws_iam_policy_document.migration_codedeploy.json
-}
-data "aws_iam_policy_document" "migration_codedeploy" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "codedeploy:PutLifecycleEventHookExecutionStatus"
-    ]
-    resources = [
-      "arn:aws:codedeploy:${var.region}:${data.aws_caller_identity.current.account_id}:deploymentgroup:${aws_codedeploy_app.api.name}/${aws_codedeploy_deployment_group.api.deployment_group_name}"
-    ]
-  }
+resource "aws_iam_role_policy_attachment" "migration_codedeploy" {
+  role = aws_iam_role.migration.name
+  policy_arn = aws_iam_policy.codedeploy.arn
 }
 
 // API
@@ -467,4 +452,87 @@ resource "aws_iam_role_policy_attachment" "api_execution_logs" {
 resource "aws_iam_role_policy_attachment" "api_execution_parameters" {
   role = aws_iam_role.api_task.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
+}
+
+// Integration tests
+/// lambda
+resource "aws_lambda_function" "integration_tests" {
+  function_name = local.integration_tests_name
+  role = aws_iam_role.integration_tests.arn
+  description = "Time integration tests"
+
+  package_type = "Image"
+  publish = true
+
+  image_uri = "${data.aws_ecr_repository.integration_tests.repository_url}:${var.npm_build_identifier}"
+
+  memory_size = 2048
+
+  reserved_concurrent_executions = 1
+
+  timeout = 900
+
+  vpc_config {
+    security_group_ids = [
+      data.aws_security_group.external.id]
+    subnet_ids = data.aws_subnet_ids.private.ids
+  }
+
+  environment {
+    variables = {
+      ENVIRONMENT = var.environment
+    }
+  }
+
+  tags = local.default_tags
+}
+/// cloudwatch
+resource "aws_cloudwatch_log_group" "integration_tests" {
+  name = "/aws/lambda/${aws_lambda_function.integration_tests.function_name}"
+  retention_in_days = 14
+  tags = local.default_tags
+}
+/// IAM
+resource "aws_iam_role" "integration_tests" {
+  name = local.migration_name
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+resource "aws_iam_role_policy_attachment" "migration_vpc" {
+  role = aws_iam_role.integration_tests.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+resource "aws_iam_role_policy_attachment" "integration_tests_codedeploy" {
+  role = aws_iam_role.integration_tests.name
+  policy_arn = aws_iam_policy.codedeploy.arn
+}
+
+// IAM 
+resource "aws_iam_policy" "codedeploy" {
+  name = "${local.api_name}-codedeploy"
+  policy = data.aws_iam_policy_document.codedeploy.json
+}
+data "aws_iam_policy_document" "codedeploy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "codedeploy:PutLifecycleEventHookExecutionStatus"
+    ]
+    resources = [
+      "arn:aws:codedeploy:${var.region}:${data.aws_caller_identity.current.account_id}:deploymentgroup:${aws_codedeploy_app.api.name}/${aws_codedeploy_deployment_group.api.deployment_group_name}"
+    ]
+  }
 }

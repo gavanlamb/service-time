@@ -73,6 +73,8 @@ stages:
       - name: artifactName
         value: preview.terraform
         readonly: true
+      - name: NPMBuildNumber
+        value: $[ stageDependencies.build.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
     jobs:
       - job: setup
         displayName: Setup
@@ -88,11 +90,12 @@ stages:
         displayName: Plan
         dependsOn:
           - setup
+        variables:
         steps:
           - template: aws/terraform/plan.yml@templates
             parameters:
               artifactName: ${{ variables.artifactName }}
-              planAdditionalCommandOptions: '-var-file=variables/${{ variables.environment }}.${{ variables.region }}.tfvars -var="build_identifier=$(Build.BuildNumber)" -var="environment=Preview$(System.PullRequest.PullRequestNumber)" -var="subdomain=time$(System.PullRequest.PullRequestNumber)"'
+              planAdditionalCommandOptions: '-var-file=variables/${{ variables.environment }}.${{ variables.region }}.tfvars -var="build_identifier=$(Build.BuildNumber)" -var="environment=Preview$(System.PullRequest.PullRequestNumber)" -var="subdomain=time$(System.PullRequest.PullRequestNumber)" -var="npm_build_identifier=$(NPMBuildNumber)"'
               serviceConnectionName: ${{ variables.terraformServiceConnectionName }}
               stateBucketName: ${{ variables.terraformStateBucketName }}
               stateLockTableName: ${{ variables.terraformStateLockTableName }}
