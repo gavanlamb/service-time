@@ -1,5 +1,5 @@
 FROM node:14 as base
-ARG BUILD_NUMBER=1.0.0
+ARG BUILD_NUMBER=1.0.0-0
 WORKDIR /app
 RUN ls -al
 COPY . ./

@@ -14,7 +14,7 @@ services:
             dockerfile: Dockerfile
             target: lambda
             args:
-                BUILD_NUMBER: 1.0.0
+                BUILD_NUMBER: 1.0.0-0
                 ENVIRONMENT: Local
         depends_on:
             -   api
@@ -31,7 +31,7 @@ services:
             target: test
             args:
                 BUILD_NUMBER: 1.0.0.1
-                PAT: 6rzymwvztaprsyyorvstaudcyyzbf4p55ajhxtfyjl5rpmkijona
+                PAT: 
         volumes:
             - ./local/tests:/artifacts/tests
 
@@ -43,7 +43,7 @@ services:
             target: migration-local
             args:
                 BUILD_NUMBER: 1.0.0.1
-                PAT: 6rzymwvztaprsyyorvstaudcyyzbf4p55ajhxtfyjl5rpmkijona
+                PAT: 
         environment:
             DOTNET_ENVIRONMENT: Development
             ConnectionStrings__Default: Host=db;Port=7010;Database=time;Username=admin;Password=Password21
@@ -56,7 +56,7 @@ services:
             target: api
             args:
                 BUILD_NUMBER: 1.0.0.1
-                PAT: 6rzymwvztaprsyyorvstaudcyyzbf4p55ajhxtfyjl5rpmkijona
+                PAT: 
         depends_on:
             -   migrations
             -   unit-tests

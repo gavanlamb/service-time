@@ -10,7 +10,7 @@
     "clean": "rimraf dist && rimraf webpack",
     "lint": "tslint --force --format verbose \"src/**/*.ts\"",
     "package": "webpack",
-    "updateVersion": "npm version 1.0.0 --allow-same-version",
+    "updateVersion": "npm version $BUILD_NUMBER --allow-same-version",
     "run": "node ./webpack/index.js"
   },
   "dependencies": {
