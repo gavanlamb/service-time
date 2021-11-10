@@ -56,7 +56,7 @@ stages:
             parameters:
               serviceConnectionName: ${{ variables.awsServiceConnectionName }}
               region: ${{ variables.region }}
-              buildNumber: $(NPMBuildNumber)
+              buildNumber: ${{ variables.NPMBuildNumber }}
 
   - stage: preview
     displayName: Preview
