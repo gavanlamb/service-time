@@ -63,9 +63,31 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Domain", "src\Time.Dom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Domain.UnitTests", "tests\Time.Domain.UnitTests\Time.Domain.UnitTests.csproj", "{2056D836-C10F-40B9-800C-16958208180A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Time.Postman.IntegrationTests", "Time.Postman.IntegrationTests", "{5167A528-7507-4D0F-995F-A8E1FE042E65}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Time.IntegrationTests", "Time.IntegrationTests", "{5167A528-7507-4D0F-995F-A8E1FE042E65}"
 ProjectSection(SolutionItems) = preProject
-	tests\Time.Postman.IntegrationTests\Time API.postman_collection.json = tests\Time.Postman.IntegrationTests\Time API.postman_collection.json
+	tests\Time.IntegrationTests\package-lock.json = tests\Time.IntegrationTests\package-lock.json
+	tests\Time.IntegrationTests\package.json = tests\Time.IntegrationTests\package.json
+	tests\Time.IntegrationTests\tsconfig.json = tests\Time.IntegrationTests\tsconfig.json
+	tests\Time.IntegrationTests\tslint.json = tests\Time.IntegrationTests\tslint.json
+	tests\Time.IntegrationTests\webpack.config.js = tests\Time.IntegrationTests\webpack.config.js
+	tests\Time.IntegrationTests\Dockerfile = tests\Time.IntegrationTests\Dockerfile
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{796C937D-440B-4A7C-B9ED-0514924C62F5}"
+ProjectSection(SolutionItems) = preProject
+	tests\Time.IntegrationTests\src\index.ts = tests\Time.IntegrationTests\src\index.ts
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "collections", "collections", "{5EAD7550-5D2D-4A54-AA86-888C7FC0E955}"
+ProjectSection(SolutionItems) = preProject
+	tests\Time.IntegrationTests\src\Collections\Time.API.postman_collection.json = tests\Time.IntegrationTests\src\Collections\Time.API.postman_collection.json
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "environments", "environments", "{27618C76-6C1F-425F-94BD-5CBDF93D6D1B}"
+ProjectSection(SolutionItems) = preProject
+	tests\Time.IntegrationTests\src\Environments\Time.Local.postman_environment.json = tests\Time.IntegrationTests\src\Environments\Time.Local.postman_environment.json
+	tests\Time.IntegrationTests\src\Environments\Time.Preview.postman_environment.json = tests\Time.IntegrationTests\src\Environments\Time.Preview.postman_environment.json
+	tests\Time.IntegrationTests\src\Environments\Time.Production.postman_environment.json = tests\Time.IntegrationTests\src\Environments\Time.Production.postman_environment.json
 EndProjectSection
 EndProject
 Global
@@ -105,5 +127,8 @@ Global
 		{5B0AB0AE-47BD-4BDE-A68A-A02BD6B10AC3} = {2C927D98-2973-4A2E-B2E7-F0C06BE0CF5D}
 		{2056D836-C10F-40B9-800C-16958208180A} = {D587B9B5-2365-4741-93FF-4DBBD6F56BFB}
 		{5167A528-7507-4D0F-995F-A8E1FE042E65} = {D587B9B5-2365-4741-93FF-4DBBD6F56BFB}
+		{796C937D-440B-4A7C-B9ED-0514924C62F5} = {5167A528-7507-4D0F-995F-A8E1FE042E65}
+		{5EAD7550-5D2D-4A54-AA86-888C7FC0E955} = {796C937D-440B-4A7C-B9ED-0514924C62F5}
+		{27618C76-6C1F-425F-94BD-5CBDF93D6D1B} = {796C937D-440B-4A7C-B9ED-0514924C62F5}
 	EndGlobalSection
 EndGlobal
