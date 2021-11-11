@@ -46,6 +46,12 @@ resource "aws_codedeploy_deployment_group" "api" {
       target_group {
         name = aws_alb_target_group.api_green.name
       }
+      
+      test_traffic_route {
+        listener_arns = [
+          data.aws_lb_listener.expensely_test.arn
+        ]
+      }
     }
   }
 }
@@ -64,6 +70,7 @@ data "template_file" "api_app_spec" {
     application_task_definition = aws_ecs_task_definition.api.arn
     application_container_name = local.api_name
     migration_lambda_arn = aws_lambda_function.migration.qualified_arn
+    integration_tests_lambda_arn = aws_lambda_function.integration_tests.qualified_arn
   }
 }
 

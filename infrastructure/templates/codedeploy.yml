@@ -9,3 +9,4 @@ Resources:
           ContainerPort: 80
 Hooks:
   - AfterInstall : "${migration_lambda_arn}"
+  - AfterAllowTestTraffic: "${integration_tests_lambda_arn}"
