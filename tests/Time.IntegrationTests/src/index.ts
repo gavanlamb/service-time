@@ -6,9 +6,6 @@ import localEnvironmentVariables from './environments/Time.Local.postman_environ
 import previewEnvironmentVariables from './environments/Time.Preview.postman_environment.json';
 import productionEnvironmentVariables from './environments/Time.Production.postman_environment.json';
 
-const codeDeploy = new aws.CodeDeploy({apiVersion: '2014-10-06'});
-const s3 = new aws.S3();
-
 const variableMap: {[key: string]: any } = {
     Local: localEnvironmentVariables,
     Preview: previewEnvironmentVariables,
@@ -19,7 +16,8 @@ const buildNumber = process.env.BUILD_NUMBER as string;
 const resultsBucket = process.env.RESULTS_BUCKET as string;
 const baseUrl = process.env.BASEURL as string;
 
-export const handler = async (event: { DeploymentId: any; LifecycleEventHookExecutionId: any; }, context: any, callback: any) => {
+export const handler = async (event: any, context: any, callback: any) => {
+    const codeDeploy = new aws.CodeDeploy({apiVersion: '2014-10-06'});
     const deploymentId = event.DeploymentId;
     const lifecycleEventHookExecutionId = event.LifecycleEventHookExecutionId;
     const resultsFile = `results.${buildNumber}.xml`;
@@ -46,6 +44,7 @@ export const handler = async (event: { DeploymentId: any; LifecycleEventHookExec
         },
         async (error: any, data: any) => {
             if (resultsBucket) {
+                const s3 = new aws.S3();
                 const testResultsData = fs.readFileSync(`/tests/${resultsFile}`, 'utf8');
                 await s3.upload({
                     ContentType: "application/xml",
