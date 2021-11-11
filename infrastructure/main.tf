@@ -301,7 +301,7 @@ resource "aws_appautoscaling_policy" "api_ecs_policy_memory" {
 }
 
 /// ALB
-resource "aws_lb_listener_rule" "api" {
+resource "aws_lb_listener_rule" "test" {
   listener_arn = data.aws_lb_listener.expensely_test.arn
 
   action {
@@ -497,7 +497,7 @@ resource "aws_lambda_function" "integration_tests" {
       ENVIRONMENT = var.environment,
       BUILD_NUMBER = var.npm_build_identifier,
       RESULTS_BUCKET = var.test_results_bucket,
-      COGNITO_CLIENT_ID = ""
+      BASEURL = "https://${local.api_url}:8443"
     }
   }
 }
