@@ -22,7 +22,7 @@ steps:
       regionName: ${{ parameters.region }}
       scriptType: 'inline'
       inlineScript: |
-        $instanceId=aws ec2 describe-instances --filters "Name=tag:Name,Values=expensely Name=instance-state-name,Values=running" --max-items 1 --query 'Reservations[0].Instances[0].InstanceId' 
+        $instanceId=aws ec2 describe-instances --filters "Name=tag:Name,Values=expensely" "Name=instance-state-name,Values=running" --max-items 1 --query 'Reservations[0].Instances[0].InstanceId' 
         $databaseName = "${{ lower(parameters.applicationName) }}_${{ lower(parameters.environmentName) }}"
         $username = "${{ lower(parameters.applicationName) }}_${{ lower(parameters.environmentName) }}"
         $connectionStringParameterStoreName = "/${{ parameters.applicationName }}/${{ parameters.environmentName }}/ConnectionStrings/Default"
