@@ -17,17 +17,26 @@ const variableMap: {[key: string]: any } = {
 const environment = (process.env.ENVIRONMENT ?? "Local") as string;
 const buildNumber = process.env.BUILD_NUMBER as string;
 const resultsBucket = process.env.RESULTS_BUCKET as string;
+const baseUrl = process.env.BASEURL as string;
 
 export const handler = async (event: { DeploymentId: any; LifecycleEventHookExecutionId: any; }, context: any, callback: any) => {
     const deploymentId = event.DeploymentId;
     const lifecycleEventHookExecutionId = event.LifecycleEventHookExecutionId;
     const resultsFile = `results.${buildNumber}.xml`;
+    const environmentConfiguration = environment.startsWith("Preview") ? variableMap["Preview"] : variableMap[environment]
     run(
         {
             // @ts-ignore
             abortOnFailure: true,
             collection: apiCollection,
-            environment: variableMap[environment],
+            envVar: [
+                // @ts-ignore
+                {
+                    "key": "baseUrl",
+                    "value": baseUrl
+                }
+            ],
+            environment: environmentConfiguration,
             reporters: ['cli', 'junitfull'],
             reporter: {
                 junitfull: {
