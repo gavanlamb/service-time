@@ -16,7 +16,7 @@ const buildNumber = process.env.BUILD_NUMBER as string;
 const resultsBucket = process.env.RESULTS_BUCKET as string;
 const baseUrl = process.env.BASEURL as string;
 
-export const handler = async (event: any): Promise<void> => {
+export const handler = (event: any): void => {
     try {
         const codeDeploy = new aws.CodeDeploy({apiVersion: '2014-10-06'});
         const resultsFile = `results.${buildNumber}.xml`;
@@ -42,16 +42,16 @@ export const handler = async (event: any): Promise<void> => {
                 },
             },
             (error: any, data: any) => {
-                if (resultsBucket) {
-                    const s3 = new aws.S3();
-                    const testResultsData = fs.readFileSync(`/tests/${resultsFile}`, 'utf8');
-                    s3.upload({
-                        ContentType: "application/xml",
-                        Bucket: resultsBucket,
-                        Body: testResultsData,
-                        Key: `/${environment}/Time.Api/${resultsFile}`
-                    });
-                }
+                // if (resultsBucket) {
+                //     const s3 = new aws.S3();
+                //     const testResultsData = fs.readFileSync(`/tests/${resultsFile}`, 'utf8');
+                //     s3.upload({
+                //         ContentType: "application/xml",
+                //         Bucket: resultsBucket,
+                //         Body: testResultsData,
+                //         Key: `/${environment}/Time.Api/${resultsFile}`
+                //     });
+                // }
                 if (error) {
                     console.error(error)
                     const params = {
@@ -61,7 +61,6 @@ export const handler = async (event: any): Promise<void> => {
                     };
                     codeDeploy.putLifecycleEventHookExecutionStatus(params);
                 } else {
-                    console.log(data)
                     const params = {
                         deploymentId: event.DeploymentId,
                         lifecycleEventHookExecutionId: event.LifecycleEventHookExecutionId,

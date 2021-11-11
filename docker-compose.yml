@@ -3,7 +3,7 @@ services:
     invoke-api-tests:
         container_name: invoke-api-tests
         image: curlimages/curl:latest
-        entrypoint: ["/bin/sh", "-c", "curl --location --request POST 'http://api-tests:8080/2015-03-31/functions/function/invocations' --header 'Content-Type: application/json' --data-raw '{\"DeploymentId\":1,\"LifecycleEventHookExecutionId\":1}'" ]
+        entrypoint: ["/bin/sh", "-c", "curl --location --request POST 'http://api-tests:8080/2015-03-31/functions/function/invocations' --header 'Content-Type: application/json' --data-raw '{\"DeploymentId\":\"1\",\"LifecycleEventHookExecutionId\":\"1\"}'" ]
         depends_on:
             - api-tests
     
@@ -35,7 +35,7 @@ services:
             target: test
             args:
                 BUILD_NUMBER: 1.0.0.1
-                PAT: 
+                PAT: m6y4rlnkoxwazdc37q3nqrkdq4dvn5a64twwvczzrrffrgfkoqhq
         volumes:
             - ./local/tests:/artifacts/tests
 
@@ -47,7 +47,7 @@ services:
             target: migration-local
             args:
                 BUILD_NUMBER: 1.0.0.1
-                PAT: 
+                PAT: m6y4rlnkoxwazdc37q3nqrkdq4dvn5a64twwvczzrrffrgfkoqhq
         environment:
             DOTNET_ENVIRONMENT: Development
             ConnectionStrings__Default: Host=db;Port=7010;Database=time;Username=admin;Password=Password21
@@ -60,7 +60,7 @@ services:
             target: api
             args:
                 BUILD_NUMBER: 1.0.0.1
-                PAT: 
+                PAT: m6y4rlnkoxwazdc37q3nqrkdq4dvn5a64twwvczzrrffrgfkoqhq
         depends_on:
             -   migrations
             -   unit-tests

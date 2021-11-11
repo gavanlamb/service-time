@@ -486,11 +486,11 @@ resource "aws_lambda_function" "integration_tests" {
 
   timeout = 900
 
-  vpc_config {
-    security_group_ids = [
-      data.aws_security_group.external.id]
-    subnet_ids = data.aws_subnet_ids.private.ids
-  }
+#  vpc_config {
+#    security_group_ids = [
+#      data.aws_security_group.external.id]
+#    subnet_ids = data.aws_subnet_ids.private.ids
+#  }
 
   environment {
     variables = {
