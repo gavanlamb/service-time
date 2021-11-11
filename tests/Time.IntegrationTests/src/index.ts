@@ -16,7 +16,7 @@ const variableMap: {[key: string]: any } = {
 }
 const environment = (process.env.ENVIRONMENT ?? "Local") as string;
 const buildNumber = process.env.BUILD_NUMBER as string;
-const resultsBucket = process.env.RESULT_BUCKET as string;
+const resultsBucket = process.env.RESULTS_BUCKET as string;
 
 export const handler = async (event: { DeploymentId: any; LifecycleEventHookExecutionId: any; }, context: any, callback: any) => {
     const deploymentId = event.DeploymentId;

@@ -473,7 +473,9 @@ resource "aws_lambda_function" "integration_tests" {
 
   environment {
     variables = {
-      ENVIRONMENT = var.environment
+      ENVIRONMENT = var.environment,
+      BUILD_NUMBER = var.npm_build_identifier,
+      RESULTS_BUCKET = var.results_bucket
     }
   }
 }
@@ -508,6 +510,10 @@ resource "aws_iam_role_policy_attachment" "integration_tests_vpc" {
 resource "aws_iam_role_policy_attachment" "integration_tests_codedeploy" {
   role = aws_iam_role.integration_tests.name
   policy_arn = aws_iam_policy.codedeploy.arn
+}
+resource "aws_iam_role_policy_attachment" "integration_tests_bucket_upload" {
+  role = aws_iam_role.integration_tests.name
+  policy_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/expensely-test-results"
 }
 
 // Shared IAM 

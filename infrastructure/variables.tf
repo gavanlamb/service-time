@@ -79,6 +79,9 @@ variable "api_desired_count"{
 variable "npm_build_identifier"{
   type = string
 }
+variable "results_bucket"{
+  type = string
+}
 
 variable "placement_strategies"{
   type = list(object({type:string, field:string}))
