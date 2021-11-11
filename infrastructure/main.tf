@@ -112,20 +112,17 @@ resource "aws_lambda_function" "migration" {
       DOTNET_ENVIRONMENT = var.environment
     }
   }
-
-  tags = local.default_tags
 }
 
 /// Cloudwatch
 resource "aws_cloudwatch_log_group" "migration" {
   name = "/aws/lambda/${aws_lambda_function.migration.function_name}"
   retention_in_days = 14
-  tags = local.default_tags
 }
 
 /// IAM 
 resource "aws_iam_role" "migration" {
-  name = "${local.migration_name}-12"
+  name = local.migration_name
 
   assume_role_policy = <<EOF
 {
@@ -146,13 +143,13 @@ resource "aws_iam_role_policy_attachment" "migration_vpc" {
   role = aws_iam_role.migration.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
-resource "aws_iam_role_policy_attachment" "migration_ssm_read" {
-  role = aws_iam_role.migration.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
-}
 resource "aws_iam_role_policy_attachment" "migration_codedeploy" {
   role = aws_iam_role.migration.name
   policy_arn = aws_iam_policy.codedeploy.arn
+}
+resource "aws_iam_role_policy_attachment" "migration_ssm_read" {
+  role = aws_iam_role.migration.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
 }
 
 // API
@@ -205,7 +202,6 @@ resource "aws_ecs_service" "api" {
     container_port = 80
   }
 
-  tags = local.default_tags
   propagate_tags = "TASK_DEFINITION"
 
   lifecycle {
@@ -254,8 +250,6 @@ resource "aws_ecs_task_definition" "api" {
       ]
     }
   ])
-
-  tags = local.default_tags
 }
 resource "aws_appautoscaling_target" "api_ecs_target" {
   min_capacity = var.api_min_capacity
@@ -335,8 +329,6 @@ resource "aws_alb_target_group" "api_blue" {
     timeout = 20
     path = "/health"
   }
-
-  tags = local.default_tags
 }
 resource "aws_alb_target_group" "api_green" {
   name = "${local.api_name}-green"
@@ -353,15 +345,12 @@ resource "aws_alb_target_group" "api_green" {
     timeout = aws_alb_target_group.api_blue.health_check[0].timeout
     path = aws_alb_target_group.api_blue.health_check[0].path
   }
-
-  tags = aws_alb_target_group.api_blue.tags
 }
 
 /// Cloudwatch
 resource "aws_cloudwatch_log_group" "api" {
   name = "/${lower(var.application_name)}/${lower(var.environment)}"
   retention_in_days = 14
-  tags = local.default_tags
 }
 resource "aws_iam_policy" "api_logs" {
   name = "${local.api_name}-logs"
@@ -403,8 +392,6 @@ resource "aws_iam_role" "api_task" {
   ]
 }
 EOF
-
-  tags = local.default_tags
 }
 resource "aws_iam_role_policy_attachment" "api_task_logs_task" {
   role = aws_iam_role.api_task.name
@@ -439,7 +426,6 @@ resource "aws_iam_role" "api_execution" {
   ]
 }
 EOF
-  tags = local.default_tags
 }
 resource "aws_iam_role_policy_attachment" "api_execution_role_policy" {
   role = aws_iam_role.api_execution.name
@@ -483,14 +469,11 @@ resource "aws_lambda_function" "integration_tests" {
       ENVIRONMENT = var.environment
     }
   }
-
-  tags = local.default_tags
 }
 /// cloudwatch
 resource "aws_cloudwatch_log_group" "integration_tests" {
   name = "/aws/lambda/${aws_lambda_function.integration_tests.function_name}"
   retention_in_days = 14
-  tags = local.default_tags
 }
 /// IAM
 resource "aws_iam_role" "integration_tests" {
