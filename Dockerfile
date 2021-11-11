@@ -31,7 +31,6 @@ ENTRYPOINT ["dotnet", "Time.Api.dll"]
 FROM base AS publish-migration
 RUN dotnet publish "src/Time.Database.Runner/Time.Database.Runner.csproj" -c Release -o /app/publish --no-build 
 
-
 FROM amazon/aws-lambda-dotnet:5.0 AS migration
 WORKDIR /var/task/
 COPY --from=publish-migration /app/publish .
