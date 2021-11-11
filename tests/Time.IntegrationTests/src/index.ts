@@ -16,13 +16,13 @@ const buildNumber = process.env.BUILD_NUMBER as string;
 const resultsBucket = process.env.RESULTS_BUCKET as string;
 const baseUrl = process.env.BASEURL as string;
 
-export const handler = async (event: any, context: any, callback: any) => {
+export const handler = async (event: any, context: any) => {
     const codeDeploy = new aws.CodeDeploy({apiVersion: '2014-10-06'});
     const deploymentId = event.DeploymentId;
     const lifecycleEventHookExecutionId = event.LifecycleEventHookExecutionId;
     const resultsFile = `results.${buildNumber}.xml`;
     const environmentConfiguration = environment.startsWith("Preview") ? variableMap["Preview"] : variableMap[environment]
-    run(
+    await run(
         {
             // @ts-ignore
             abortOnFailure: true,
@@ -60,9 +60,7 @@ export const handler = async (event: any, context: any, callback: any) => {
                     lifecycleEventHookExecutionId,
                     status: 'Failed'
                 };
-                codeDeploy.putLifecycleEventHookExecutionStatus(params, () => {
-                    callback("Error encountered during test run");
-                });
+                await codeDeploy.putLifecycleEventHookExecutionStatus(params).promise();
             } else {
                 console.log(data)
                 const params = {
@@ -70,9 +68,7 @@ export const handler = async (event: any, context: any, callback: any) => {
                     lifecycleEventHookExecutionId,
                     status: 'Succeeded'
                 };
-                codeDeploy.putLifecycleEventHookExecutionStatus(params, () => {
-                    callback();
-                });
+                await codeDeploy.putLifecycleEventHookExecutionStatus(params).promise();
             }
         }
     );
