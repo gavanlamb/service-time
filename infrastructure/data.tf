@@ -36,7 +36,7 @@ data "aws_lb_listener" "expensely_https" {
 }
 data "aws_lb_listener" "expensely_test" {
   load_balancer_arn = data.aws_lb.expensely.arn
-  port = 8000
+  port = 8443
 }
 
 data "aws_kms_alias" ssm_default_key{
