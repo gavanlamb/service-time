@@ -89,7 +89,7 @@ stages:
                 - checkout: self
                 - template: aws/terraform/destroy.yml@templates
                   parameters:
-                    destroyAdditionalArguments: '-var-file=variables/${{ variables.environment }}.${{ variables.region }}.tfvars -var="build_identifier=${{ variables.buildId }}" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)"'
+                    destroyAdditionalArguments: '-var-file=variables/${{ variables.environment }}.${{ variables.region }}.tfvars -var="build_identifier=${{ variables.buildId }}" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)" -var="npm_build_identifier=${{ variables.buildId }}"'
                     serviceConnectionName: ${{ variables.terraformServiceConnectionName }}
                     stateBucketName: ${{ variables.terraformStateBucketName }}
                     stateLockTableName: ${{ variables.terraformStateLockTableName }}
