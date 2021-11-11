@@ -302,6 +302,27 @@ resource "aws_appautoscaling_policy" "api_ecs_policy_memory" {
 
 /// ALB
 resource "aws_lb_listener_rule" "api" {
+  listener_arn = data.aws_lb_listener.expensely_test.arn
+
+  action {
+    type = "forward"
+    target_group_arn = aws_alb_target_group.api_blue.arn
+  }
+
+  condition {
+    host_header {
+      values = [
+        local.api_url]
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      action
+    ]
+  }
+}
+resource "aws_lb_listener_rule" "api" {
   listener_arn = data.aws_lb_listener.expensely_https.arn
 
   action {
