@@ -1,23 +1,29 @@
 // import { run } from 'newman';
 import * as aws from 'aws-sdk';
-// import * as fs from "fs";
-// import apiCollection from './collections/Time.API.postman_collection.json';
-// import localEnvironmentVariables from './environments/Time.Local.postman_environment.json';
-// import previewEnvironmentVariables from './environments/Time.Preview.postman_environment.json';
-// import productionEnvironmentVariables from './environments/Time.Production.postman_environment.json';
+import * as fs from "fs";
+import apiCollection from './collections/Time.API.postman_collection.json';
+import localEnvironmentVariables from './environments/Time.Local.postman_environment.json';
+import previewEnvironmentVariables from './environments/Time.Preview.postman_environment.json';
+import productionEnvironmentVariables from './environments/Time.Production.postman_environment.json';
 
-// const variableMap: {[key: string]: any } = {
-//     Local: localEnvironmentVariables,
-//     Preview: previewEnvironmentVariables,
-//     Production: productionEnvironmentVariables
-// }
-// const environment = (process.env.ENVIRONMENT ?? "Local") as string;
-// const buildNumber = process.env.BUILD_NUMBER as string;
-// const resultsBucket = process.env.RESULTS_BUCKET as string;
-// const baseUrl = process.env.BASEURL as string;
+const variableMap: {[key: string]: any } = {
+    Api: apiCollection,
+    Local: localEnvironmentVariables,
+    Preview: previewEnvironmentVariables,
+    Production: productionEnvironmentVariables
+}
+const environment = (process.env.ENVIRONMENT ?? "Local") as string;
+const buildNumber = process.env.BUILD_NUMBER as string;
+const resultsBucket = process.env.RESULTS_BUCKET as string;
+const baseUrl = process.env.BASEURL as string;
 
 export const handler = async (event: any): Promise<void> => {
     try {
+        console.log(variableMap);
+        console.log(environment);
+        console.log(buildNumber);
+        console.log(resultsBucket);
+        console.log(baseUrl);
         const params = {
             deploymentId: event.DeploymentId,
             lifecycleEventHookExecutionId: event.LifecycleEventHookExecutionId,
