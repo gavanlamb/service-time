@@ -443,7 +443,7 @@ resource "aws_iam_role_policy_attachment" "api_execution_logs" {
   policy_arn = aws_iam_policy.api_logs.arn
 }
 resource "aws_iam_role_policy_attachment" "api_execution_parameters" {
-  role = aws_iam_role.api_task.name
+  role = aws_iam_role.api_execution.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
 }
 
@@ -475,7 +475,8 @@ resource "aws_lambda_function" "integration_tests" {
     variables = {
       ENVIRONMENT = var.environment,
       BUILD_NUMBER = var.npm_build_identifier,
-      RESULTS_BUCKET = var.results_bucket
+      RESULTS_BUCKET = var.test_results_bucket,
+      COGNITO_CLIENT_ID = ""
     }
   }
 }
@@ -513,7 +514,7 @@ resource "aws_iam_role_policy_attachment" "integration_tests_codedeploy" {
 }
 resource "aws_iam_role_policy_attachment" "integration_tests_bucket_upload" {
   role = aws_iam_role.integration_tests.name
-  policy_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/expensely-test-results"
+  policy_arn = data.aws_iam_policy.test_results_bucket.arn
 }
 
 // Shared IAM 

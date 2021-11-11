@@ -53,4 +53,8 @@ data "aws_ecr_repository" "integration_tests" {
   name = "${lower(var.application_name)}-integration-tests"
 }
 
+data "aws_iam_policy" "test_results_bucket"{
+  name = var.test_results_bucket_policy_name
+}
+
 data "aws_caller_identity" "current" {}

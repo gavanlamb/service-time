@@ -79,7 +79,10 @@ variable "api_desired_count"{
 variable "npm_build_identifier"{
   type = string
 }
-variable "results_bucket"{
+variable "test_results_bucket"{
+  type = string
+}
+variable "test_results_bucket_policy_name"{
   type = string
 }
 
