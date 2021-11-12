@@ -15,14 +15,14 @@ exports.handler = (event, context, callback) => {
     newman.run(
         {
             abortOnFailure: true,
-            collection: './collections/time.api.postman_collection.json',
+            collection: './collections/time.postman_collection.json',
             envVar: [
                 {
                     "key": "baseUrl",
                     "value": baseUrl
                 }
             ],
-            environment: `./environments/time.${environment.startsWith("preview") ? "preview" : environment}.postman_environment.json`,
+            environment: `./environments/${environment.startsWith("preview") ? "preview" : environment}.postman_environment.json`,
             reporters: ['junitfull'],
             reporter: {
                 junitfull: {
