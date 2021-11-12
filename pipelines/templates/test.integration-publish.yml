@@ -21,21 +21,24 @@ parameters:
   - name: testResultsFormat
     displayName: Tests results format
     type: string
-    default: xUnit
+    default: XUnit
 
 steps:
   - task: AWSPowerShellModuleScript@1
     name: download_test_results_file
     displayName: Download test results file:${{ parameters.destinationFile }}
+    condition: succeededOrFailed()
     inputs:
       awsCredentials: ${{ parameters.serviceConnectionName }}
       regionName: ${{ parameters.region }}
       scriptType: inline
       inlineScript: |
         aws s3 cp s3://${{ parameters.testResultsBucketName }}/${{ parameters.sourcePath }} ${{ parameters.destinationFile }}
+        cd
       workingDirectory: ${{ parameters.workingDirectory }}
   - task: PublishTestResults@2
     displayName: Publish test results file:${{ parameters.destinationFile }}
+    condition: succeededOrFailed()
     inputs:
       mergeTestResults: false
       failTaskOnFailedTests: true
