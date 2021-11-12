@@ -25,7 +25,7 @@ services:
         ports:
             -   7081:8080
         volumes:
-            - ./local/api-tests:/tests
+            - ./local/api-tests:/tmp
     
     unit-tests:
         container_name: unit-tests

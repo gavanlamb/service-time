@@ -2,10 +2,11 @@
 
 const newman = require('newman');
 const aws = require('aws-sdk');
+const fs = require("fs");
 
 const environment = (process.env.ENVIRONMENT ?? "Local").startsWith("Preview") ? "Preview" : (process.env.ENVIRONMENT ?? "Local");
 const buildNumber = process.env.BUILD_NUMBER;
-//const resultsBucket = process.env.RESULTS_BUCKET;
+const resultsBucket = process.env.RESULTS_BUCKET;
 const baseUrl = process.env.BASEURL;
 
 exports.handler = (event) => {
@@ -26,21 +27,21 @@ exports.handler = (event) => {
                 reporters: ['cli','junitfull'],
                 reporter: {
                     junitfull: {
-                        export: `/tests/${resultsFile}`,
+                        export: `/tmp/${resultsFile}`,
                     },
                 },
             },
             (error, data) => {
-                // if (resultsBucket) {
-                //     const s3 = new aws.S3();
-                //     const testResultsData = fs.readFileSync(`/tests/${resultsFile}`, 'utf8');
-                //     s3.upload({
-                //         ContentType: "application/xml",
-                //         Bucket: resultsBucket,
-                //         Body: testResultsData,
-                //         Key: `/${environment}/Time.Api/${resultsFile}`
-                //     });
-                // }
+                if (resultsBucket) {
+                    const s3 = new aws.S3();
+                    const testResultsData = fs.readFileSync(`/tmp/${resultsFile}`, 'utf8');
+                    s3.upload({
+                        ContentType: "application/xml",
+                        Bucket: resultsBucket,
+                        Body: testResultsData,
+                        Key: `/${environment}/Time.Api/${resultsFile}`
+                    });
+                }
                 if (error) {
                     console.error(error);
                     const params = {
