@@ -42,7 +42,7 @@ steps:
     displayName: Publish test results file:${{ parameters.destinationFile }}
     condition: succeededOrFailed()
     inputs:
-      mergeTestResults: false
+      mergeTestResults: true
       failTaskOnFailedTests: true
       publishRunAttachments: false
       searchFolder: ${{ parameters.workingDirectory }}
