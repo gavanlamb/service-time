@@ -14,8 +14,8 @@ exports.handler = (event, context, callback) => {
     const resultsFile = `${buildNumber}.xml`;
     newman.run(
         {
-            abortOnFailure: true,
             collection: './collections/time.postman_collection.json',
+            delayRequest: 1000,
             envVar: [
                 {
                     "key": "baseUrl",
@@ -92,6 +92,7 @@ exports.handler = (event, context, callback) => {
                         }
                     });
             }
+            
         }
     );
 }
