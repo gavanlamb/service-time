@@ -5,24 +5,24 @@ const aws = require('aws-sdk');
 const fs = require("fs");
 
 exports.handler = (event, context, callback) => {
-    const environment = (process.env.ENVIRONMENT ?? "Local");
+    const environment = (process.env.ENVIRONMENT ?? "local");
     const buildNumber = process.env.BUILD_NUMBER;
     const resultsBucket = process.env.RESULTS_BUCKET;
     const baseUrl = process.env.BASEURL;
     
     const codeDeploy = new aws.CodeDeploy({apiVersion: '2014-10-06'});
-    const resultsFile = `results.${buildNumber}.xml`;
+    const resultsFile = `${buildNumber}.xml`;
     newman.run(
         {
             abortOnFailure: true,
-            collection: './collections/Time.API.postman_collection.json',
+            collection: './collections/time.api.postman_collection.json',
             envVar: [
                 {
                     "key": "baseUrl",
                     "value": baseUrl
                 }
             ],
-            environment: `./environments/Time.${environment.startsWith("Preview") ? "Preview" : environment}.postman_environment.json`,
+            environment: `./environments/time.${environment.startsWith("preview") ? "preview" : environment}.postman_environment.json`,
             reporters: ['junitfull'],
             reporter: {
                 junitfull: {
@@ -46,7 +46,7 @@ exports.handler = (event, context, callback) => {
                         ContentType: "application/xml",
                         Bucket: resultsBucket,
                         Body: testResultsData,
-                        Key: `${environment}/Time.Api/${resultsFile}`
+                        Key: `time/${environment}/${resultsFile}`
                     },
                     function (s3Error, s3Data) {
                         if (s3Error) {

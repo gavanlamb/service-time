@@ -1,0 +1,46 @@
+parameters:
+  - name: serviceConnectionName
+    displayName: Name of the service connection for AWS
+    type: string
+  - name: region
+    displayName: Name of the AWS region
+    type: string
+  - name: testResultsBucketName
+    displayName: Name of the bucket to download tests results from
+    type: string
+  - name: sourcePath
+    displayName: Key of the test results file
+    type: string
+  - name: destinationFile
+    displayName: 
+    type: string
+  - name: workingDirectory
+    displayName: Directory where the files are located
+    type: string
+    default: $(Pipeline.Workspace)
+  - name: testResultsFormat
+    displayName: Tests results format
+    type: string
+    default: xUnit
+
+steps:
+  - task: AWSPowerShellModuleScript@1
+    name: download_test_results_file
+    displayName: Download test results file:${{ parameters.destinationPath }}
+    inputs:
+      awsCredentials: ${{ parameters.serviceConnectionName }}
+      regionName: ${{ parameters.region }}
+      scriptType: inline
+      inlineScript: |
+        aws s3 cp s3://${{ parameters.testResultsBucketName }}/${{ parameters.sourcePath }} ${{ parameters.destinationFile }}
+      workingDirectory: ${{ parameters.workingDirectory }}
+  - task: PublishTestResults@2
+    displayName: Publish test results file:${{ parameters.destinationFile }}
+    inputs:
+      mergeTestResults: false
+      failTaskOnFailedTests: true
+      publishRunAttachments: false
+      searchFolder: ${{ parameters.workingDirectory }}
+      testRunTitle: ${{ parameters.destinationFile }}
+      testResultsFiles: ${{ parameters.destinationFile }}
+      testResultsFormat: ${{ parameters.testResultsFormat }}

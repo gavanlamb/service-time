@@ -121,6 +121,13 @@ stages:
                     serviceConnectionName: ${{variables.awsServiceConnectionName}}
                     region: ${{ variables.region }}
                     sourcePath: time-$(Build.BuildNumber).yaml
-                    destinationPath: time/${{ variables.environment }}$(System.PullRequest.PullRequestNumber)/time-$(Build.BuildNumber).yaml
+                    destinationPath: time/${{ variables.environment }}$(System.PullRequest.PullRequestNumber)/$(Build.BuildNumber).yaml
                     codeDeployBucketName: ${{ variables.codeDeployBucketName }}
-
+                - template: templates/test.integration-publish.yml
+                  parameters:
+                    serviceConnectionName: ${{ variables.awsServiceConnectionName }}
+                    region: ${{ variables.region }}
+                    sourcePath: time/${{ variables.environment }}$(System.PullRequest.PullRequestNumber)/$(NPMBuildNumber).xml
+                    testResultsBucketName: ${{ variables.testResultsBucketName }}
+                    destinationFile: $(NPMBuildNumber).xml
+                    testResultsFormat: xUnit
