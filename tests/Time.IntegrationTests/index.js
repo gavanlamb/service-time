@@ -2,9 +2,8 @@
 
 const newman = require('newman');
 const aws = require('aws-sdk');
-//import * as fs from "fs";
 
-const environment = process.env.ENVIRONMENT ?? "Local";
+const environment = (process.env.ENVIRONMENT ?? "Local").startsWith("Preview") ? "Preview" : (process.env.ENVIRONMENT ?? "Local");
 const buildNumber = process.env.BUILD_NUMBER;
 //const resultsBucket = process.env.RESULTS_BUCKET;
 const baseUrl = process.env.BASEURL;
@@ -24,7 +23,7 @@ exports.handler = (event) => {
                     }
                 ],
                 environment: `./environments/Time.${environment}.postman_environment.json`,
-                reporters: 'junitfull',
+                reporters: ['cli','junitfull'],
                 reporter: {
                     junitfull: {
                         export: `/tests/${resultsFile}`,

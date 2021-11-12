@@ -4,4 +4,4 @@ WORKDIR /var/task
 COPY . ./
 RUN npm ci
 RUN npm run build
-CMD [ "app.index.handler" ]
+CMD [ "index.handler" ]

@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "description": "This service is manage time records",
   "repository": "https://github.com/Expensely/service-time",
-  "main": "app/index.js",
+  "main": "index.js",
   "scripts": {
     "build": "npm run updateVersion && npm run lint",
-    "lint": "eslint \"app/**/*.js\"",
-    "updateVersion": "npm version $BUILD_NUMBER --allow-same-version",
-    "run": "node ./app/index.js"
+    "lint": "eslint \"**/*.js\"",
+    "updateVersion": "npm version $BUILD_NUMBER --allow-same-version"
   },
   "dependencies": {
     "newman": "^5.3.0",
