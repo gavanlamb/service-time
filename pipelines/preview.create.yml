@@ -120,7 +120,7 @@ stages:
                   parameters:
                     serviceConnectionName: ${{variables.awsServiceConnectionName}}
                     region: ${{ variables.region }}
-                    sourcePath: time-$(Build.BuildNumber).yaml
+                    sourcePath: $(Build.BuildNumber).yaml
                     destinationPath: time/${{ variables.environment }}$(System.PullRequest.PullRequestNumber)/$(Build.BuildNumber).yaml
                     codeDeployBucketName: ${{ variables.codeDeployBucketName }}
                 - template: templates/test.integration-publish.yml

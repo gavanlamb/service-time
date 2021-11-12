@@ -61,7 +61,7 @@ resource "aws_codedeploy_app" "api" {
 }
 resource "local_file" "api_app_spec" {
   content_base64 = base64encode(data.template_file.api_app_spec.rendered)
-  filename = "${lower(var.application_name)}-${var.build_identifier}.yaml"
+  filename = "${var.build_identifier}.yaml"
 }
 data "template_file" "api_app_spec" {
   template = file("./templates/codedeploy.yml")
@@ -83,7 +83,7 @@ data "template_file" "code_deployment" {
 
   vars = {
     codedeploy_bucket_name = var.codedeploy_bucket_name
-    app_spec_key = "${lower(var.application_name)}/${lower(var.environment)}/${lower(var.application_name)}-${var.build_identifier}.yaml"
+    app_spec_key = "${lower(var.application_name)}/${lower(var.environment)}/${var.build_identifier}.yaml"
     deployment_group_name = aws_codedeploy_deployment_group.api.deployment_group_name
     application_name = aws_codedeploy_app.api.name
   }

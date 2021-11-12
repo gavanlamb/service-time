@@ -17,8 +17,7 @@ services:
                 BUILD_NUMBER: 1.0.0-0
         environment:
             BUILD_NUMBER: 1.0.0-0
-            ENVIRONMENT: Local
-            COGNITO_CLIENT_ID: 54rao29eb40i3g235apo2co8p3
+            ENVIRONMENT: local
             BASEURL: http://api:80
         depends_on:
             -   api
@@ -35,7 +34,7 @@ services:
             target: test
             args:
                 BUILD_NUMBER: 1.0.0.1
-                PAT: m6y4rlnkoxwazdc37q3nqrkdq4dvn5a64twwvczzrrffrgfkoqhq
+                PAT: 
         volumes:
             - ./local/tests:/artifacts/tests
 
@@ -47,7 +46,7 @@ services:
             target: migration-local
             args:
                 BUILD_NUMBER: 1.0.0.1
-                PAT: m6y4rlnkoxwazdc37q3nqrkdq4dvn5a64twwvczzrrffrgfkoqhq
+                PAT: 
         environment:
             DOTNET_ENVIRONMENT: Development
             ConnectionStrings__Default: Host=db;Port=7010;Database=time;Username=admin;Password=Password21
@@ -60,7 +59,7 @@ services:
             target: api
             args:
                 BUILD_NUMBER: 1.0.0.1
-                PAT: m6y4rlnkoxwazdc37q3nqrkdq4dvn5a64twwvczzrrffrgfkoqhq
+                PAT: 
         depends_on:
             -   migrations
             -   unit-tests
