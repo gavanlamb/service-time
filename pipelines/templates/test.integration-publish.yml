@@ -26,7 +26,7 @@ parameters:
 steps:
   - task: AWSPowerShellModuleScript@1
     name: download_test_results_file
-    displayName: Download test results file:${{ parameters.destinationPath }}
+    displayName: Download test results file:${{ parameters.destinationFile }}
     inputs:
       awsCredentials: ${{ parameters.serviceConnectionName }}
       regionName: ${{ parameters.region }}
