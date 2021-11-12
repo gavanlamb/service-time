@@ -14,6 +14,9 @@ parameters:
   - name: destinationFile
     displayName: 
     type: string
+  - name: testRunTitle
+    displayName: 
+    type: string
   - name: workingDirectory
     displayName: Directory where the files are located
     type: string
@@ -43,6 +46,6 @@ steps:
       failTaskOnFailedTests: true
       publishRunAttachments: false
       searchFolder: ${{ parameters.workingDirectory }}
-      testRunTitle: ${{ parameters.destinationFile }}
+      testRunTitle: ${{ parameters.testRunTitle }}
       testResultsFiles: ${{ parameters.destinationFile }}
       testResultsFormat: ${{ parameters.testResultsFormat }}
