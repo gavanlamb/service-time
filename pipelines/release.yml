@@ -118,4 +118,3 @@ stages:
                     sourcePath: time/${{ variables.environment }}/$(NPMBuildNumber).xml
                     testResultsBucketName: ${{ variables.testResultsBucketName }}
                     destinationFile: $(NPMBuildNumber).xml
-                    testResultsFormat: xUnit

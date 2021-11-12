@@ -130,4 +130,3 @@ stages:
                     sourcePath: time/${{ variables.environment }}$(System.PullRequest.PullRequestNumber)/$(NPMBuildNumber).xml
                     testResultsBucketName: ${{ variables.testResultsBucketName }}
                     destinationFile: $(NPMBuildNumber).xml
-                    testResultsFormat: xUnit
