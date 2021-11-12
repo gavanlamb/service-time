@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Mvc;
 using Time.Domain.Models;
 using PaginationDetails = Time.Api.V1.Models.Pagination;
@@ -21,7 +22,7 @@ namespace Time.Api.V1.Helpers
                     })
                 : null;
             
-            var nextPage = (pagedEntity.TotalItems/pagedEntity.PageSize) > pagedEntity.PageNumber
+            var nextPage = pagedEntity.PageNumber < pagedEntity.TotalPages
                 ? urlHelper.Action(
                     actionName,
                     new
