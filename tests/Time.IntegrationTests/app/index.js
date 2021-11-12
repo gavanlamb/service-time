@@ -1,5 +1,7 @@
-import { run } from 'newman';
-import * as aws from 'aws-sdk';
+'use strict';
+
+const newman = require('newman');
+const aws = require('aws-sdk');
 //import * as fs from "fs";
 
 const environment = process.env.ENVIRONMENT ?? "Local";
@@ -7,11 +9,11 @@ const buildNumber = process.env.BUILD_NUMBER;
 //const resultsBucket = process.env.RESULTS_BUCKET;
 const baseUrl = process.env.BASEURL;
 
-export const handler = (event) => {
+exports.handler = (event) => {
     try {
         const codeDeploy = new aws.CodeDeploy({apiVersion: '2014-10-06'});
         const resultsFile = `results.${buildNumber}.xml`;
-        run(
+        newman.run(
             {
                 abortOnFailure: true,
                 collection: './collections/Time.API.postman_collection.json',
