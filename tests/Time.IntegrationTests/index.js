@@ -23,9 +23,9 @@ exports.handler = (event, context, callback) => {
                 }
             ],
             environment: `./environments/${environment.startsWith("preview") ? "preview" : environment}.postman_environment.json`,
-            reporters: 'junitfull',
+            reporters: 'junitxray',
             reporter: {
-                junitfull: {
+                junitxray: {
                     export: `/tmp/${resultsFile}`,
                 },
             },
