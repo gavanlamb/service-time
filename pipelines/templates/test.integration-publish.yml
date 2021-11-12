@@ -34,7 +34,7 @@ steps:
       scriptType: inline
       inlineScript: |
         aws s3 cp s3://${{ parameters.testResultsBucketName }}/${{ parameters.sourcePath }} ${{ parameters.destinationFile }}
-        cd
+        ls
       workingDirectory: ${{ parameters.workingDirectory }}
   - task: PublishTestResults@2
     displayName: Publish test results file:${{ parameters.destinationFile }}
