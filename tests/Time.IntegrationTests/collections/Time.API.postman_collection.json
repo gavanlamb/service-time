@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "f580d787-b59f-4ebb-b499-7d99c7f61f45",
-		"name": "Time API",
+		"name": "time.api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
