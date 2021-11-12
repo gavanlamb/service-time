@@ -34,6 +34,10 @@ data "aws_lb_listener" "expensely_https" {
   load_balancer_arn = data.aws_lb.expensely.arn
   port = 443
 }
+data "aws_lb_listener" "expensely_test" {
+  load_balancer_arn = data.aws_lb.expensely.arn
+  port = 8443
+}
 
 data "aws_kms_alias" ssm_default_key{
   name = "alias/aws/ssm"
@@ -45,9 +49,12 @@ data "aws_ecr_repository" "api" {
 data "aws_ecr_repository" "migration" {
   name = "${lower(var.application_name)}-migration"
 }
+data "aws_ecr_repository" "integration_tests" {
+  name = "${lower(var.application_name)}-integration-tests"
+}
 
-data "aws_cognito_user_pools" "expensely" {
-  name = var.cognito_name
+data "aws_iam_policy" "test_results_bucket"{
+  name = var.test_results_bucket_policy_name
 }
 
 data "aws_caller_identity" "current" {}

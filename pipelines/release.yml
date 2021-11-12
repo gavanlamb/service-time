@@ -28,13 +28,40 @@ stages:
     variables:
       - template: variables/production.ap-southeast-2.yml@expensely-templates
     jobs:
-      - job: build
-        displayName: Build
+      - job: setup
+        displayName: Setup
         steps:
-          - template: templates/build.yml
+          - checkout: none
+          - script: echo "##vso[build.updatebuildnumber]1.0.$(build.buildid).$(System.StageAttempt)"
+            displayName: Set build identifier
+          - script: echo "##vso[task.setvariable variable=NPMBuildNumber;isOutput=true]1.0.$(build.buildid)-$(System.StageAttempt)"
+            displayName: Set NPM build identifier
+            name: setNPMBuildIdentifier
+      - job: api
+        displayName: Api
+        dependsOn:
+          - setup
+        steps:
+          - template: templates/build.api.yml
+          - template: templates/push.api.yml
             parameters:
               serviceConnectionName: ${{ variables.awsServiceConnectionName }}
               region: ${{ variables.region }}
+      - job: integration_tests
+        displayName: Integration tests
+        dependsOn:
+          - setup
+        variables:
+          NPMBuildNumber: $[ dependencies.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
+        steps:
+          - template: templates/build.integration-tests.yml
+            parameters:
+              buildNumber: $(NPMBuildNumber)
+          - template: templates/push.integration-tests.yml
+            parameters:
+              serviceConnectionName: ${{ variables.awsServiceConnectionName }}
+              region: ${{ variables.region }}
+              buildNumber: $(NPMBuildNumber)
 
   - stage: production
     displayName: Production
@@ -45,6 +72,8 @@ stages:
       - name: artifactName
         value: production.terraform
         readonly: true
+      - name: NPMBuildNumber
+        value: $[ stageDependencies.build.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
     jobs:
       - job: plan
         displayName: Plan
@@ -52,7 +81,7 @@ stages:
           - template: aws/terraform/plan.yml@templates
             parameters:
               artifactName: ${{ variables.artifactName }}
-              planAdditionalCommandOptions: '-var-file=variables/${{ variables.environment }}.${{ variables.region }}.tfvars -var="build_identifier=$(Build.BuildNumber)"'
+              planAdditionalCommandOptions: '-var-file=variables/${{ variables.environment }}.${{ variables.region }}.tfvars -var="build_identifier=$(Build.BuildNumber)" -var="npm_build_identifier=$(NPMBuildNumber)"'
               serviceConnectionName: ${{ variables.terraformServiceConnectionName }}
               stateBucketName: ${{ variables.terraformStateBucketName }}
               stateLockTableName: ${{ variables.terraformStateLockTableName }}
@@ -81,6 +110,14 @@ stages:
                   parameters:
                     serviceConnectionName: ${{ variables.awsServiceConnectionName }}
                     region: ${{ variables.region }}
-                    sourcePath: time-$(Build.BuildNumber).yaml
-                    destinationPath: time/${{ variables.environment }}/time-$(Build.BuildNumber).yaml
+                    sourcePath: $(Build.BuildNumber).yaml
+                    destinationPath: time/${{ variables.environment }}/$(Build.BuildNumber).yaml
                     codeDeployBucketName: ${{ variables.codeDeployBucketName }}
+                - template: templates/test.integration-publish.yml
+                  parameters:
+                    serviceConnectionName: ${{ variables.awsServiceConnectionName }}
+                    region: ${{ variables.region }}
+                    sourcePath: time/${{ variables.environment }}/$(NPMBuildNumber).xml
+                    testResultsBucketName: ${{ variables.testResultsBucketName }}
+                    destinationFile: $(NPMBuildNumber).xml
+                    testRunTitle: Integration

@@ -23,6 +23,7 @@ namespace Time.Domain.Commands.Records
             var record = await _context
                 .Records
                 .Where(r => r.Id == request.Id)
+                .Where(r => r.UserId == request.UserId)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (record != null)

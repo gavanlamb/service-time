@@ -46,6 +46,12 @@ resource "aws_codedeploy_deployment_group" "api" {
       target_group {
         name = aws_alb_target_group.api_green.name
       }
+      
+      test_traffic_route {
+        listener_arns = [
+          data.aws_lb_listener.expensely_test.arn
+        ]
+      }
     }
   }
 }
@@ -55,7 +61,7 @@ resource "aws_codedeploy_app" "api" {
 }
 resource "local_file" "api_app_spec" {
   content_base64 = base64encode(data.template_file.api_app_spec.rendered)
-  filename = "${lower(var.application_name)}-${var.build_identifier}.yaml"
+  filename = "${var.build_identifier}.yaml"
 }
 data "template_file" "api_app_spec" {
   template = file("./templates/codedeploy.yml")
@@ -64,6 +70,7 @@ data "template_file" "api_app_spec" {
     application_task_definition = aws_ecs_task_definition.api.arn
     application_container_name = local.api_name
     migration_lambda_arn = aws_lambda_function.migration.qualified_arn
+    integration_tests_lambda_arn = aws_lambda_function.integration_tests.qualified_arn
   }
 }
 
@@ -76,7 +83,7 @@ data "template_file" "code_deployment" {
 
   vars = {
     codedeploy_bucket_name = var.codedeploy_bucket_name
-    app_spec_key = "${lower(var.application_name)}/${lower(var.environment)}/${lower(var.application_name)}-${var.build_identifier}.yaml"
+    app_spec_key = "${lower(var.application_name)}/${lower(var.environment)}/${var.build_identifier}.yaml"
     deployment_group_name = aws_codedeploy_deployment_group.api.deployment_group_name
     application_name = aws_codedeploy_app.api.name
   }
@@ -112,15 +119,12 @@ resource "aws_lambda_function" "migration" {
       DOTNET_ENVIRONMENT = var.environment
     }
   }
-
-  tags = local.default_tags
 }
 
 /// Cloudwatch
 resource "aws_cloudwatch_log_group" "migration" {
   name = "/aws/lambda/${aws_lambda_function.migration.function_name}"
   retention_in_days = 14
-  tags = local.default_tags
 }
 
 /// IAM 
@@ -148,26 +152,11 @@ resource "aws_iam_role_policy_attachment" "migration_vpc" {
 }
 resource "aws_iam_role_policy_attachment" "migration_codedeploy" {
   role = aws_iam_role.migration.name
-  policy_arn = aws_iam_policy.migration_codedeploy.arn
+  policy_arn = aws_iam_policy.codedeploy.arn
 }
 resource "aws_iam_role_policy_attachment" "migration_ssm_read" {
   role = aws_iam_role.migration.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
-}
-resource "aws_iam_policy" "migration_codedeploy" {
-  name = "${local.api_name}-codedeploy"
-  policy = data.aws_iam_policy_document.migration_codedeploy.json
-}
-data "aws_iam_policy_document" "migration_codedeploy" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "codedeploy:PutLifecycleEventHookExecutionStatus"
-    ]
-    resources = [
-      "arn:aws:codedeploy:${var.region}:${data.aws_caller_identity.current.account_id}:deploymentgroup:${aws_codedeploy_app.api.name}/${aws_codedeploy_deployment_group.api.deployment_group_name}"
-    ]
-  }
 }
 
 // API
@@ -220,7 +209,6 @@ resource "aws_ecs_service" "api" {
     container_port = 80
   }
 
-  tags = local.default_tags
   propagate_tags = "TASK_DEFINITION"
 
   lifecycle {
@@ -259,34 +247,6 @@ resource "aws_ecs_task_definition" "api" {
         {
           name = "DOTNET_ENVIRONMENT",
           value = var.environment
-        },
-        {
-          name = "Auth__UserPoolId",
-          value = local.user_pool_id
-        },
-        {
-          name = "Auth__JwtKeySetUrl",
-          value = local.jwt_key_set_url
-        },
-        {
-          name = "Auth__Issuer",
-          value = local.issuer
-        },
-        {
-          name = "Auth__Scopes__create__0",
-          value = sort(aws_cognito_resource_server.time.scope_identifiers)[0]
-        },
-        {
-          name = "Auth__Scopes__delete__0",
-          value = sort(aws_cognito_resource_server.time.scope_identifiers)[1]
-        },
-        {
-          name = "Auth__Scopes__read__0",
-          value = sort(aws_cognito_resource_server.time.scope_identifiers)[2]
-        },
-        {
-          name = "Auth__Scopes__update__0",
-          value = sort(aws_cognito_resource_server.time.scope_identifiers)[3]
         }
       ]
       portMappings = [
@@ -297,8 +257,6 @@ resource "aws_ecs_task_definition" "api" {
       ]
     }
   ])
-
-  tags = local.default_tags
 }
 resource "aws_appautoscaling_target" "api_ecs_target" {
   min_capacity = var.api_min_capacity
@@ -343,6 +301,27 @@ resource "aws_appautoscaling_policy" "api_ecs_policy_memory" {
 }
 
 /// ALB
+resource "aws_lb_listener_rule" "test" {
+  listener_arn = data.aws_lb_listener.expensely_test.arn
+
+  action {
+    type = "forward"
+    target_group_arn = aws_alb_target_group.api_blue.arn
+  }
+
+  condition {
+    host_header {
+      values = [
+        local.api_url]
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      action
+    ]
+  }
+}
 resource "aws_lb_listener_rule" "api" {
   listener_arn = data.aws_lb_listener.expensely_https.arn
 
@@ -378,8 +357,6 @@ resource "aws_alb_target_group" "api_blue" {
     timeout = 20
     path = "/health"
   }
-
-  tags = local.default_tags
 }
 resource "aws_alb_target_group" "api_green" {
   name = "${local.api_name}-green"
@@ -396,15 +373,12 @@ resource "aws_alb_target_group" "api_green" {
     timeout = aws_alb_target_group.api_blue.health_check[0].timeout
     path = aws_alb_target_group.api_blue.health_check[0].path
   }
-
-  tags = aws_alb_target_group.api_blue.tags
 }
 
 /// Cloudwatch
 resource "aws_cloudwatch_log_group" "api" {
   name = "/${lower(var.application_name)}/${lower(var.environment)}"
   retention_in_days = 14
-  tags = local.default_tags
 }
 resource "aws_iam_policy" "api_logs" {
   name = "${local.api_name}-logs"
@@ -446,8 +420,6 @@ resource "aws_iam_role" "api_task" {
   ]
 }
 EOF
-
-  tags = local.default_tags
 }
 resource "aws_iam_role_policy_attachment" "api_task_logs_task" {
   role = aws_iam_role.api_task.name
@@ -482,7 +454,6 @@ resource "aws_iam_role" "api_execution" {
   ]
 }
 EOF
-  tags = local.default_tags
 }
 resource "aws_iam_role_policy_attachment" "api_execution_role_policy" {
   role = aws_iam_role.api_execution.name
@@ -493,31 +464,87 @@ resource "aws_iam_role_policy_attachment" "api_execution_logs" {
   policy_arn = aws_iam_policy.api_logs.arn
 }
 resource "aws_iam_role_policy_attachment" "api_execution_parameters" {
-  role = aws_iam_role.api_task.name
+  role = aws_iam_role.api_execution.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
 }
 
-// Cognito
-resource "aws_cognito_resource_server" "time" {
-  identifier = aws_route53_record.api.fqdn
-  name = "time"
+// Integration tests
+/// lambda
+resource "aws_lambda_function" "integration_tests" {
+  function_name = local.integration_tests_name
+  role = aws_iam_role.integration_tests.arn
+  description = "Time integration tests"
 
-  scope {
-    scope_name = "time:create"
-    scope_description = "Permission to create records for Time API"
-  }
-  scope {
-    scope_name = "time:delete"
-    scope_description = "Permission to delete records for Time API"
-  }
-  scope {
-    scope_name = "time:read"
-    scope_description = "Permission to read records for Time API"
-  }
-  scope {
-    scope_name = "time:update"
-    scope_description = "Permission to update records for Time API"
-  }
+  package_type = "Image"
+  publish = true
 
-  user_pool_id = local.user_pool_id
+  image_uri = "${data.aws_ecr_repository.integration_tests.repository_url}:${var.npm_build_identifier}"
+
+  memory_size = 2048
+
+  reserved_concurrent_executions = 1
+
+  timeout = 900
+
+  environment {
+    variables = {
+      ENVIRONMENT = lower(var.environment),
+      BUILD_NUMBER = var.npm_build_identifier,
+      RESULTS_BUCKET = var.test_results_bucket,
+      BASEURL = "https://${local.api_url}:8443"
+    }
+  }
+}
+/// cloudwatch
+resource "aws_cloudwatch_log_group" "integration_tests" {
+  name = "/aws/lambda/${aws_lambda_function.integration_tests.function_name}"
+  retention_in_days = 14
+}
+/// IAM
+resource "aws_iam_role" "integration_tests" {
+  name = local.integration_tests_name
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+resource "aws_iam_role_policy_attachment" "integration_tests_vpc" {
+  role = aws_iam_role.integration_tests.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+resource "aws_iam_role_policy_attachment" "integration_tests_codedeploy" {
+  role = aws_iam_role.integration_tests.name
+  policy_arn = aws_iam_policy.codedeploy.arn
+}
+resource "aws_iam_role_policy_attachment" "integration_tests_bucket_upload" {
+  role = aws_iam_role.integration_tests.name
+  policy_arn = data.aws_iam_policy.test_results_bucket.arn
+}
+
+// Shared IAM 
+resource "aws_iam_policy" "codedeploy" {
+  name = "${local.api_name}-codedeploy"
+  policy = data.aws_iam_policy_document.codedeploy.json
+}
+data "aws_iam_policy_document" "codedeploy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "codedeploy:PutLifecycleEventHookExecutionStatus"
+    ]
+    resources = [
+      "arn:aws:codedeploy:${var.region}:${data.aws_caller_identity.current.account_id}:deploymentgroup:${aws_codedeploy_app.api.name}/${aws_codedeploy_deployment_group.api.deployment_group_name}"
+    ]
+  }
 }

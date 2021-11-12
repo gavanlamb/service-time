@@ -9,13 +9,15 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Time.Api.V1.Models;
 using Time.Domain.Commands.Records;
 using Time.Domain.Queries.Records;
 
 namespace Time.Api.V1.Controllers
 {
+    /// <summary>
+    /// Api controller to interact with record items
+    /// </summary>
     [ApiController]
     [ApiVersion("1.0")]
     [Route("v{version:apiVersion}/[controller]")]
@@ -29,6 +31,11 @@ namespace Time.Api.V1.Controllers
         private readonly IMapper _mapper;
         private readonly IMediator _mediatr;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="mapper">Automapper</param>
+        /// <param name="mediatr">Mediatr</param>
         public RecordsController(
             IMapper mapper,
             IMediator mediatr)
@@ -63,7 +70,7 @@ namespace Time.Api.V1.Controllers
         /// <summary>
         /// Update a record
         /// </summary>
-        /// <param name="id">Identifier of the record to update</param>
+        /// <param name="id" example="1">Identifier of the record to update</param>
         /// <param name="updateRecord">Record details</param>
         /// <returns>Update record</returns>
         [HttpPut("{id:long}")]
@@ -94,7 +101,7 @@ namespace Time.Api.V1.Controllers
         /// <summary>
         /// Delete a record
         /// </summary>
-        /// <param name="id">Identifier of the record to delete</param>
+        /// <param name="id" example="1">Identifier of the record to delete</param>
         [HttpDelete("{id:long}")]
         [Authorize("delete")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -114,11 +121,12 @@ namespace Time.Api.V1.Controllers
         /// <summary>
         /// Get a record
         /// </summary>
-        /// <param name="id">Identifier of the record to get</param>
+        /// <param name="id" example="1">Identifier of the record to get</param>
         /// <returns>Found record</returns>
         [HttpGet("{id:long}")]
         [Authorize("read")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Record>> Get(
             [FromRoute] long id)
         {

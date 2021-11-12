@@ -76,6 +76,15 @@ variable "api_desired_count"{
   type = number
   default = 2
 }
+variable "npm_build_identifier"{
+  type = string
+}
+variable "test_results_bucket"{
+  type = string
+}
+variable "test_results_bucket_policy_name"{
+  type = string
+}
 
 variable "placement_strategies"{
   type = list(object({type:string, field:string}))
@@ -93,12 +102,9 @@ variable "placement_strategies"{
 locals {
   api_name = "${lower(var.application_name)}-${lower(var.environment)}"
   migration_name = "${lower(var.application_name)}-migration-${lower(var.environment)}"
+  integration_tests_name = "${lower(var.application_name)}-integration-tests-${lower(var.environment)}"
 
   api_url = "${var.subdomain}.${trimsuffix(data.aws_route53_zone.expensely_io.name, ".")}"
-  
-  user_pool_id = sort(data.aws_cognito_user_pools.expensely.ids)[0]
-  jwt_key_set_url = "https://cognito-idp.${var.region}.amazonaws.com/${local.user_pool_id}/.well-known/jwks.json"
-  issuer = "https://cognito-idp.${var.region}.amazonaws.com/${local.user_pool_id}"
 
   default_tags = {
     Application = "Expensely"

@@ -1,0 +1,12 @@
+parameters:
+  - name: buildNumber
+    displayName: NPM build number
+    type: string
+
+steps:
+  - template: ./docker/build.yml@templates
+    parameters:
+      target: integration-tests
+      dockerfilePath: tests/Time.IntegrationTests/Dockerfile
+      argument: "--build-arg BUILD_NUMBER=${{ parameters.buildNumber }}"
+      tag: ${{ parameters.buildNumber }}

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -27,7 +28,9 @@ namespace Time.Domain.Commands.Records
         {
             var record = await _context
                 .Records
-                .FirstAsync(r => r.Id == request.Id, cancellationToken);
+                .Where(r => r.Id == request.Id)
+                .Where(r => r.UserId == request.UserId)
+                .FirstAsync(cancellationToken);
             
             record.Name = request.Name;
             record.Start = request.Start;

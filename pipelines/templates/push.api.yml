@@ -1,0 +1,22 @@
+parameters:
+  - name: serviceConnectionName
+    displayName: Name of the AWS service connection to use
+    type: string
+  - name: region
+    displayName: Name of the AWS region
+    type: string
+
+steps:
+  - template: ./aws/cli/ecr.push.yml@templates
+    parameters:
+      serviceConnectionName: ${{ parameters.serviceConnectionName }}
+      region: ${{ parameters.region }}
+      imageName: api
+      repositoryName: time-api
+
+  - template: ./aws/cli/ecr.push.yml@templates
+    parameters:
+      serviceConnectionName: ${{ parameters.serviceConnectionName }}
+      region: ${{ parameters.region }}
+      imageName: migration
+      repositoryName: time-migration

@@ -1,15 +1,4 @@
-parameters:
-  - name: serviceConnectionName
-    displayName: Name of the AWS service connection to use
-    type: string
-  - name: region
-    displayName: Name of the AWS region
-    type: string
-
 steps:
-  - script: echo "##vso[build.updatebuildnumber]1.0.$(build.buildid).$(System.StageAttempt)"
-    displayName: Set build identifier
-
   - template: ./docker/build.yml@templates
     parameters:
       target: base
@@ -28,20 +17,8 @@ steps:
     parameters:
       target: api
       argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
-  - template: ./aws/cli/ecr.push.yml@templates
-    parameters:
-      serviceConnectionName: ${{ parameters.serviceConnectionName }}
-      region: ${{ parameters.region }}
-      imageName: api
-      repositoryName: time-api
 
   - template: ./docker/build.yml@templates
     parameters:
       target: migration
       argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
-  - template: ./aws/cli/ecr.push.yml@templates
-    parameters:
-      serviceConnectionName: ${{ parameters.serviceConnectionName }}
-      region: ${{ parameters.region }}
-      imageName: migration
-      repositoryName: time-migration

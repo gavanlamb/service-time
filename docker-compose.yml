@@ -1,14 +1,40 @@
 version: '3.6'
 services:
-    tests:
-        container_name: test
+    invoke-api-tests:
+        container_name: invoke-api-tests
+        image: curlimages/curl:latest
+        entrypoint: ["/bin/sh", "-c", "curl --location --request POST 'http://api-tests:8080/2015-03-31/functions/function/invocations' --header 'Content-Type: application/json' --data-raw '{\"DeploymentId\":\"1\",\"LifecycleEventHookExecutionId\":\"1\"}'" ]
+        depends_on:
+            - api-tests
+    
+    api-tests:
+        container_name: api-tests
+        build:
+            context: ./tests/Time.IntegrationTests/
+            dockerfile: Dockerfile
+            target: integration-tests
+            args:
+                BUILD_NUMBER: 1.0.0-0
+        environment:
+            BUILD_NUMBER: 1.0.0-0
+            ENVIRONMENT: local
+            BASEURL: http://api:80
+        depends_on:
+            -   api
+        ports:
+            -   7081:8080
+        volumes:
+            - ./local/api-tests:/tmp
+    
+    unit-tests:
+        container_name: unit-tests
         build:
             context: .
             dockerfile: Dockerfile
             target: test
             args:
                 BUILD_NUMBER: 1.0.0.1
-                PAT:
+                PAT: 
         volumes:
             - ./local/tests:/artifacts/tests
 
@@ -33,12 +59,12 @@ services:
             target: api
             args:
                 BUILD_NUMBER: 1.0.0.1
-                PAT:
+                PAT: 
         depends_on:
             -   migrations
-            -   tests
+            -   unit-tests
         ports:
-            -   8081:80
+            -   7080:80
         environment:
             DOTNET_ENVIRONMENT: Development
             ConnectionStrings__Default: Host=db;Port=7010;Database=time;Username=admin;Password=Password21

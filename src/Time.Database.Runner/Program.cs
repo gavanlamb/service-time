@@ -34,8 +34,12 @@ namespace Time.Database.Runner
                     request.LifecycleEventHookExecutionId,
                     LifecycleEventStatus.Succeeded);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
+                Log.Logger.Error(
+                    exception,
+                    "Error encountered during migration");
+                
                 await PutLifecycleEventHookExecutionStatusAsync(
                     request.DeploymentId,
                     request.LifecycleEventHookExecutionId,

@@ -20,3 +20,6 @@ api_max_capacity=10
 api_desired_count=2
 
 cognito_name="expensely-preview"
+
+test_results_bucket="expensely-test-results-production"
+test_results_bucket_policy_name="expensely-test-results"
