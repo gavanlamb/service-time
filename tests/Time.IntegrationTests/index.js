@@ -46,7 +46,7 @@ exports.handler = (event, context, callback) => {
                         ContentType: "application/xml",
                         Bucket: resultsBucket,
                         Body: testResultsData,
-                        Key: `/${environment}/Time.Api/${resultsFile}`
+                        Key: `${environment}/Time.Api/${resultsFile}`
                     },
                     function (s3Error, s3Data) {
                         if (s3Error) {
