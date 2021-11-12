@@ -50,11 +50,13 @@ exports.handler = (event, context, callback) => {
                     status: 'Failed'
                 };
                 codeDeploy.putLifecycleEventHookExecutionStatus(
-                    params, 
-                    function(err, data){
-                        if (err) {
+                    params,
+                    function(codeDeployError, codeDeployData){
+                        if (codeDeployError) {
+                            console.error(codeDeployError);
                             callback('Validation test failed');
                         } else {
+                            console.log(codeDeployData);
                             callback(null, 'Validation test succeeded');
                         }
                     });
@@ -67,10 +69,12 @@ exports.handler = (event, context, callback) => {
                 };
                 codeDeploy.putLifecycleEventHookExecutionStatus(
                     params,
-                    function(err, data){
-                        if (err) {
+                    function(codeDeployError, codeDeployData){
+                        if (codeDeployError) {
+                            console.error(codeDeployError);
                             callback('Validation test failed');
                         } else {
+                            console.log(codeDeployData);
                             callback(null, 'Validation test succeeded');
                         }
                     });
