@@ -68,27 +68,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Time.IntegrationTests", "Ti
 ProjectSection(SolutionItems) = preProject
 	tests\Time.IntegrationTests\package-lock.json = tests\Time.IntegrationTests\package-lock.json
 	tests\Time.IntegrationTests\package.json = tests\Time.IntegrationTests\package.json
-	tests\Time.IntegrationTests\tsconfig.json = tests\Time.IntegrationTests\tsconfig.json
-	tests\Time.IntegrationTests\tslint.json = tests\Time.IntegrationTests\tslint.json
-	tests\Time.IntegrationTests\webpack.config.js = tests\Time.IntegrationTests\webpack.config.js
 	tests\Time.IntegrationTests\Dockerfile = tests\Time.IntegrationTests\Dockerfile
+	tests\Time.IntegrationTests\.eslintrc.yml = tests\Time.IntegrationTests\.eslintrc.yml
 EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{796C937D-440B-4A7C-B9ED-0514924C62F5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "app", "app", "{796C937D-440B-4A7C-B9ED-0514924C62F5}"
 ProjectSection(SolutionItems) = preProject
-	tests\Time.IntegrationTests\src\index.ts = tests\Time.IntegrationTests\src\index.ts
+	tests\Time.IntegrationTests\app\index.js = tests\Time.IntegrationTests\app\index.js
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "collections", "collections", "{5EAD7550-5D2D-4A54-AA86-888C7FC0E955}"
 ProjectSection(SolutionItems) = preProject
-	tests\Time.IntegrationTests\src\Collections\Time.API.postman_collection.json = tests\Time.IntegrationTests\src\Collections\Time.API.postman_collection.json
+	tests\Time.IntegrationTests\app\collections\Time.API.postman_collection.json = tests\Time.IntegrationTests\app\collections\Time.API.postman_collection.json
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "environments", "environments", "{27618C76-6C1F-425F-94BD-5CBDF93D6D1B}"
 ProjectSection(SolutionItems) = preProject
-	tests\Time.IntegrationTests\src\Environments\Time.Local.postman_environment.json = tests\Time.IntegrationTests\src\Environments\Time.Local.postman_environment.json
-	tests\Time.IntegrationTests\src\Environments\Time.Preview.postman_environment.json = tests\Time.IntegrationTests\src\Environments\Time.Preview.postman_environment.json
-	tests\Time.IntegrationTests\src\Environments\Time.Production.postman_environment.json = tests\Time.IntegrationTests\src\Environments\Time.Production.postman_environment.json
+	tests\Time.IntegrationTests\app\environments\Time.Local.postman_environment.json = tests\Time.IntegrationTests\app\environments\Time.Local.postman_environment.json
+	tests\Time.IntegrationTests\app\environments\Time.Preview.postman_environment.json = tests\Time.IntegrationTests\app\environments\Time.Preview.postman_environment.json
+	tests\Time.IntegrationTests\app\environments\Time.Production.postman_environment.json = tests\Time.IntegrationTests\app\environments\Time.Production.postman_environment.json
 EndProjectSection
 EndProject
 Global

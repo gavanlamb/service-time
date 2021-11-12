@@ -6,13 +6,6 @@ parameters:
 steps:
   - template: ./docker/build.yml@templates
     parameters:
-      target: base
-      dockerfilePath: tests/Time.IntegrationTests/Dockerfile
-      argument: "--build-arg BUILD_NUMBER=${{ parameters.buildNumber }}"
-      tag: ${{ parameters.buildNumber }}
-
-  - template: ./docker/build.yml@templates
-    parameters:
       target: integration-tests
       dockerfilePath: tests/Time.IntegrationTests/Dockerfile
       argument: "--build-arg BUILD_NUMBER=${{ parameters.buildNumber }}"

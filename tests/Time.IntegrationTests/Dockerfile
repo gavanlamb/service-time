@@ -1,12 +1,7 @@
-FROM node:14 as base
+FROM amazon/aws-lambda-nodejs:14 as integration-tests
 ARG BUILD_NUMBER=1.0.0-0
-WORKDIR /app
-RUN ls -al
+WORKDIR /var/task
 COPY . ./
 RUN npm ci
 RUN npm run build
-RUN npm run package
-
-FROM amazon/aws-lambda-nodejs:14 as integration-tests
-COPY --from=base /app/webpack /var/task
-CMD [ "index.handler" ]
+CMD [ "app.index.handler" ]
