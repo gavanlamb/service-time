@@ -30,3 +30,14 @@ test_results_bucket_policy_name="expensely-test-results"
 
 rds_delete_protection=true
 rds_database_name="time_api"
+
+placement_strategies=[
+  {
+    type = "spread"
+    field = "attribute:ecs.availability-zone"
+  },
+  {
+    field = "cpu",
+    type = "binpack"
+  }
+]

@@ -668,3 +668,94 @@ resource "aws_ssm_parameter" "connection_string" {
   type  = "SecureString"
   value = "Host=${local.rds_endpoint};Port=${local.rds_port};Database=${var.rds_database_name};Username=${local.rds_username};Password=${local.rds_password};Keepalive=300;CommandTimeout=300;Timeout=300"
 }
+
+// Cloudwatch
+/// Dashboard
+resource "aws_cloudwatch_dashboard" "main" {
+  dashboard_name = "time-${var.environment}"
+  dashboard_body = <<EOF
+{
+    "widgets": [
+        {
+            "height": 6,
+            "width": 24,
+            "y": 0,
+            "x": 0,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields MessageTemplate, Level\n| stats count(*) as Count by MessageTemplate, Level\n| sort Count desc\n| limit 20",
+                "region": "ap-southeast-2",
+                "stacked": false,
+                "title": "Top log templates",
+                "view": "table"
+            }
+        },
+        {
+            "height": 6,
+            "width": 6,
+            "y": 6,
+            "x": 0,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.StatusCode\n| filter MessageTemplate = \"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\"\n| filter Properties.RequestPath != \"/health\"\n| stats count(*) as Count by Properties.StatusCode",
+                "region": "ap-southeast-2",
+                "title": "Response codes",
+                "view": "pie"
+            }
+        },
+        {
+            "height": 1,
+            "width": 24,
+            "y": 12,
+            "x": 0,
+            "type": "text",
+            "properties": {
+                "markdown": "# Health "
+            }
+        },
+        {
+            "height": 6,
+            "width": 6,
+            "y": 13,
+            "x": 0,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.StatusCode\n| filter MessageTemplate = \"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\"\n| filter Properties.RequestPath = \"/health\"\n| stats count(*) as Count by Properties.StatusCode\n",
+                "region": "ap-southeast-2",
+                "stacked": false,
+                "view": "pie",
+                "title": "Response codes"
+            }
+        },
+        {
+            "height": 6,
+            "width": 18,
+            "y": 6,
+            "x": 6,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.Elapsed\n| filter MessageTemplate = \"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\"\n| filter Properties.RequestPath != \"/health\"\n| stats avg(Properties.Elapsed) as avg, max(Properties.Elapsed) as max, min(Properties.Elapsed)as min by bin(1m)\n",
+                "region": "ap-southeast-2",
+                "stacked": false,
+                "title": "Request elapsed ms",
+                "view": "timeSeries"
+            }
+        },
+        {
+            "height": 6,
+            "width": 18,
+            "y": 13,
+            "x": 6,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.Elapsed\n| filter MessageTemplate = \"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\"\n| filter Properties.RequestPath = \"/health\"\n| stats avg(Properties.Elapsed) as avg, max(Properties.Elapsed) as max, min(Properties.Elapsed)as min by bin(1m)\n",
+                "region": "ap-southeast-2",
+                "stacked": false,
+                "title": "Request elapsed ms",
+                "view": "timeSeries"
+            }
+        }
+    ]
+}
+EOF
+}
