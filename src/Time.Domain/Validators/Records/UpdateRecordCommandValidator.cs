@@ -16,6 +16,8 @@ namespace Time.Domain.Validators.Records
             
             RuleFor(r => r.End)
                 .Must(DateTimeValidator.BeInThePast).When(r => r.End != null).WithMessage("The end time must be in the past");
+            
+            // TODO Check Start < End
         }
     }
 }
