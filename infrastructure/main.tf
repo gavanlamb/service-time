@@ -672,7 +672,7 @@ resource "aws_ssm_parameter" "connection_string" {
 // Cloudwatch
 /// Dashboard
 resource "aws_cloudwatch_dashboard" "main" {
-  dashboard_name = "time-${var.environment}"
+  dashboard_name = local.api_name
   dashboard_body = <<EOF
 {
     "widgets": [
