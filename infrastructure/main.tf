@@ -632,6 +632,16 @@ resource "aws_security_group_rule" "postgres_server" {
   source_security_group_id = aws_security_group.postgres_client.id
   description = "Allow traffic from ${aws_security_group.postgres_client.name} on port ${module.postgres.rds_cluster_port}"
 }
+resource "aws_security_group_rule" "external" {
+  security_group_id = aws_security_group.postgres_server.id
+
+  type = "ingress"
+  from_port = module.postgres.rds_cluster_port
+  to_port = module.postgres.rds_cluster_port
+  protocol = "tcp"
+  source_security_group_id = data.aws_security_group.external.id
+  description = "Allow traffic from ${data.aws_security_group.external.name} on port ${module.postgres.rds_cluster_port}"
+}
 
 resource "aws_security_group" "postgres_client" {
   name = "${local.rds_name}-rds-client"
