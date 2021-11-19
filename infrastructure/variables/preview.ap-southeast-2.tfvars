@@ -26,4 +26,4 @@ test_results_bucket="expensely-test-results-production"
 test_results_bucket_policy_name="expensely-test-results"
 
 rds_delete_protection=false
-rds_database_name="time"
+rds_database_name="time_api"
