@@ -10,15 +10,10 @@ data "aws_subnet_ids" "private" {
     Tier = "private"
   }
 }
-data "aws_security_group" "postgres_client" {
-  vpc_id = data.aws_vpc.vpc.id
-  name = "expensely-rds-client"
-}
 data "aws_security_group" "external" {
   vpc_id = data.aws_vpc.vpc.id
   name = "external"
 }
-
 data "aws_db_subnet_group" "database"{
   name = var.db_subnet_group_name
 }

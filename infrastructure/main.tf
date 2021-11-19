@@ -109,7 +109,7 @@ resource "aws_lambda_function" "migration" {
 
   vpc_config {
     security_group_ids = [
-      data.aws_security_group.postgres_client.id,
+      aws_security_group.postgres_client.id,
       data.aws_security_group.external.id]
     subnet_ids = data.aws_subnet_ids.private.ids
   }
