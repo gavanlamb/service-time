@@ -54,8 +54,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Database.Runner", "src
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{8F0DA939-E41B-47DA-8545-60FA2524BC91}"
 ProjectSection(SolutionItems) = preProject
-	pipelines\templates\environment.create.yml = pipelines\templates\environment.create.yml
-	pipelines\templates\environment.destroy.yml = pipelines\templates\environment.destroy.yml
 	pipelines\templates\build.api.yml = pipelines\templates\build.api.yml
 	pipelines\templates\build.integration-tests.yml = pipelines\templates\build.integration-tests.yml
 	pipelines\templates\push.api.yml = pipelines\templates\push.api.yml
