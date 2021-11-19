@@ -85,6 +85,16 @@ variable "test_results_bucket"{
 variable "test_results_bucket_policy_name"{
   type = string
 }
+variable "db_subnet_group_name"{
+  type = string
+}
+
+variable "rds_delete_protection" {
+  type = bool
+}
+variable "rds_database_name" {
+  type = string
+}
 
 variable "placement_strategies"{
   type = list(object({type:string, field:string}))
@@ -100,6 +110,12 @@ variable "placement_strategies"{
 # LOCALS
 ###################################################
 locals {
+  rds_name = "${lower(var.application_name)}-${lower(var.environment)}"
+  rds_username = module.postgres.rds_cluster_master_username,
+  rds_password = module.postgres.rds_cluster_master_password,
+  rds_port = module.postgres.rds_cluster_port,
+  rds_endpoint = replace(module.postgres.rds_cluster_endpoint, ":${module.postgres.rds_cluster_port}", "")
+  
   api_name = "${lower(var.application_name)}-${lower(var.environment)}"
   migration_name = "${lower(var.application_name)}-migration-${lower(var.environment)}"
   integration_tests_name = "${lower(var.application_name)}-integration-tests-${lower(var.environment)}"

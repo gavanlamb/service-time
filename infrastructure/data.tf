@@ -19,6 +19,10 @@ data "aws_security_group" "external" {
   name = "external"
 }
 
+data "aws_db_subnet_group" "database"{
+  name = var.db_subnet_group_name
+}
+
 data "aws_iam_role" "codedeploy"{
   name = var.codedeploy_role_name
 }

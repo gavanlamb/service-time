@@ -548,3 +548,113 @@ data "aws_iam_policy_document" "codedeploy" {
     ]
   }
 }
+
+// RDS
+module "postgres" {
+  source = "terraform-aws-modules/rds-aurora/aws"
+  version = "5.2.0"
+
+  name = local.rds_name
+  engine = "aurora-postgresql"
+  engine_mode = "serverless"
+  storage_encrypted = true
+
+  vpc_id = data.aws_vpc.vpc.id
+  subnets = data.aws_db_subnet_group.database.subnet_ids
+  db_subnet_group_name = data.aws_db_subnet_group.database.name
+  create_security_group = false
+  vpc_security_group_ids = [aws_security_group.postgres_server.id]
+
+  replica_scale_enabled = false
+  replica_count = 0
+
+  monitoring_interval = 60
+
+  apply_immediately = true
+  skip_final_snapshot = true
+
+  db_parameter_group_name = aws_db_parameter_group.postgresql.id
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.postgresql.id
+
+  deletion_protection = var.rds_delete_protection
+  
+  database_name = var.rds_database_name
+
+  scaling_configuration = {
+    auto_pause = true
+    min_capacity = 2
+    max_capacity = 4
+    seconds_until_auto_pause = 300
+    timeout_action = "ForceApplyCapacityChange"
+  }
+}
+resource "aws_db_parameter_group" "postgresql" {
+  name = "${local.rds_name}-aurora-pg-parameter-group"
+  family = "aurora-postgresql10"
+  description = "Parameter group for ${local.rds_name}"
+}
+resource "aws_rds_cluster_parameter_group" "postgresql" {
+  name = "${local.rds_name}-aurora-pg-cluster-parameter-group"
+  family = "aurora-postgresql10"
+  description = "Cluster parameter group for ${local.rds_name}"
+}
+
+resource "aws_secretsmanager_secret" "postgres_admin_password" {
+  name = "Expensely/${var.environment}/DatabaseInstance/Postgres/User/Expensely"
+  description = "Admin password for RDS instance:${module.postgres.rds_cluster_id}"
+}
+resource "aws_secretsmanager_secret_version" "postgres_admin_password" {
+  secret_id = aws_secretsmanager_secret.postgres_admin_password.id
+  secret_string = jsonencode({
+    Username = local.rds_username,
+    Password = local.rds_password,
+    Port = local.rds_port,
+    Endpoint = local.rds_endpoint
+  })
+}
+
+resource "aws_security_group" "postgres_server" {
+  name = "${local.rds_name}-rds-server"
+  description = "Allow traffic into RDS:expensely"
+  vpc_id = data.aws_vpc.vpc.id
+
+  tags = {
+    Name = "${local.rds_name}-rds-server"
+  }
+}
+resource "aws_security_group_rule" "postgres_server" {
+  security_group_id = aws_security_group.postgres_server.id
+
+  type = "ingress"
+  from_port = module.postgres.rds_cluster_port
+  to_port = module.postgres.rds_cluster_port
+  protocol = "tcp"
+  source_security_group_id = aws_security_group.postgres_client.id
+  description = "Allow traffic from ${aws_security_group.postgres_client.name} on port ${module.postgres.rds_cluster_port}"
+}
+
+resource "aws_security_group" "postgres_client" {
+  name = "${local.rds_name}-rds-client"
+  description = "Allow traffic to RDS:${local.rds_name}"
+  vpc_id = data.aws_vpc.vpc.id
+
+  tags = {
+    Name = "${local.rds_name}-rds-client"
+  }
+}
+resource "aws_security_group_rule" "postgres_client" {
+  security_group_id = aws_security_group.postgres_client.id
+
+  type = "egress"
+  from_port = module.postgres.rds_cluster_port
+  to_port = module.postgres.rds_cluster_port
+  protocol = "tcp"
+  source_security_group_id = aws_security_group.postgres_server.id
+  description = "Allow traffic to ${aws_security_group.postgres_server.name} on port ${module.postgres.rds_cluster_port}"
+}
+
+resource "aws_ssm_parameter" "connection_string" {
+  name  = "/${var.application_name}/${var.environment}/ConnectionStrings/Default"
+  type  = "SecureString"
+  value = "Host=${local.rds_endpoint};Port=${local.rds_port};Database=${var.rds_database_name};Username=${local.rds_username};Password=${local.rds_password};Keepalive=300;CommandTimeout=300;Timeout=300"
+}
