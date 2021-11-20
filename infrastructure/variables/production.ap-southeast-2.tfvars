@@ -5,6 +5,7 @@ region="ap-southeast-2"
 application_name="Time"
 
 vpc_name="expensely"
+db_subnet_group_name="expensely"
 
 cluster_name="expensely"
 capacity_provider_name="linux"
@@ -26,3 +27,6 @@ cognito_name="expensely"
 
 test_results_bucket="expensely-test-results-production"
 test_results_bucket_policy_name="expensely-test-results"
+
+rds_delete_protection=true
+rds_database_name="time_api"

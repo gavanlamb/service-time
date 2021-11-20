@@ -94,17 +94,3 @@ stages:
                     stateBucketName: ${{ variables.terraformStateBucketName }}
                     stateLockTableName: ${{ variables.terraformStateLockTableName }}
                     workspaceName: service-time-${{ variables.environment }}$(pullRequestId)
-
-      - job: destory_environment_resources
-        displayName: Destroy environment resources
-        dependsOn:
-          - destroy
-          - setup
-        variables:
-          pullRequestId: $[ dependencies.setup.outputs['set_variables.pullRequestId'] ]
-        steps:
-          - template: templates/environment.destroy.yml
-            parameters:
-              environmentName: Preview$(pullRequestId)
-              serviceConnectionName: ${{ variables.awsServiceConnectionName }}
-              region: ${{ variables.region }}

@@ -77,20 +77,8 @@ stages:
       - name: NPMBuildNumber
         value: $[ stageDependencies.build.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
     jobs:
-      - job: setup
-        displayName: Setup
-        steps:
-          - checkout: none
-          - template: templates/environment.create.yml
-            parameters:
-              environmentName: Preview$(System.PullRequest.PullRequestNumber)
-              serviceConnectionName: ${{ variables.awsServiceConnectionName }}
-              region: ${{ variables.region }}
-
       - job: plan
         displayName: Plan
-        dependsOn:
-          - setup
         steps:
           - template: aws/terraform/plan.yml@templates
             parameters:
@@ -105,7 +93,6 @@ stages:
         displayName: Deploy
         dependsOn:
           - plan
-          - setup
         environment: preview
         strategy:
           runOnce:
