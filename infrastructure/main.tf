@@ -1293,3 +1293,117 @@ resource "aws_cloudwatch_dashboard" "main" {
 }
 EOF
 }
+
+/// Metric filters
+resource "aws_cloudwatch_log_metric_filter" "get_health_request_time" {
+  name = "GET /health request time"
+  pattern = "{ $.MessageTemplate = \"{HostingRequestFinishedLog:l}\" && $.Properties.Method = \"GET\" && $.Properties.Path = \"/health\" }"
+  log_group_name = aws_cloudwatch_log_group.api.name
+
+  metric_transformation {
+    name = "RequestTime"
+    namespace = "Time/${var.environment}/API/Get/Health"
+    value = "$.Properties.ElapsedMilliseconds"
+    unit = "Milliseconds"
+    dimensions = {
+      Method: "$.Properties.Method",
+      Protocol: "$.Properties.Protocol"
+    }
+  }
+}
+resource "aws_cloudwatch_log_metric_filter" "post_record_request_time" {
+  name = "POST /v1/Records request time"
+  pattern = "{ $.MessageTemplate = \"{HostingRequestFinishedLog:l}\" && $.Properties.Method = \"POST\" && $.Properties.Path = \"/v1/Records\" }"
+  log_group_name = aws_cloudwatch_log_group.api.name
+
+  metric_transformation {
+    name = "RequestTime"
+    namespace = "Time/${var.environment}/API/Post/V1/Records"
+    value = "$.Properties.ElapsedMilliseconds"
+    unit = "Milliseconds"
+    dimensions = {
+      Method: "$.Properties.Method",
+      Protocol: "$.Properties.Protocol"
+    }
+  }
+}
+resource "aws_cloudwatch_log_metric_filter" "get_records_request_time" {
+  name = "GET /v1/Records request time"
+  pattern = "{ $.MessageTemplate = \"{HostingRequestFinishedLog:l}\" && $.Properties.Method = \"GET\" && $.Properties.Path = \"/v1/Records\" }"
+  log_group_name = aws_cloudwatch_log_group.api.name
+
+  metric_transformation {
+    name = "RequestTime"
+    namespace = "Time/${var.environment}/API/GET/V1/Records"
+    value = "$.Properties.ElapsedMilliseconds"
+    unit = "Milliseconds"
+    dimensions = {
+      Method: "$.Properties.Method",
+      Protocol: "$.Properties.Protocol"
+    }
+  }
+}
+resource "aws_cloudwatch_log_metric_filter" "put_record_request_time" {
+  name = "PUT /v1/Records/{id} request time"
+  pattern = "{ $.MessageTemplate = \"{HostingRequestFinishedLog:l}\" && $.Properties.Method = \"PUT\" && $.Properties.Path = \"/v1/Records/*\" }"
+  log_group_name = aws_cloudwatch_log_group.api.name
+
+  metric_transformation {
+    name = "RequestTime"
+    namespace = "Time/${var.environment}/API/PUT/v1/Records/{id}"
+    value = "$.Properties.ElapsedMilliseconds"
+    unit = "Milliseconds"
+    dimensions = {
+      Method: "$.Properties.Method",
+      Protocol: "$.Properties.Protocol"
+    }
+  }
+}
+resource "aws_cloudwatch_log_metric_filter" "delete_record_request_time" {
+  name = "DELETE /v1/Records/{id} request time"
+  pattern = "{ $.MessageTemplate = \"{HostingRequestFinishedLog:l}\" && $.Properties.Method = \"DELETE\" && $.Properties.Path = \"/v1/Records/*\" }"
+  log_group_name = aws_cloudwatch_log_group.api.name
+
+  metric_transformation {
+    name = "RequestTime"
+    namespace = "Time/${var.environment}/API/DELETE/v1/Records/{id}"
+    value = "$.Properties.ElapsedMilliseconds"
+    unit = "Milliseconds"
+    dimensions = {
+      Method: "$.Properties.Method",
+      Protocol: "$.Properties.Protocol"
+    }
+  }
+}
+resource "aws_cloudwatch_log_metric_filter" "get_record_request_time" {
+  name = "GET /v1/Records/{id} request time"
+  pattern = "{ $.MessageTemplate = \"{HostingRequestFinishedLog:l}\" && $.Properties.Method = \"GET\" && $.Properties.Path = \"/v1/Records/*\" }"
+  log_group_name = aws_cloudwatch_log_group.api.name
+
+  metric_transformation {
+    name = "RequestTime"
+    namespace = "Time/${var.environment}/API/GET/v1/Records/{id}"
+    value = "$.Properties.ElapsedMilliseconds"
+    unit = "Milliseconds"
+    dimensions = {
+      Method: "$.Properties.Method",
+      Protocol: "$.Properties.Protocol"
+    }
+  }
+}
+resource "aws_cloudwatch_log_metric_filter" "get_service_information_request_time" {
+  name = "GET /v1/Service/Info request time"
+  pattern = "{ $.MessageTemplate = \"{HostingRequestFinishedLog:l}\" && $.Properties.Method = \"GET\" && $.Properties.Path = \"/v1/Service/Info\" }"
+  log_group_name = aws_cloudwatch_log_group.api.name
+
+  metric_transformation {
+    name = "RequestTime"
+    namespace = "Time/${var.environment}/API/GET/V1/Service/Info"
+    value = "$.Properties.ElapsedMilliseconds"
+    unit = "Milliseconds"
+    dimensions = {
+      Method: "$.Properties.Method",
+      Protocol: "$.Properties.Protocol"
+    }
+  }
+}
