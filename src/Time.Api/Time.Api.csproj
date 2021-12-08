@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Expensely.Logging.Serilog" Version="1.0.1627.1" />
+        <PackageReference Include="Expensely.Logging.Serilog" Version="1.0.1630.1" />
         <PackageReference Include="Expensely.Authentication.Cognito.Jwt" Version="1.0.1354.1" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.10" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
