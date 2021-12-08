@@ -707,7 +707,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 1,
             "width": 24,
-            "y": 63,
+            "y": 57,
             "x": 0,
             "type": "text",
             "properties": {
@@ -717,7 +717,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 6,
-            "y": 57,
+            "y": 58,
             "x": 0,
             "type": "log",
             "properties": {
@@ -730,9 +730,9 @@ resource "aws_cloudwatch_dashboard" "main" {
         },
         {
             "height": 6,
-            "width": 12,
+            "width": 18,
             "y": 0,
-            "x": 12,
+            "x": 6,
             "type": "log",
             "properties": {
                 "query": "SOURCE '/time/preview21' | fields Properties.Elapsed\n| filter MessageTemplate = \"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\"\n| filter Properties.RequestPath != \"/health\"\n| stats min(Properties.Elapsed)as min, avg(Properties.Elapsed) as avg, max(Properties.Elapsed) as max by bin(1m)\n",
@@ -745,7 +745,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 18,
-            "y": 64,
+            "y": 58,
             "x": 6,
             "type": "log",
             "properties": {
@@ -759,7 +759,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 71,
+            "y": 65,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -797,7 +797,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 1,
             "width": 24,
-            "y": 70,
+            "y": 64,
             "x": 0,
             "type": "text",
             "properties": {
@@ -876,7 +876,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 57,
+            "y": 45,
             "x": 12,
             "type": "metric",
             "properties": {
@@ -908,7 +908,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 77,
+            "y": 71,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -944,7 +944,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 71,
+            "y": 65,
             "x": 12,
             "type": "metric",
             "properties": {
@@ -979,7 +979,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 83,
+            "y": 77,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -1014,7 +1014,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 77,
+            "y": 71,
             "x": 12,
             "type": "metric",
             "properties": {
@@ -1223,7 +1223,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         },
         {
             "height": 6,
-            "width": 24,
+            "width": 12,
             "y": 45,
             "x": 0,
             "type": "metric",
@@ -1256,11 +1256,11 @@ resource "aws_cloudwatch_dashboard" "main" {
             }
         },
         {
-            "type": "metric",
-            "x": 6,
-            "y": 14,
-            "width": 6,
             "height": 3,
+            "width": 6,
+            "y": 14,
+            "x": 6,
+            "type": "metric",
             "properties": {
                 "metrics": [
                     [ "AWS/Logs", "IncomingLogEvents", "LogGroupName", "/time/preview21", { "label": "Log Events" } ]
@@ -1273,11 +1273,11 @@ resource "aws_cloudwatch_dashboard" "main" {
             }
         },
         {
-            "type": "metric",
-            "x": 0,
-            "y": 14,
-            "width": 6,
             "height": 3,
+            "width": 6,
+            "y": 14,
+            "x": 0,
+            "type": "metric",
             "properties": {
                 "metrics": [
                     [ "AWS/Logs", "IncomingBytes", "LogGroupName", "/time/preview21", { "label": "Bytes" } ]
