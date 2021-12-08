@@ -55,6 +55,7 @@ namespace Time.Api
             
             services.AddCognitoJwt(Configuration);
             
+            services.AddHttpContextAccessor();
             Logging.AddSerilog(Configuration);
             
             services.AddAutoMapper(typeof(Startup));
