@@ -51,7 +51,6 @@ stages:
         displayName: Integration Tests
         dependsOn:
           - setup
-          - api
         variables:
           NPMBuildNumber: $[ dependencies.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
         steps:
