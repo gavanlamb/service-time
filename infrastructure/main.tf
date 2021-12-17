@@ -736,7 +736,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "ReadIOPS", "DBClusterIdentifier", "${module.postgres.name}", { "yAxis": "right", "label": "Read" } ],
+                    [ "AWS/RDS", "ReadIOPS", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "yAxis": "right", "label": "Read" } ],
                     [ ".", "WriteIOPS", ".", ".", { "label": "Write" } ]
                 ],
                 "view": "timeSeries",
@@ -776,7 +776,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "CPUUtilization", "DBClusterIdentifier", "${module.postgres.name}", { "label": "Utilization" } ]
+                    [ "AWS/RDS", "CPUUtilization", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Utilization" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -804,7 +804,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "FreeableMemory", "DBClusterIdentifier", "${module.postgres.name}", { "label": "Freeable" } ]
+                    [ "AWS/RDS", "FreeableMemory", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Freeable" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -829,7 +829,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "FreeLocalStorage", "DBClusterIdentifier", "${module.postgres.name}", { "label": "Free Local" } ]
+                    [ "AWS/RDS", "FreeLocalStorage", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Free Local" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -853,7 +853,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "DatabaseConnections", "DBClusterIdentifier", "${module.postgres.name}", { "label": "Connections" } ]
+                    [ "AWS/RDS", "DatabaseConnections", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Connections" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -881,7 +881,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "Deadlocks", "DBClusterIdentifier", "${module.postgres.name}" ]
+                    [ "AWS/RDS", "Deadlocks", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,
@@ -908,7 +908,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "ServerlessDatabaseCapacity", "DBClusterIdentifier", "${module.postgres.name}", { "label": "ServerlessDatabaseCapacity" } ]
+                    [ "AWS/RDS", "ServerlessDatabaseCapacity", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "ServerlessDatabaseCapacity" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -935,7 +935,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "AuroraReplicaLag", "DBClusterIdentifier", "${module.postgres.name}" ]
+                    [ "AWS/RDS", "AuroraReplicaLag", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1205,7 +1205,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "CPUUtilization", "DBClusterIdentifier", "${module.postgres.name}", { "label": "Utilization" } ]
+                    [ "AWS/RDS", "CPUUtilization", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Utilization" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1224,7 +1224,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "FreeableMemory", "DBClusterIdentifier", "${module.postgres.name}", { "label": "Freeable" } ]
+                    [ "AWS/RDS", "FreeableMemory", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Freeable" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1242,7 +1242,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "BufferCacheHitRatio", "DBClusterIdentifier", "${module.postgres.name}", { "label": "Cache Hit Ratio" } ]
+                    [ "AWS/RDS", "BufferCacheHitRatio", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Cache Hit Ratio" } ]
                 ],
                 "view": "timeSeries",
                 "region": "${var.region}",
