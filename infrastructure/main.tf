@@ -1260,7 +1260,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "${aws_cloudwatch_log_metric_filter.request_time.metric_transformation[0].name}", "RequestTime", "Path", "/v1/Records/{id:long}", "Method", "PUT", "Protocol", "HTTP/1.1" ],
+                    [ "${aws_cloudwatch_log_metric_filter.request_time.metric_transformation[0].namespace}", "RequestTime", "Path", "/v1/Records/{id:long}", "Method", "PUT", "Protocol", "HTTP/1.1" ],
                     [ "...", "/v1/Records", ".", "POST", ".", "." ],
                     [ "...", "/v1/Records/{id:long}", ".", "GET", ".", "." ],
                     [ "...", "/v1/Service/Info", ".", ".", ".", "." ],
@@ -1285,7 +1285,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "view": "timeSeries",
                 "stacked": false,
                 "metrics": [
-                    [ "${aws_cloudwatch_log_metric_filter.request_time.metric_transformation[0].name}", "RequestTime", "Path", "/health", "Method", "GET", "Protocol", "HTTP/1.1" ]
+                    [ "${aws_cloudwatch_log_metric_filter.request_time.metric_transformation[0].namespace}", "RequestTime", "Path", "/health", "Method", "GET", "Protocol", "HTTP/1.1" ]
                 ],
                 "region": "${var.region}",
                 "period": 300,
@@ -1529,7 +1529,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "width": 24,
             "height": 6,
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.integration_tests.name}' | fields MessageTemplate as Template, Level\n| filter isPresent(Template)\n| stats count(*) as Count by Template, Level\n| sort Count desc\n| display Count, Level, Template\n| limit 50",
+                "query": "SOURCE '${aws_cloudwatch_log_group.migration.name}' | fields MessageTemplate as Template, Level\n| filter isPresent(Template)\n| stats count(*) as Count by Template, Level\n| sort Count desc\n| display Count, Level, Template\n| limit 50",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Top log templates",
@@ -1631,7 +1631,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "width": 24,
             "height": 6,
             "properties": {
-                "query": "SOURCE '/aws/rds/cluster/time-${var.environment}/postgresql' | fields @message\n| sort by @timestamp desc",
+                "query": "SOURCE '/aws/rds/cluster/${local.rds_name}/postgresql' | fields @message\n| sort by @timestamp desc",
                 "region": "${var.region}",
                 "stacked": false,
                 "view": "table",
