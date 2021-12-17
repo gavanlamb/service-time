@@ -1260,7 +1260,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "${aws_cloudwatch_log_metric_filter.request_time.metric_transformation.name}", "RequestTime", "Path", "/v1/Records/{id:long}", "Method", "PUT", "Protocol", "HTTP/1.1" ],
+                    [ "${aws_cloudwatch_log_metric_filter.request_time.metric_transformation[0].name}", "RequestTime", "Path", "/v1/Records/{id:long}", "Method", "PUT", "Protocol", "HTTP/1.1" ],
                     [ "...", "/v1/Records", ".", "POST", ".", "." ],
                     [ "...", "/v1/Records/{id:long}", ".", "GET", ".", "." ],
                     [ "...", "/v1/Service/Info", ".", ".", ".", "." ],
@@ -1285,7 +1285,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "view": "timeSeries",
                 "stacked": false,
                 "metrics": [
-                    [ "${aws_cloudwatch_log_metric_filter.request_time.metric_transformation.name}", "RequestTime", "Path", "/health", "Method", "GET", "Protocol", "HTTP/1.1" ]
+                    [ "${aws_cloudwatch_log_metric_filter.request_time.metric_transformation[0].name}", "RequestTime", "Path", "/health", "Method", "GET", "Protocol", "HTTP/1.1" ]
                 ],
                 "region": "${var.region}",
                 "period": 300,
