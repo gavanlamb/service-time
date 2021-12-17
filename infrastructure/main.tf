@@ -792,7 +792,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "legend": {
                     "position": "bottom"
                 },
-                "setPeriodToTimeRange": true
+                "setPeriodToTimeRange": true,
                 "liveData": true
             }
         },
