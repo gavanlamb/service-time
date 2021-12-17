@@ -679,12 +679,12 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 18,
-            "y": 29,
+            "y": 35,
             "x": 6,
             "type": "log",
             "properties": {
-                "query": "SOURCE '/time/preview21' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Information\"\n| stats count(*) as Count by Template, Version\n| sort Count desc\n| display Count, Version, Template\n| limit 20",
-                "region": "ap-southeast-2",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Information\"\n| stats count(*) as Count by Template, Version\n| sort Count desc, Version, Template\n| display Count, Version, Template\n| limit 20",
+                "region": "${var.region}",
                 "stacked": false,
                 "title": "Top information templates",
                 "view": "table"
@@ -697,8 +697,8 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '/time/preview21' | fields Properties.StatusCode as Code\n| filter MessageTemplate = \"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\"\n| filter Properties.RequestPath != \"/health\"\n| stats count(*) as Count by Code\n| sort by Code\n",
-                "region": "ap-southeast-2",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.StatusCode as Code\n| filter MessageTemplate = \"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\"\n| filter Properties.RequestPath != \"/health\"\n| stats count(*) as Count by Code\n| sort by Code\n",
+                "region": "${var.region}",
                 "stacked": false,
                 "title": "Response codes",
                 "view": "pie"
@@ -707,22 +707,22 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 1,
             "width": 24,
-            "y": 57,
+            "y": 102,
             "x": 0,
             "type": "text",
             "properties": {
-                "markdown": "## Health "
+                "markdown": "# Integration tests "
             }
         },
         {
             "height": 6,
             "width": 6,
-            "y": 58,
+            "y": 77,
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '/time/preview21' | fields Properties.StatusCode\n| filter MessageTemplate = \"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\"\n| filter Properties.RequestPath = \"/health\"\n| stats count(*) as Count by Properties.StatusCode\n",
-                "region": "ap-southeast-2",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.StatusCode\n| filter MessageTemplate = \"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\"\n| filter Properties.RequestPath = \"/health\"\n| stats count(*) as Count by Properties.StatusCode\n",
+                "region": "${var.region}",
                 "stacked": false,
                 "view": "pie",
                 "title": "Response codes"
@@ -730,46 +730,18 @@ resource "aws_cloudwatch_dashboard" "main" {
         },
         {
             "height": 6,
-            "width": 18,
-            "y": 0,
-            "x": 6,
-            "type": "log",
-            "properties": {
-                "query": "SOURCE '/time/preview21' | fields Properties.Elapsed\n| filter MessageTemplate = \"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\"\n| filter Properties.RequestPath != \"/health\"\n| stats min(Properties.Elapsed)as min, avg(Properties.Elapsed) as avg, max(Properties.Elapsed) as max by bin(1m)\n",
-                "region": "ap-southeast-2",
-                "stacked": false,
-                "title": "Request elapsed ms",
-                "view": "timeSeries"
-            }
-        },
-        {
-            "height": 6,
-            "width": 18,
-            "y": 58,
-            "x": 6,
-            "type": "log",
-            "properties": {
-                "query": "SOURCE '/time/preview21' | fields Properties.Elapsed\n| filter MessageTemplate = \"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\"\n| filter Properties.RequestPath = \"/health\"\n| stats min(Properties.Elapsed)as min, avg(Properties.Elapsed) as avg, max(Properties.Elapsed) as max by bin(1m)\n",
-                "region": "ap-southeast-2",
-                "stacked": false,
-                "title": "Request elapsed ms",
-                "view": "timeSeries"
-            }
-        },
-        {
-            "height": 6,
             "width": 12,
-            "y": 65,
+            "y": 134,
             "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "ReadIOPS", "DBClusterIdentifier", "time-preview21", { "yAxis": "right", "label": "Read" } ],
+                    [ "AWS/RDS", "ReadIOPS", "DBClusterIdentifier", "${module.postgres.name}", { "yAxis": "right", "label": "Read" } ],
                     [ ".", "WriteIOPS", ".", ".", { "label": "Write" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
-                "region": "ap-southeast-2",
+                "region": "${var.region}",
                 "period": 60,
                 "stat": "Sum",
                 "title": "IOPS",
@@ -783,21 +755,13 @@ resource "aws_cloudwatch_dashboard" "main" {
                         "showUnits": true
                     }
                 },
-                "liveData": true,
-                "annotations": {
-                    "vertical": [
-                        {
-                            "label": "1.0.2213.1",
-                            "value": "2021-11-20T01:39:02.000Z"
-                        }
-                    ]
-                }
+                "liveData": true
             }
         },
         {
             "height": 1,
             "width": 24,
-            "y": 64,
+            "y": 121,
             "x": 0,
             "type": "text",
             "properties": {
@@ -807,16 +771,16 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 51,
+            "y": 64,
             "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "CPUUtilization", "DBClusterIdentifier", "time-preview21", { "label": "Utilization" } ]
+                    [ "AWS/RDS", "CPUUtilization", "DBClusterIdentifier", "${module.postgres.name}", { "label": "Utilization" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
-                "region": "ap-southeast-2",
+                "region": "${var.region}",
                 "stat": "Average",
                 "period": 60,
                 "title": "CPU",
@@ -828,31 +792,23 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "legend": {
                     "position": "bottom"
                 },
-                "setPeriodToTimeRange": true,
-                "annotations": {
-                    "vertical": [
-                        {
-                            "label": "1.0.2213.1",
-                            "value": "2021-11-20T01:39:02.000Z"
-                        }
-                    ]
-                },
+                "setPeriodToTimeRange": true
                 "liveData": true
             }
         },
         {
             "height": 6,
             "width": 12,
-            "y": 51,
+            "y": 64,
             "x": 12,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "FreeableMemory", "DBClusterIdentifier", "time-preview21", { "label": "Freeable" } ]
+                    [ "AWS/RDS", "FreeableMemory", "DBClusterIdentifier", "${module.postgres.name}", { "label": "Freeable" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
-                "region": "ap-southeast-2",
+                "region": "${var.region}",
                 "period": 60,
                 "stat": "Average",
                 "title": "Memory",
@@ -862,42 +818,26 @@ resource "aws_cloudwatch_dashboard" "main" {
                         "showUnits": false
                     }
                 },
-                "annotations": {
-                    "vertical": [
-                        {
-                            "label": "1.0.2213.1",
-                            "value": "2021-11-20T01:39:02.000Z"
-                        }
-                    ]
-                },
                 "liveData": true
             }
         },
         {
             "height": 6,
             "width": 12,
-            "y": 45,
+            "y": 70,
             "x": 12,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "FreeLocalStorage", "DBClusterIdentifier", "time-preview21", { "label": "Free Local" } ]
+                    [ "AWS/RDS", "FreeLocalStorage", "DBClusterIdentifier", "${module.postgres.name}", { "label": "Free Local" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
-                "region": "ap-southeast-2",
+                "region": "${var.region}",
                 "stat": "Average",
                 "period": 60,
                 "title": "Storage",
                 "liveData": true,
-                "annotations": {
-                    "vertical": [
-                        {
-                            "label": "1.0.2213.1",
-                            "value": "2021-11-20T01:39:02.000Z"
-                        }
-                    ]
-                },
                 "yAxis": {
                     "left": {
                         "min": 0
@@ -908,16 +848,16 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 71,
+            "y": 140,
             "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "DatabaseConnections", "DBClusterIdentifier", "time-preview21", { "label": "Connections" } ]
+                    [ "AWS/RDS", "DatabaseConnections", "DBClusterIdentifier", "${module.postgres.name}", { "label": "Connections" } ]
                 ],
                 "view": "timeSeries",
-                "stacked": true,
-                "region": "ap-southeast-2",
+                "stacked": false,
+                "region": "${var.region}",
                 "stat": "Average",
                 "period": 60,
                 "title": "Connections",
@@ -930,30 +870,22 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "liveData": true,
                 "legend": {
                     "position": "hidden"
-                },
-                "annotations": {
-                    "vertical": [
-                        {
-                            "label": "1.0.2213.1",
-                            "value": "2021-11-20T01:39:02.000Z"
-                        }
-                    ]
                 }
             }
         },
         {
             "height": 6,
             "width": 12,
-            "y": 65,
+            "y": 134,
             "x": 12,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "Deadlocks", "DBClusterIdentifier", "time-preview21" ]
+                    [ "AWS/RDS", "Deadlocks", "DBClusterIdentifier", "${module.postgres.name}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,
-                "region": "ap-southeast-2",
+                "region": "${var.region}",
                 "yAxis": {
                     "left": {
                         "min": 0
@@ -965,30 +897,22 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "title": "Deadlocks",
                 "period": 60,
                 "liveData": true,
-                "stat": "Average",
-                "annotations": {
-                    "vertical": [
-                        {
-                            "label": "1.0.2213.1",
-                            "value": "2021-11-20T01:39:02.000Z"
-                        }
-                    ]
-                }
+                "stat": "Average"
             }
         },
         {
             "height": 6,
             "width": 12,
-            "y": 77,
-            "x": 0,
+            "y": 140,
+            "x": 12,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "ServerlessDatabaseCapacity", "DBClusterIdentifier", "time-preview21", { "label": "ServerlessDatabaseCapacity" } ]
+                    [ "AWS/RDS", "ServerlessDatabaseCapacity", "DBClusterIdentifier", "${module.postgres.name}", { "label": "ServerlessDatabaseCapacity" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
-                "region": "ap-southeast-2",
+                "region": "${var.region}",
                 "stat": "Average",
                 "period": 60,
                 "title": "Capacity",
@@ -1000,30 +924,22 @@ resource "aws_cloudwatch_dashboard" "main" {
                         "min": 0
                     }
                 },
-                "liveData": true,
-                "annotations": {
-                    "vertical": [
-                        {
-                            "label": "1.0.2213.1",
-                            "value": "2021-11-20T01:39:02.000Z"
-                        }
-                    ]
-                }
+                "liveData": true
             }
         },
         {
             "height": 6,
             "width": 12,
-            "y": 71,
+            "y": 146,
             "x": 12,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "AuroraReplicaLag", "DBClusterIdentifier", "time-preview21" ]
+                    [ "AWS/RDS", "AuroraReplicaLag", "DBClusterIdentifier", "${module.postgres.name}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
-                "region": "ap-southeast-2",
+                "region": "${var.region}",
                 "title": "Replica lag",
                 "stat": "Average",
                 "period": 60,
@@ -1032,15 +948,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                         "min": 0
                     }
                 },
-                "liveData": true,
-                "annotations": {
-                    "vertical": [
-                        {
-                            "label": "1.0.2213.1",
-                            "value": "2021-11-20T01:39:02.000Z"
-                        }
-                    ]
-                }
+                "liveData": true
             }
         },
         {
@@ -1050,10 +958,24 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '/time/preview21' | fields MessageTemplate as Template, Level\n| stats count(*) as Count by Template, Level\n| sort Count desc\n| display Count, Level, Template\n| limit 20",
-                "region": "ap-southeast-2",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields MessageTemplate as Template, Level\n| stats count(*) as Count by Template, Level\n| sort Count desc\n| display Count, Level, Template\n| limit 50",
+                "region": "${var.region}",
                 "stacked": false,
                 "title": "Top log templates",
+                "view": "table"
+            }
+        },
+        {
+            "height": 6,
+            "width": 18,
+            "y": 29,
+            "x": 6,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Warning\"\n| stats count(*) as Count by Template, Version\n| sort Count desc, Version, Template\n| display Count, Version, Template\n| limit 20",
+                "region": "${var.region}",
+                "stacked": false,
+                "title": "Top warning templates",
                 "view": "table"
             }
         },
@@ -1064,25 +986,39 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 6,
             "type": "log",
             "properties": {
-                "query": "SOURCE '/time/preview21' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Warning\"\n| stats count(*) as Count by Template, Version\n| sort Count desc\n| display Count, Version, Template\n| limit 20",
-                "region": "ap-southeast-2",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Error\"\n| stats count(*) as Count by Template, Version\n| sort Count desc, Version, Template\n| display Count, Version, Template\n| limit 20",
+                "region": "${var.region}",
                 "stacked": false,
-                "title": "Top warning templates",
+                "title": "Top error templates",
                 "view": "table"
             }
         },
         {
             "height": 6,
-            "width": 18,
-            "y": 17,
-            "x": 6,
+            "width": 6,
+            "y": 35,
+            "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '/time/preview21' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Error\"\n| stats count(*) as Count by Template, Version\n| sort Count desc\n| display Count, Version, Template\n| limit 20",
-                "region": "ap-southeast-2",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Information\"\n| stats count(*) as Count by Version\n| sort by Count\n",
+                "region": "${var.region}",
                 "stacked": false,
-                "title": "Top error templates",
-                "view": "table"
+                "title": "Info by version",
+                "view": "pie"
+            }
+        },
+        {
+            "height": 6,
+            "width": 6,
+            "y": 23,
+            "x": 0,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Error\"\n| stats count(*) as Count by Version\n| sort by Count\n",
+                "region": "${var.region}",
+                "stacked": false,
+                "title": "Errors by version",
+                "view": "pie"
             }
         },
         {
@@ -1092,36 +1028,8 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '/time/preview21' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Information\"\n| stats count(*) as Count by Version\n| sort by Count\n",
-                "region": "ap-southeast-2",
-                "stacked": false,
-                "title": "Info by version",
-                "view": "pie"
-            }
-        },
-        {
-            "height": 6,
-            "width": 6,
-            "y": 17,
-            "x": 0,
-            "type": "log",
-            "properties": {
-                "query": "SOURCE '/time/preview21' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Error\"\n| stats count(*) as Count by Version\n| sort by Count\n",
-                "region": "ap-southeast-2",
-                "stacked": false,
-                "title": "Errors by version",
-                "view": "pie"
-            }
-        },
-        {
-            "height": 6,
-            "width": 6,
-            "y": 23,
-            "x": 0,
-            "type": "log",
-            "properties": {
-                "query": "SOURCE '/time/preview21' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Warning\"\n| stats count(*) as Count by Version\n| sort by Count\n",
-                "region": "ap-southeast-2",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Warning\"\n| stats count(*) as Count by Version\n| sort by Count\n",
+                "region": "${var.region}",
                 "stacked": false,
                 "title": "Warnings by version",
                 "view": "pie"
@@ -1130,7 +1038,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 1,
             "width": 24,
-            "y": 13,
+            "y": 22,
             "x": 0,
             "type": "text",
             "properties": {
@@ -1140,7 +1048,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 1,
             "width": 24,
-            "y": 35,
+            "y": 54,
             "x": 0,
             "type": "text",
             "properties": {
@@ -1150,17 +1058,17 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 39,
+            "y": 58,
             "x": 12,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "MemoryReserved", "ServiceName", "time-preview21-service", "ClusterName", "expensely", { "label": "Reserved" } ],
+                    [ "ECS/ContainerInsights", "MemoryReserved", "ServiceName", "${aws_ecs_service.api.name}", "ClusterName", "expensely", { "label": "Reserved" } ],
                     [ ".", "MemoryUtilized", ".", ".", ".", ".", { "label": "Consumed" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
-                "region": "ap-southeast-2",
+                "region": "${var.region}",
                 "period": 60,
                 "stat": "Sum",
                 "yAxis": {
@@ -1174,17 +1082,17 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 39,
+            "y": 58,
             "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "CpuReserved", "ServiceName", "time-preview21-service", "ClusterName", "expensely", { "label": "Reserved" } ],
+                    [ "ECS/ContainerInsights", "CpuReserved", "ServiceName", "${aws_ecs_service.api.name}", "ClusterName", "expensely", { "label": "Reserved" } ],
                     [ ".", "CpuUtilized", ".", ".", ".", ".", { "label": "Utilized" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
-                "region": "ap-southeast-2",
+                "region": "${var.region}",
                 "period": 60,
                 "yAxis": {
                     "left": {
@@ -1198,19 +1106,19 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 3,
             "width": 24,
-            "y": 36,
+            "y": 55,
             "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "DeploymentCount", "ServiceName", "time-preview21-service", "ClusterName", "expensely", { "label": "Deployment" } ],
+                    [ "ECS/ContainerInsights", "DeploymentCount", "ServiceName", "${aws_ecs_service.api.name}", "ClusterName", "expensely", { "label": "Deployment" } ],
                     [ ".", "DesiredTaskCount", ".", ".", ".", ".", { "label": "Desired" } ],
                     [ ".", "PendingTaskCount", ".", ".", ".", ".", { "label": "Pending" } ],
                     [ ".", "RunningTaskCount", ".", ".", ".", ".", { "label": "Running" } ],
                     [ ".", "TaskSetCount", ".", ".", ".", ".", { "label": "Task" } ]
                 ],
                 "view": "singleValue",
-                "region": "ap-southeast-2",
+                "region": "${var.region}",
                 "stat": "Average",
                 "period": 60,
                 "stacked": true,
@@ -1224,17 +1132,17 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 45,
+            "y": 70,
             "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "NetworkRxBytes", "ServiceName", "time-preview21-service", "ClusterName", "expensely", { "label": "Receive" } ],
+                    [ "ECS/ContainerInsights", "NetworkRxBytes", "ServiceName", "${aws_ecs_service.api.name}", "ClusterName", "expensely", { "label": "Receive" } ],
                     [ ".", "NetworkTxBytes", ".", ".", ".", ".", { "label": "Transmit" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
-                "region": "ap-southeast-2",
+                "region": "${var.region}",
                 "stat": "Sum",
                 "period": 60,
                 "yAxis": {
@@ -1248,7 +1156,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 1,
             "width": 24,
-            "y": 12,
+            "y": 21,
             "x": 0,
             "type": "text",
             "properties": {
@@ -1258,15 +1166,15 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 3,
             "width": 6,
-            "y": 14,
+            "y": 18,
             "x": 6,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/Logs", "IncomingLogEvents", "LogGroupName", "/time/preview21", { "label": "Log Events" } ]
+                    [ "AWS/Logs", "IncomingLogEvents", "LogGroupName", "${aws_cloudwatch_log_group.api.name}", { "label": "Log Events" } ]
                 ],
                 "view": "singleValue",
-                "region": "ap-southeast-2",
+                "region": "${var.region}",
                 "period": 300,
                 "title": "Incoming",
                 "stat": "Average"
@@ -1275,18 +1183,475 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 3,
             "width": 6,
-            "y": 14,
+            "y": 18,
             "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/Logs", "IncomingBytes", "LogGroupName", "/time/preview21", { "label": "Bytes" } ]
+                    [ "AWS/Logs", "IncomingBytes", "LogGroupName", "${aws_cloudwatch_log_group.api.name}", { "label": "Bytes" } ]
                 ],
                 "view": "singleValue",
-                "region": "ap-southeast-2",
+                "region": "${var.region}",
                 "period": 300,
                 "title": "Incoming",
                 "stat": "Average"
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 128,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "AWS/RDS", "CPUUtilization", "DBClusterIdentifier", "${module.postgres.name}", { "label": "Utilization" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${var.region}",
+                "stat": "Average",
+                "period": 60,
+                "title": "CPU",
+                "liveData": true
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 128,
+            "x": 12,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "AWS/RDS", "FreeableMemory", "DBClusterIdentifier", "${module.postgres.name}", { "label": "Freeable" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${var.region}",
+                "title": "Memory",
+                "stat": "Average",
+                "period": 60
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 146,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "AWS/RDS", "BufferCacheHitRatio", "DBClusterIdentifier", "${module.postgres.name}", { "label": "Cache Hit Ratio" } ]
+                ],
+                "view": "timeSeries",
+                "region": "${var.region}",
+                "stacked": false,
+                "period": 60,
+                "stat": "Average",
+                "title": "Buffer"
+            }
+        },
+        {
+            "height": 6,
+            "width": 18,
+            "y": 0,
+            "x": 6,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "${aws_cloudwatch_log_metric_filter.request_time.metric_transformation.name}", "RequestTime", "Path", "/v1/Records/{id:long}", "Method", "PUT", "Protocol", "HTTP/1.1" ],
+                    [ "...", "/v1/Records", ".", "POST", ".", "." ],
+                    [ "...", "/v1/Records/{id:long}", ".", "GET", ".", "." ],
+                    [ "...", "/v1/Service/Info", ".", ".", ".", "." ],
+                    [ "...", "/v1/Records", ".", ".", ".", "." ],
+                    [ "...", "/v1/Records/{id:long}", ".", "DELETE", ".", "." ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${var.region}",
+                "stat": "Average",
+                "period": 60,
+                "title": "Responce times"
+            }
+        },
+        {
+            "height": 6,
+            "width": 18,
+            "y": 77,
+            "x": 6,
+            "type": "metric",
+            "properties": {
+                "view": "timeSeries",
+                "stacked": false,
+                "metrics": [
+                    [ "${aws_cloudwatch_log_metric_filter.request_time.metric_transformation.name}", "RequestTime", "Path", "/health", "Method", "GET", "Protocol", "HTTP/1.1" ]
+                ],
+                "region": "${var.region}",
+                "period": 300,
+                "liveData": true,
+                "yAxis": {
+                    "left": {
+                        "showUnits": false
+                    },
+                    "right": {
+                        "showUnits": false
+                    }
+                },
+                "legend": {
+                    "position": "hidden"
+                },
+                "title": "Request time"
+            }
+        },
+        {
+            "height": 1,
+            "width": 24,
+            "y": 41,
+            "x": 0,
+            "type": "text",
+            "properties": {
+                "markdown": "## ALB"
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 42,
+            "x": 12,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ { "expression": "AVG([m1,m2])", "label": "Count", "id": "e1", "stat": "SampleCount", "region": "${var.region}" } ],
+                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "${aws_alb_target_group.api_blue.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m1", "visible": false } ],
+                    [ "...", "${aws_alb_target_group.api_green.arn_suffix}", ".", ".", { "id": "m2", "visible": false } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${var.region}",
+                "stat": "Average",
+                "period": 60,
+                "title": "Target response time"
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 42,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SUM([m1,m2])", "label": "Count", "id": "e1", "stat": "SampleCount", "region": "${var.region}" } ],
+                    [ "AWS/ApplicationELB", "RequestCountPerTarget", "TargetGroup", "${aws_alb_target_group.api_blue.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m1", "visible": false } ],
+                    [ "...", "${aws_alb_target_group.api_green.arn_suffix}", ".", ".", { "id": "m2", "visible": false } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${var.region}",
+                "stat": "Sum",
+                "period": 60,
+                "title": "Total target requests"
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 48,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SUM([m1, m4])", "label": "Healthy", "id": "e1" } ],
+                    [ { "expression": "SUM([m2, m3])", "label": "Unhealthy", "id": "e2", "yAxis": "left" } ],
+                    [ "AWS/ApplicationELB", "HealthyHostCount", "TargetGroup", "${aws_alb_target_group.api_blue.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m1", "visible": false } ],
+                    [ ".", "UnHealthyHostCount", ".", ".", ".", ".", { "id": "m2", "visible": false } ],
+                    [ "...", "${aws_alb_target_group.api_green.arn_suffix}", ".", ".", { "id": "m3", "visible": false } ],
+                    [ ".", "HealthyHostCount", ".", ".", ".", ".", { "id": "m4", "visible": false } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${var.region}",
+                "stat": "Average",
+                "period": 60,
+                "title": "Host count"
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 48,
+            "x": 12,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SUM([m1, m2])", "label": "2xx", "id": "e1" } ],
+                    [ { "expression": "SUM([m3, m4])", "label": "4xx", "id": "e2" } ],
+                    [ "AWS/ApplicationELB", "HTTPCode_Target_4XX_Count", "TargetGroup", "${aws_alb_target_group.api_blue.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m1", "visible": false } ],
+                    [ "...", "${aws_alb_target_group.api_green.arn_suffix}", ".", ".", { "id": "m2", "visible": false } ],
+                    [ ".", "HTTPCode_Target_2XX_Count", ".", ".", ".", ".", { "id": "m3", "visible": false } ],
+                    [ "...", "${aws_alb_target_group.api_blue.arn_suffix}", ".", ".", { "id": "m4", "visible": false } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${var.region}",
+                "stat": "Sum",
+                "period": 60,
+                "title": "Reponse code"
+            }
+        },
+        {
+            "height": 1,
+            "width": 24,
+            "y": 76,
+            "x": 0,
+            "type": "text",
+            "properties": {
+                "markdown": "## Health "
+            }
+        },
+        {
+            "height": 1,
+            "width": 24,
+            "y": 83,
+            "x": 0,
+            "type": "text",
+            "properties": {
+                "markdown": "# Migrations "
+            }
+        },
+        {
+            "type": "log",
+            "x": 0,
+            "y": 103,
+            "width": 24,
+            "height": 6,
+            "properties": {
+                "query": "SOURCE '${aws_cloudwatch_log_group.integration_tests.name}' | fields @message\n| sort @timestamp desc",
+                "region": "${var.region}",
+                "stacked": false,
+                "title": "Top log templates",
+                "view": "table"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 115,
+            "width": 24,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.integration_tests.function_name}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${var.region}",
+                "title": "Duration",
+                "stat": "Sum",
+                "period": 60,
+                "yAxis": {
+                    "left": {
+                        "showUnits": false,
+                        "min": 0
+                    },
+                    "right": {
+                        "showUnits": false
+                    }
+                },
+                "legend": {
+                    "position": "hidden"
+                }
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 109,
+            "width": 12,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Errors", "FunctionName", "${aws_lambda_function.integration_tests.function_name}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${var.region}",
+                "title": "Errors",
+                "stat": "Sum",
+                "period": 60,
+                "yAxis": {
+                    "left": {
+                        "showUnits": false
+                    },
+                    "right": {
+                        "showUnits": false
+                    }
+                },
+                "legend": {
+                    "position": "hidden"
+                }
+            }
+        },
+        {
+            "type": "metric",
+            "x": 12,
+            "y": 109,
+            "width": 12,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.integration_tests.function_name}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${var.region}",
+                "title": "Invocations",
+                "stat": "Sum",
+                "period": 60,
+                "yAxis": {
+                    "left": {
+                        "showUnits": false
+                    },
+                    "right": {
+                        "showUnits": false
+                    }
+                },
+                "legend": {
+                    "position": "hidden"
+                }
+            }
+        },
+        {
+            "type": "log",
+            "x": 0,
+            "y": 84,
+            "width": 24,
+            "height": 6,
+            "properties": {
+                "query": "SOURCE '${aws_cloudwatch_log_group.integration_tests.name}' | fields MessageTemplate as Template, Level\n| filter isPresent(Template)\n| stats count(*) as Count by Template, Level\n| sort Count desc\n| display Count, Level, Template\n| limit 50",
+                "region": "${var.region}",
+                "stacked": false,
+                "title": "Top log templates",
+                "view": "table"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 90,
+            "width": 12,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Errors", "FunctionName", "${aws_lambda_function.migration.function_name}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${var.region}",
+                "title": "Errors",
+                "stat": "Sum",
+                "period": 60,
+                "yAxis": {
+                    "left": {
+                        "showUnits": false
+                    },
+                    "right": {
+                        "showUnits": false
+                    }
+                },
+                "legend": {
+                    "position": "hidden"
+                }
+            }
+        },
+        {
+            "type": "metric",
+            "x": 12,
+            "y": 90,
+            "width": 12,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.migration.function_name}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${var.region}",
+                "title": "Invocations",
+                "stat": "Sum",
+                "period": 60,
+                "yAxis": {
+                    "left": {
+                        "showUnits": false
+                    },
+                    "right": {
+                        "showUnits": false
+                    }
+                },
+                "legend": {
+                    "position": "hidden"
+                }
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 96,
+            "width": 24,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.migration.function_name}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${var.region}",
+                "title": "Duration",
+                "stat": "Sum",
+                "period": 60,
+                "yAxis": {
+                    "left": {
+                        "showUnits": false,
+                        "min": 0
+                    },
+                    "right": {
+                        "showUnits": false
+                    }
+                },
+                "legend": {
+                    "position": "hidden"
+                }
+            }
+        },
+        {
+            "type": "log",
+            "x": 0,
+            "y": 122,
+            "width": 24,
+            "height": 6,
+            "properties": {
+                "query": "SOURCE '/aws/rds/cluster/time-${var.environment}/postgresql' | fields @message\n| sort by @timestamp desc",
+                "region": "${var.region}",
+                "stacked": false,
+                "view": "table",
+                "title": "Logs"
+            }
+        },
+        {
+            "type": "alarm",
+            "x": 0,
+            "y": 12,
+            "width": 24,
+            "height": 6,
+            "properties": {
+                "title": "Alarms",
+                "alarms": [
+                    "arn:aws:cloudwatch:ap-southeast-2:395617268302:alarm:TargetTracking-service/expensely/time-preview21-service-AlarmLow-801062c1-f52c-43b4-933c-c7fbe663eb3c",
+                    "arn:aws:cloudwatch:ap-southeast-2:395617268302:alarm:TargetTracking-service/expensely/time-preview21-service-AlarmLow-fc24e773-eb00-42e7-b848-165ec1f45a65",
+                    "arn:aws:cloudwatch:ap-southeast-2:395617268302:alarm:TargetTracking-service/expensely/time-preview21-service-AlarmHigh-d65e2e3e-6c77-45e1-81f6-a331a4f0561a",
+                    "arn:aws:cloudwatch:ap-southeast-2:395617268302:alarm:TargetTracking-service/expensely/time-preview21-service-AlarmHigh-ebff35ff-20e0-4ca1-882f-091699656648"
+                ]
             }
         }
     ]
