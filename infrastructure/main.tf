@@ -784,16 +784,19 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "stat": "Average",
                 "period": 60,
                 "title": "CPU",
-                "yAxis": {
-                    "left": {
-                        "min": 0
-                    }
-                },
                 "legend": {
                     "position": "bottom"
                 },
                 "setPeriodToTimeRange": true,
-                "liveData": true
+                "liveData": true,
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    },
+                    "right": {
+                        "min": 0
+                    }
+                }
             }
         },
         {
@@ -814,8 +817,10 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "title": "Memory",
                 "yAxis": {
                     "left": {
-                        "min": 0,
-                        "showUnits": false
+                        "min": 0
+                    },
+                    "right": {
+                        "min": 0
                     }
                 },
                 "liveData": true
@@ -841,6 +846,9 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "yAxis": {
                     "left": {
                         "min": 0
+                    },
+                    "right": {
+                        "min": 0
                     }
                 }
             }
@@ -863,6 +871,10 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "title": "Connections",
                 "yAxis": {
                     "left": {
+                        "min": 0,
+                        "label": ""
+                    },
+                    "right": {
                         "min": 0,
                         "label": ""
                     }
@@ -888,6 +900,9 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "region": "${var.region}",
                 "yAxis": {
                     "left": {
+                        "min": 0
+                    },
+                    "right": {
                         "min": 0
                     }
                 },
@@ -922,6 +937,9 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "yAxis": {
                     "left": {
                         "min": 0
+                    },
+                    "right": {
+                        "min": 0
                     }
                 },
                 "liveData": true
@@ -943,12 +961,15 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "title": "Replica lag",
                 "stat": "Average",
                 "period": 60,
+                "liveData": true,
                 "yAxis": {
                     "left": {
                         "min": 0
+                    },
+                    "right": {
+                        "min": 0
                     }
-                },
-                "liveData": true
+                }
             }
         },
         {
@@ -1071,12 +1092,15 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "region": "${var.region}",
                 "period": 60,
                 "stat": "Sum",
+                "title": "Memory",
                 "yAxis": {
                     "left": {
                         "min": 0
+                    },
+                    "right": {
+                        "min": 0
                     }
-                },
-                "title": "Memory"
+                }
             }
         },
         {
@@ -1094,13 +1118,16 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "stacked": false,
                 "region": "${var.region}",
                 "period": 60,
+                "stat": "Sum",
+                "title": "CPU",
                 "yAxis": {
                     "left": {
                         "min": 0
+                    },
+                    "right": {
+                        "min": 0
                     }
-                },
-                "stat": "Sum",
-                "title": "CPU"
+                }
             }
         },
         {
@@ -1126,7 +1153,15 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "liveData": true,
                 "sparkline": true,
                 "title": "Task count",
-                "singleValueFullPrecision": false
+                "singleValueFullPrecision": false,
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    },
+                    "right": {
+                        "min": 0
+                    }
+                }
             }
         },
         {
@@ -1145,12 +1180,15 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "region": "${var.region}",
                 "stat": "Sum",
                 "period": 60,
+                "title": "Bytes",
                 "yAxis": {
                     "left": {
                         "min": 0
+                    },
+                    "right": {
+                        "min": 0
                     }
-                },
-                "title": "Bytes"
+                }
             }
         },
         {
@@ -1177,7 +1215,15 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "region": "${var.region}",
                 "period": 300,
                 "title": "Incoming",
-                "stat": "Average"
+                "stat": "Average",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    },
+                    "right": {
+                        "min": 0
+                    }
+                }
             }
         },
         {
@@ -1194,7 +1240,15 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "region": "${var.region}",
                 "period": 300,
                 "title": "Incoming",
-                "stat": "Average"
+                "stat": "Average",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    },
+                    "right": {
+                        "min": 0
+                    }
+                }
             }
         },
         {
@@ -1213,7 +1267,15 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "stat": "Average",
                 "period": 60,
                 "title": "CPU",
-                "liveData": true
+                "liveData": true,
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    },
+                    "right": {
+                        "min": 0
+                    }
+                }
             }
         },
         {
@@ -1231,7 +1293,15 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "region": "${var.region}",
                 "title": "Memory",
                 "stat": "Average",
-                "period": 60
+                "period": 60,
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    },
+                    "right": {
+                        "min": 0
+                    }
+                }
             }
         },
         {
@@ -1249,7 +1319,15 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "stacked": false,
                 "period": 60,
                 "stat": "Average",
-                "title": "Buffer"
+                "title": "Buffer",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    },
+                    "right": {
+                        "min": 0
+                    }
+                }
             }
         },
         {
@@ -1272,7 +1350,15 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "region": "${var.region}",
                 "stat": "Average",
                 "period": 60,
-                "title": "Responce times"
+                "title": "Responce times",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    },
+                    "right": {
+                        "min": 0
+                    }
+                }
             }
         },
         {
@@ -1292,9 +1378,11 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "liveData": true,
                 "yAxis": {
                     "left": {
+                        "min": 0,
                         "showUnits": false
                     },
                     "right": {
+                        "min": 0,
                         "showUnits": false
                     }
                 },
@@ -1322,16 +1410,23 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ { "expression": "AVG([m1,m2])", "label": "Count", "id": "e1", "stat": "SampleCount", "region": "${var.region}" } ],
-                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "${aws_alb_target_group.api_blue.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m1", "visible": false } ],
-                    [ "...", "${aws_alb_target_group.api_green.arn_suffix}", ".", ".", { "id": "m2", "visible": false } ]
+                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "${aws_alb_target_group.api_blue.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m1", "label": "Blue" } ],
+                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "${aws_alb_target_group.api_green.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m2", "label": "Green", "color": "#2ca02c" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "${var.region}",
                 "stat": "Average",
                 "period": 60,
-                "title": "Target response time"
+                "title": "Target response time",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    },
+                    "right": {
+                        "min": 0
+                    }
+                }
             }
         },
         {
@@ -1342,16 +1437,23 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ { "expression": "SUM([m1,m2])", "label": "Count", "id": "e1", "stat": "SampleCount", "region": "${var.region}" } ],
-                    [ "AWS/ApplicationELB", "RequestCountPerTarget", "TargetGroup", "${aws_alb_target_group.api_blue.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m1", "visible": false } ],
-                    [ "...", "${aws_alb_target_group.api_green.arn_suffix}", ".", ".", { "id": "m2", "visible": false } ]
+                    [ "AWS/ApplicationELB", "RequestCountPerTarget", "TargetGroup", "${aws_alb_target_group.api_blue.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m1", "label": "Blue" } ],
+                    [ "AWS/ApplicationELB", "RequestCountPerTarget", "TargetGroup", "${aws_alb_target_group.api_green.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m2", "label": "Green", "color": "#2ca02c" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "${var.region}",
-                "stat": "Sum",
+                "stat": "SampleCount",
                 "period": 60,
-                "title": "Total target requests"
+                "title": "Total target requests",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    },
+                    "right": {
+                        "min": 0
+                    }
+                }
             }
         },
         {
@@ -1362,19 +1464,25 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ { "expression": "SUM([m1, m4])", "label": "Healthy", "id": "e1" } ],
-                    [ { "expression": "SUM([m2, m3])", "label": "Unhealthy", "id": "e2", "yAxis": "left" } ],
-                    [ "AWS/ApplicationELB", "HealthyHostCount", "TargetGroup", "${aws_alb_target_group.api_blue.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m1", "visible": false } ],
-                    [ ".", "UnHealthyHostCount", ".", ".", ".", ".", { "id": "m2", "visible": false } ],
-                    [ "...", "${aws_alb_target_group.api_green.arn_suffix}", ".", ".", { "id": "m3", "visible": false } ],
-                    [ ".", "HealthyHostCount", ".", ".", ".", ".", { "id": "m4", "visible": false } ]
+                    [ "AWS/ApplicationELB", "HealthyHostCount", "TargetGroup", "${aws_alb_target_group.api_blue.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m1", "color": "#1f77b4", "label": "Healthy host count" } ],
+                    [ "AWS/ApplicationELB", "HealthyHostCount", "TargetGroup", "${aws_alb_target_group.api_green.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m2", "color": "#2ca02c", "label": "Healthy host count" } ],
+                    [ "AWS/ApplicationELB", "UnHealthyHostCount", "TargetGroup", "${aws_alb_target_group.api_blue.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m3", "color": "#17becf", "label": "Unhealthy host count" } ],
+                    [ "AWS/ApplicationELB", "UnHealthyHostCount", "TargetGroup", "${aws_alb_target_group.api_green.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m4", "color": "#bcbd22", "label": "Unhealthy host count" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "${var.region}",
                 "stat": "Average",
                 "period": 60,
-                "title": "Host count"
+                "title": "Host count",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    },
+                    "right": {
+                        "min": 0
+                    }
+                }
             }
         },
         {
@@ -1385,19 +1493,25 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ { "expression": "SUM([m1, m2])", "label": "2xx", "id": "e1" } ],
-                    [ { "expression": "SUM([m3, m4])", "label": "4xx", "id": "e2" } ],
-                    [ "AWS/ApplicationELB", "HTTPCode_Target_4XX_Count", "TargetGroup", "${aws_alb_target_group.api_blue.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m1", "visible": false } ],
-                    [ "...", "${aws_alb_target_group.api_green.arn_suffix}", ".", ".", { "id": "m2", "visible": false } ],
-                    [ ".", "HTTPCode_Target_2XX_Count", ".", ".", ".", ".", { "id": "m3", "visible": false } ],
-                    [ "...", "${aws_alb_target_group.api_blue.arn_suffix}", ".", ".", { "id": "m4", "visible": false } ]
+                    [ "AWS/ApplicationELB", "HTTPCode_Target_4XX_Count", "TargetGroup", "${aws_alb_target_group.api_blue.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m1", "label": "4xx", "color": "#1f77b4" } ],
+                    [ "AWS/ApplicationELB", "HTTPCode_Target_4XX_Count", "TargetGroup", "${aws_alb_target_group.api_green.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m2", "label": "4xx", "color": "#2ca02c" } ],
+                    [ "AWS/ApplicationELB", "HTTPCode_Target_2XX_Count", "TargetGroup", "${aws_alb_target_group.api_blue.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m3", "label": "2xx", "color": "#17becf" } ],
+                    [ "AWS/ApplicationELB", "HTTPCode_Target_2XX_Count", "TargetGroup", "${aws_alb_target_group.api_green.arn_suffix}", "LoadBalancer", "${data.aws_lb.expensely.arn_suffix}", { "id": "m4", "label": "2xx", "color": "#bcbd22" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "${var.region}",
                 "stat": "Sum",
                 "period": 60,
-                "title": "Reponse code"
+                "title": "Reponse code",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    },
+                    "right": {
+                        "min": 0
+                    }
+                }
             }
         },
         {
@@ -1456,7 +1570,8 @@ resource "aws_cloudwatch_dashboard" "main" {
                         "min": 0
                     },
                     "right": {
-                        "showUnits": false
+                        "showUnits": false,
+                        "min": 0
                     }
                 },
                 "legend": {
@@ -1482,10 +1597,12 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "period": 60,
                 "yAxis": {
                     "left": {
-                        "showUnits": false
+                        "showUnits": false,
+                        "min": 0
                     },
                     "right": {
-                        "showUnits": false
+                        "showUnits": false,
+                        "min": 0
                     }
                 },
                 "legend": {
@@ -1511,10 +1628,12 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "period": 60,
                 "yAxis": {
                     "left": {
-                        "showUnits": false
+                        "showUnits": false,
+                        "min": 0
                     },
                     "right": {
-                        "showUnits": false
+                        "showUnits": false,
+                        "min": 0
                     }
                 },
                 "legend": {
@@ -1554,10 +1673,12 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "period": 60,
                 "yAxis": {
                     "left": {
-                        "showUnits": false
+                        "showUnits": false,
+                        "min": 0
                     },
                     "right": {
-                        "showUnits": false
+                        "showUnits": false,
+                        "min": 0
                     }
                 },
                 "legend": {
@@ -1583,10 +1704,12 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "period": 60,
                 "yAxis": {
                     "left": {
-                        "showUnits": false
+                        "showUnits": false,
+                        "min": 0
                     },
                     "right": {
-                        "showUnits": false
+                        "showUnits": false,
+                        "min": 0
                     }
                 },
                 "legend": {
@@ -1616,7 +1739,8 @@ resource "aws_cloudwatch_dashboard" "main" {
                         "min": 0
                     },
                     "right": {
-                        "showUnits": false
+                        "showUnits": false,
+                        "min": 0
                     }
                 },
                 "legend": {
