@@ -30,6 +30,11 @@ stages:
     jobs:
       - job: setup
         displayName: Setup
+        variables:
+          - group: test
+          - name: hello
+            value: world
+            readonly: true
         steps:
           - checkout: none
           - script: echo "##vso[build.updatebuildnumber]1.0.$(build.buildid).$(System.StageAttempt)"
@@ -37,6 +42,18 @@ stages:
           - script: echo "##vso[task.setvariable variable=NPMBuildNumber;isOutput=true]1.0.$(build.buildid)-$(System.StageAttempt)"
             displayName: Set NPM build identifier
             name: setNPMBuildIdentifier
+          - task: PowerShell@2
+            displayName: Initialise
+            name: tf_initialise
+            inputs:
+              targetType: inline
+              script: gci env:* | sort-object name
+              errorActionPreference: default
+              showWarnings: true
+              pwsh: true
+            env:
+              TF_IN_AUTOMATION: 0
+              TF_INPUT: 0
       - job: api
         displayName: Api
         dependsOn:
