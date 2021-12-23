@@ -2,15 +2,8 @@ resources:
   repositories:
     - repository: templates
       type: github
-      name: gavanlamb/azure-devops-templates
-      endpoint: expensely
-    - repository: expensely-templates
-      type: github
       name: expensely/azure-devops-templates
       endpoint: expensely
-
-pool:
-  vmImage: ubuntu-latest
 
 trigger: none
 
@@ -19,24 +12,26 @@ pr:
     include:
       - 'main'
 
+pool:
+  vmImage: ubuntu-latest
+
 variables:
-  - template: variables/preview.ap-southeast-2.yml@expensely-templates
+  - template: variables/preview.ap-southeast-2.yml@templates
+  - group: aws.preview.ap-southeast-2
+  - name: AWS_ACCESS_KEY_ID1
+    value: $(AWS_ACCESS_KEY_ID)
+  - name: AWS_SECRET_ACCESS_KEY1
+    value: $(AWS_SECRET_ACCESS_KEY)
 
 stages:
   - stage: build
     displayName: Build
-    pool:
-      vmImage: 'ubuntu-latest'
     jobs:
       - job: setup
         displayName: Setup
         steps:
           - checkout: none
-          - script: echo "##vso[build.updatebuildnumber]1.0.$(build.buildid).$(System.StageAttempt)"
-            displayName: Set build identifier
-          - script: echo "##vso[task.setvariable variable=NPMBuildNumber;isOutput=true]1.0.$(build.buildid)-$(System.StageAttempt)"
-            displayName: Set NPM build identifier
-            name: setNPMBuildIdentifier
+          - template: templates/build.numbers.yml
       - job: api
         displayName: Api
         dependsOn:
@@ -44,9 +39,6 @@ stages:
         steps:
           - template: templates/build.api.yml
           - template: templates/push.api.yml
-            parameters:
-              serviceConnectionName: ${{ variables.AWS_SERVICE_CONNECTION_NAME }}
-              region: ${{ variables.AWS_DEFAULT_REGION }}
       - job: integration_tests
         displayName: Integration Tests
         dependsOn:
@@ -59,58 +51,48 @@ stages:
               buildNumber: $(NPM_BUILD_NUMBER)
           - template: templates/push.integration-tests.yml
             parameters:
-              serviceConnectionName: ${{ variables.AWS_SERVICE_CONNECTION_NAME }}
-              region: ${{ variables.AWS_DEFAULT_REGION }}
               buildNumber: $(NPM_BUILD_NUMBER)
 
   - stage: preview
     displayName: Preview
     dependsOn:
       - build
-    pool:
-      vmImage: 'windows-latest'
     variables:
       - name: ARTIFACT_NAME
         value: preview.terraform
         readonly: true
       - name: NPM_BUILD_NUMBER
         value: $[ stageDependencies.build.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
-      - group: preview.ap-southeast-2
     jobs:
       - job: plan
         displayName: Plan
         steps:
-          - template: aws/terraform/plan.yml@expensely-templates
+          - template: aws/terraform/plan.yml@templates
             parameters:
-              artifactName: ${{ variables.ARTIFACT_NAME }}
-              workspaceName: service-time-${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
-              planAdditionalCommandOptions: '-var-file=variables/${{ variables.ENVIRONMENT }}.${{ variables.AWS_DEFAULT_REGION }}.tfvars -var "build_identifier=$(Build.BuildNumber)" -var "environment=Preview$(System.PullRequest.PullRequestNumber)" -var "subdomain=time$(System.PullRequest.PullRequestNumber)" -var "npm_build_identifier=$(NPM_BUILD_NUMBER)"'
-
-#      - deployment: deploy
-#        displayName: Deploy
-#        dependsOn:
-#          - plan
-#        environment: preview
-#        strategy:
-#          runOnce:
-#            deploy:
-#              steps:
-#                - download: none
-#                - template: aws/terraform/apply.yml@templates
-#                  parameters:
-#                    artifactName: ${{ variables.artifactName }}
-#                - template: aws/cli/codedeploy.deploy.yml@templates
-#                  parameters:
-#                    serviceConnectionName: ${{variables.awsServiceConnectionName}}
-#                    region: ${{ variables.AWS_DEFAULT_REGION }}
-#                    sourcePath: $(Build.BuildNumber).yaml
-#                    destinationPath: time/${{ variables.environment }}$(System.PullRequest.PullRequestNumber)/$(Build.BuildNumber).yaml
-#                    codeDeployBucketName: ${{ variables.codeDeployBucketName }}
-#                - template: templates/test.integration-publish.yml
-#                  parameters:
-#                    serviceConnectionName: ${{ variables.awsServiceConnectionName }}
-#                    region: ${{ variables.AWS_DEFAULT_REGION }}
-#                    sourcePath: time/${{ variables.environment }}$(System.PullRequest.PullRequestNumber)/$(NPMBuildNumber).xml
-#                    testResultsBucketName: ${{ variables.testResultsBucketName }}
-#                    destinationFile: $(NPMBuildNumber).xml
-#                    testRunTitle: Integration
+              artifactName: $(ARTIFACT_NAME)
+              workspaceName: service-time-$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)
+              planAdditionalCommandOptions: '-var-file="variables/$(ENVIRONMENT).$(AWS_DEFAULT_REGION).tfvars" -var="build_identifier=$(Build.BuildNumber)" -var="environment=Preview$(System.PullRequest.PullRequestNumber)" -var="subdomain=time$(System.PullRequest.PullRequestNumber)" -var="npm_build_identifier=$(NPM_BUILD_NUMBER)"'
+      - deployment: deploy
+        displayName: Deploy
+        dependsOn:
+          - plan
+        environment: preview
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: none
+                - template: aws/terraform/apply.yml@templates
+                  parameters:
+                    artifactName: $(ARTIFACT_NAME)
+                - template: aws/codedeploy/deploy.yml@templates
+                  parameters:
+                    sourcePath: $(Build.BuildNumber).yaml
+                    destinationPath: time/$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)/$(Build.BuildNumber).yaml
+                    codeDeployBucketName: $(CODEDEPLOY_BUCKET_NAME)
+                - template: azure-devops/publish-test-results-from-s3.yml@templates
+                  parameters:
+                    sourcePath: time/$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)/$(NPM_BUILD_NUMBER).xml
+                    testResultsBucketName: $(TEST_RESULTS_BUCKET_NAME)
+                    destinationFile: $(NPM_BUILD_NUMBER).xml
+                    testRunTitle: Integration

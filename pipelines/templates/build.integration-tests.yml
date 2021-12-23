@@ -7,6 +7,6 @@ steps:
   - template: ./docker/build.yml@templates
     parameters:
       target: integration-tests
-      dockerfilePath: tests/Time.IntegrationTests/Dockerfile
+      workingDirectory: tests/Time.IntegrationTests
       argument: "--build-arg BUILD_NUMBER=${{ parameters.buildNumber }}"
       tag: ${{ parameters.buildNumber }}
