@@ -86,6 +86,7 @@ stages:
               workspaceName: service-time-${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
               planAdditionalCommandOptions: '-var-file="variables/${{ variables.ENVIRONMENT }}.${{ variables.AWS_DEFAULT_REGION }}.tfvars" -var="build_identifier=$(Build.BuildNumber)" -var="environment=Preview$(System.PullRequest.PullRequestNumber)" -var="subdomain=time$(System.PullRequest.PullRequestNumber)" -var="npm_build_identifier=$(NPM_BUILD_NUMBER)"'
 
+
 #      - deployment: deploy
 #        displayName: Deploy
 #        dependsOn:
