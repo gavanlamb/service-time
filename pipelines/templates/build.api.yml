@@ -2,12 +2,12 @@ steps:
   - template: ./docker/build.yml@templates
     parameters:
       target: base
-      argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
+      arguments: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
 
   - template: ./docker/build.yml@templates
     parameters:
       target: test
-      argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
+      arguments: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
   - template: ./docker/test.yml@templates
     parameters:
       containerName: test
@@ -16,9 +16,9 @@ steps:
   - template: ./docker/build.yml@templates
     parameters:
       target: api
-      argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
+      arguments: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
 
   - template: ./docker/build.yml@templates
     parameters:
       target: migration
-      argument: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
+      arguments: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"

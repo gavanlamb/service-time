@@ -8,5 +8,5 @@ steps:
     parameters:
       target: integration-tests
       workingDirectory: tests/Time.IntegrationTests
-      argument: "--build-arg BUILD_NUMBER=${{ parameters.buildNumber }}"
+      arguments: "--build-arg BUILD_NUMBER=${{ parameters.buildNumber }}"
       tag: ${{ parameters.buildNumber }}
