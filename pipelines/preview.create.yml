@@ -17,11 +17,6 @@ pool:
 
 variables:
   - template: variables/preview.ap-southeast-2.yml@templates
-  - group: aws.preview.ap-southeast-2
-  - name: AWS_ACCESS_KEY_ID1
-    value: $(AWS_ACCESS_KEY_ID)
-  - name: AWS_SECRET_ACCESS_KEY1
-    value: $(AWS_SECRET_ACCESS_KEY)
 
 stages:
   - stage: build
@@ -38,6 +33,7 @@ stages:
           - setup
         steps:
           - template: templates/build.api.yml
+          - template: aws/iam/configure.yml@templates
           - template: templates/push.api.yml
       - job: integration_tests
         displayName: Integration Tests
@@ -49,6 +45,7 @@ stages:
           - template: templates/build.integration-tests.yml
             parameters:
               buildNumber: $(NPM_BUILD_NUMBER)
+          - template: aws/iam/configure.yml@templates
           - template: templates/push.integration-tests.yml
             parameters:
               buildNumber: $(NPM_BUILD_NUMBER)
@@ -67,7 +64,8 @@ stages:
       - job: plan
         displayName: Plan
         steps:
-          - template: aws/terraform/plan.yml@templates
+          - template: aws/iam/configure.yml@templates
+          - template: terraform/plan.yml@templates
             parameters:
               artifactName: $(ARTIFACT_NAME)
               workspaceName: service-time-$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)
@@ -82,17 +80,16 @@ stages:
             deploy:
               steps:
                 - download: none
-                - template: aws/terraform/apply.yml@templates
+                - template: aws/iam/configure.yml@templates
+                - template: terraform/apply.yml@templates
                   parameters:
                     artifactName: $(ARTIFACT_NAME)
                 - template: aws/codedeploy/deploy.yml@templates
                   parameters:
-                    sourcePath: $(Build.BuildNumber).yaml
-                    destinationPath: time/$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)/$(Build.BuildNumber).yaml
-                    codeDeployBucketName: $(CODEDEPLOY_BUCKET_NAME)
-                - template: azure-devops/publish-test-results-from-s3.yml@templates
+                    fileName: $(Build.BuildNumber).yaml
+                    destinationPath: time/$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)
+                - template: aws/s3/publish-test-results.yml@templates
                   parameters:
-                    sourcePath: time/$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)/$(NPM_BUILD_NUMBER).xml
-                    testResultsBucketName: $(TEST_RESULTS_BUCKET_NAME)
-                    destinationFile: $(NPM_BUILD_NUMBER).xml
+                    sourcePath: time/$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)
+                    fileName: $(NPM_BUILD_NUMBER).xml
                     testRunTitle: Integration
