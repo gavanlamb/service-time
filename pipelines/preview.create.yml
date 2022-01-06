@@ -86,10 +86,10 @@ stages:
                     artifactName: $(ARTIFACT_NAME)
                 - template: aws/codedeploy/deploy.yml@templates
                   parameters:
-                    fileName: $(Build.BuildNumber).yaml
+                    appSpecFileName: $(Build.BuildNumber).yaml
                     destinationPath: time/$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)
                 - template: aws/s3/publish-test-results.yml@templates
                   parameters:
                     sourcePath: time/$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)
-                    fileName: $(NPM_BUILD_NUMBER).xml
+                    testResultsFileName: $(NPM_BUILD_NUMBER).xml
                     testRunTitle: Integration
