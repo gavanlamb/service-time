@@ -18,7 +18,6 @@ pool:
 
 variables:
   - template: variables/preview.ap-southeast-2.yml@templates
-  - group: aws.preview.ap-southeast-2
 
 parameters:
   - name: pullRequestNumber
@@ -83,10 +82,8 @@ stages:
             deploy:
               steps:
                 - checkout: self
-                - template: aws/terraform/destroy.yml@templates
+                - template: aws/iam/configure.yml@templates
+                - template: terraform/destroy.yml@templates 
                   parameters:
-                    destroyAdditionalArguments: '-var-file=variables/${{ variables.environment }}.${{ variables.region }}.tfvars -var="build_identifier=${{ variables.buildId }}" -var="environment=Preview$(pullRequestId)" -var="subdomain=time$(pullRequestId)" -var="npm_build_identifier=${{ variables.buildId }}"'
-                    serviceConnectionName: ${{ variables.terraformServiceConnectionName }}
-                    stateBucketName: ${{ variables.terraformStateBucketName }}
-                    stateLockTableName: ${{ variables.terraformStateLockTableName }}
-                    workspaceName: service-time-${{ variables.environment }}$(pullRequestId)
+                    destroyAdditionalArguments: '-var-file="variables/$(ENVIRONMENT).$(AWS_DEFAULT_REGION).tfvars" -var="build_identifier=1.0.0" -var="environment=Preview$(pullRequestId)" -var="subdomain=time" -var="npm_build_identifier=1.0.0"'
+                    workspaceName: service-time-$(ENVIRONMENT)$(pullRequestId)
