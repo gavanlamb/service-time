@@ -2,10 +2,6 @@ resources:
   repositories:
     - repository: templates
       type: github
-      name: gavanlamb/azure-devops-templates
-      endpoint: expensely
-    - repository: expensely-templates
-      type: github
       name: expensely/azure-devops-templates
       endpoint: expensely
 
@@ -24,7 +20,7 @@ stages:
   - stage: build
     displayName: Build
     variables:
-      - template: variables/production.ap-southeast-2.yml@expensely-templates
+      - template: variables/production.ap-southeast-2.yml@templates
     jobs:
       - job: setup
         displayName: Setup
@@ -37,55 +33,51 @@ stages:
           - setup
         steps:
           - template: templates/build.api.yml
+          - template: aws/iam/configure.yml@templates
           - template: templates/push.api.yml
-            parameters:
-              serviceConnectionName: ${{ variables.awsServiceConnectionName }}
-              region: ${{ variables.region }}
       - job: integration_tests
         displayName: Integration tests
         dependsOn:
           - setup
         variables:
-          NPMBuildNumber: $[ dependencies.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
+          - name: NPM_BUILD_NUMBER
+            value: $[ stageDependencies.build.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
         steps:
           - template: templates/build.integration-tests.yml
             parameters:
-              buildNumber: $(NPMBuildNumber)
+              buildNumber: $(NPM_BUILD_NUMBER)
+          - template: aws/iam/configure.yml@templates
           - template: templates/push.integration-tests.yml
             parameters:
-              serviceConnectionName: ${{ variables.awsServiceConnectionName }}
-              region: ${{ variables.region }}
-              buildNumber: $(NPMBuildNumber)
+              buildNumber: $(NPM_BUILD_NUMBER)
 
   - stage: production
     displayName: Production
     pool:
       vmImage: 'windows-latest'
     variables:
-      - template: variables/production.ap-southeast-2.yml@expensely-templates
+      - template: variables/production.ap-southeast-2.yml@templates
       - name: artifactName
         value: production.terraform
         readonly: true
-      - name: NPMBuildNumber
+      - name: NPM_BUILD_NUMBER
         value: $[ stageDependencies.build.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
     jobs:
       - job: plan
         displayName: Plan
         steps:
-          - template: aws/terraform/plan.yml@templates
+          - template: aws/iam/configure.yml@templates
+          - template: terraform/plan.yml@templates
             parameters:
-              artifactName: ${{ variables.artifactName }}
-              planAdditionalCommandOptions: '-var-file=variables/${{ variables.environment }}.${{ variables.region }}.tfvars -var="build_identifier=$(Build.BuildNumber)" -var="npm_build_identifier=$(NPMBuildNumber)"'
-              serviceConnectionName: ${{ variables.terraformServiceConnectionName }}
-              stateBucketName: ${{ variables.terraformStateBucketName }}
-              stateLockTableName: ${{ variables.terraformStateLockTableName }}
+              artifactName: $(ARTIFACT_NAME)
               workspaceName: service-time-${{ variables.environment }}
+              planAdditionalCommandOptions: '-var-file="variables/$(ENVIRONMENT).$(AWS_DEFAULT_REGION).tfvars" -var="build_identifier=$(Build.BuildNumber)" -var="npm_build_identifier=$(NPM_BUILD_NUMBER)"'
 
-      - template: job/approve.yml@templates
+      - template: azure-devops/approve.yml@templates
         parameters:
           dependsOn: plan
           timeoutInMinutes: 60
-          notifyUsers: '[Expensely]\Expensely Team'
+          userToNotify: '[Expensely]\Expensely Team'
 
       - deployment: deploy
         displayName: Deploy
@@ -96,22 +88,16 @@ stages:
             deploy:
               steps:
                 - download: none
-                - template: aws/terraform/apply.yml@templates
+                - template: aws/iam/configure.yml@templates
+                - template: terraform/apply.yml@templates
                   parameters:
-                    artifactName: ${{ variables.artifactName }}
-                    serviceConnectionName: ${{ variables.terraformServiceConnectionName }}
-                - template: aws/cli/codedeploy.deploy.yml@templates
+                    artifactName: $(ARTIFACT_NAME)
+                - template: aws/codedeploy/deploy.yml@templates
                   parameters:
-                    serviceConnectionName: ${{ variables.awsServiceConnectionName }}
-                    region: ${{ variables.region }}
-                    sourcePath: $(Build.BuildNumber).yaml
-                    destinationPath: time/${{ variables.environment }}/$(Build.BuildNumber).yaml
-                    codeDeployBucketName: ${{ variables.codeDeployBucketName }}
-                - template: templates/test.integration-publish.yml
+                    appSpecFileName: $(Build.BuildNumber).yaml
+                    destinationPath: time/${{ variables.environment }}
+                - template: aws/s3/publish-test-results.yml@templates
                   parameters:
-                    serviceConnectionName: ${{ variables.awsServiceConnectionName }}
-                    region: ${{ variables.region }}
-                    sourcePath: time/${{ variables.environment }}/$(NPMBuildNumber).xml
-                    testResultsBucketName: ${{ variables.testResultsBucketName }}
-                    destinationFile: $(NPMBuildNumber).xml
+                    sourcePath: time/$(ENVIRONMENT)
+                    testResultsFileName: $(NPM_BUILD_NUMBER).xml
                     testRunTitle: Integration
