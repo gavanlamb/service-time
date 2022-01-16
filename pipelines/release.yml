@@ -58,7 +58,7 @@ stages:
         value: production.terraform
         readonly: true
       - name: NPM_BUILD_NUMBER
-        value: $[ dependencies.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
+        value: $[ stageDependencies.build.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
     jobs:
       - job: plan
         displayName: Plan
