@@ -16,12 +16,11 @@ trigger:
 
 pr: none
 
-variables:
-  - template: variables/production.ap-southeast-2.yml@templates
-
 stages:
   - stage: build
     displayName: Build
+    variables:
+      - template: variables/production.ap-southeast-2.yml@templates
     jobs:
       - job: setup
         displayName: Setup
@@ -41,8 +40,7 @@ stages:
         dependsOn:
           - setup
         variables:
-          - name: NPM_BUILD_NUMBER
-            value: $[ stageDependencies.build.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
+          NPM_BUILD_NUMBER: $[ dependencies.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
         steps:
           - template: templates/build.integration-tests.yml
             parameters:
@@ -55,11 +53,12 @@ stages:
   - stage: production
     displayName: Production
     variables:
+      - template: variables/production.ap-southeast-2.yml@templates
       - name: artifactName
         value: production.terraform
         readonly: true
       - name: NPM_BUILD_NUMBER
-        value: $[ stageDependencies.build.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
+        value: $[ dependencies.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
     jobs:
       - job: plan
         displayName: Plan
