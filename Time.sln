@@ -58,7 +58,7 @@ ProjectSection(SolutionItems) = preProject
 	pipelines\templates\build.integration-tests.yml = pipelines\templates\build.integration-tests.yml
 	pipelines\templates\push.api.yml = pipelines\templates\push.api.yml
 	pipelines\templates\push.integration-tests.yml = pipelines\templates\push.integration-tests.yml
-	pipelines\templates\test.integration-publish.yml = pipelines\templates\test.integration-publish.yml
+	pipelines\templates\build.numbers.yml = pipelines\templates\build.numbers.yml
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Domain", "src\Time.Domain\Time.Domain.csproj", "{5B0AB0AE-47BD-4BDE-A68A-A02BD6B10AC3}"

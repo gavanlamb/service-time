@@ -1,20 +1,11 @@
 parameters:
-  - name: serviceConnectionName
-    displayName: Name of the AWS service connection to use
-    type: string
-  - name: region
-    displayName: Name of the AWS region
-    type: string
   - name: buildNumber
     displayName: NPM build number
     type: string
 
 steps:
-  - template: ./aws/cli/ecr.push.yml@templates
+  - template: ./aws/ecr/push.yml@templates
     parameters:
-      serviceConnectionName: ${{ parameters.serviceConnectionName }}
-      region: ${{ parameters.region }}
       imageName: integration-tests
       repositoryName: time-integration-tests
       tag: ${{ parameters.buildNumber }}
-
