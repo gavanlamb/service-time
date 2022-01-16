@@ -16,11 +16,12 @@ trigger:
 
 pr: none
 
+variables:
+  - template: variables/production.ap-southeast-2.yml@templates
+
 stages:
   - stage: build
     displayName: Build
-    variables:
-      - template: variables/production.ap-southeast-2.yml@templates
     jobs:
       - job: setup
         displayName: Setup
@@ -53,10 +54,7 @@ stages:
 
   - stage: production
     displayName: Production
-    pool:
-      vmImage: 'windows-latest'
     variables:
-      - template: variables/production.ap-southeast-2.yml@templates
       - name: artifactName
         value: production.terraform
         readonly: true
