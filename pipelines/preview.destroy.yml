@@ -85,5 +85,5 @@ stages:
                 - template: aws/iam/configure.yml@templates
                 - template: terraform/destroy.yml@templates 
                   parameters:
-                    destroyAdditionalArguments: '-var-file="variables/$(ENVIRONMENT).$(AWS_DEFAULT_REGION).tfvars" -var="build_identifier=1.0.0" -var="environment=Preview$(pullRequestId)" -var="subdomain=time" -var="npm_build_identifier=1.0.0"'
+                    destroyAdditionalArguments: '-var-file="variables/$(ENVIRONMENT).$(REGION).tfvars" -var="build_identifier=1.0.0" -var="environment=Preview$(pullRequestId)" -var="subdomain=time" -var="npm_build_identifier=1.0.0"'
                     workspaceName: service-time-$(ENVIRONMENT)$(pullRequestId)
