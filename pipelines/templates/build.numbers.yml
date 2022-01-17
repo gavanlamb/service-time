@@ -10,6 +10,7 @@ steps:
 
   - task: PowerShell@2
     displayName: Set NPM build identifier
+    name: setNPMBuildIdentifier
     inputs:
       targetType: inline
       script: Write-Host "##vso[task.setvariable variable=NPMBuildNumber;isOutput=true]1.0.$(build.buildid)-$(System.StageAttempt)"
