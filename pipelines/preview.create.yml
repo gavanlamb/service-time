@@ -34,6 +34,7 @@ stages:
         steps:
           - template: templates/build.api.yml
           - template: aws/iam/configure.yml@templates
+          - template: aws/iam/configure.yml@templates
           - template: templates/push.api.yml
       - job: integration_tests
         displayName: Integration Tests
