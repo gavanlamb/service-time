@@ -1,6 +1,18 @@
 steps:
-  - script: echo "##vso[build.updatebuildnumber]1.0.$(build.buildid).$(System.StageAttempt)"
+  - task: PowerShell@2
     displayName: Set build identifier
-  - script: echo "##vso[task.setvariable variable=NPMBuildNumber;isOutput=true]1.0.$(build.buildid)-$(System.StageAttempt)"
+    inputs:
+      targetType: inline
+      script: Write-Host "##vso[build.updatebuildnumber]1.0.$(build.buildid).$(System.StageAttempt)"
+      errorActionPreference: default
+      showWarnings: true
+      pwsh: true
+
+  - task: PowerShell@2
     displayName: Set NPM build identifier
-    name: setNPMBuildIdentifier
+    inputs:
+      targetType: inline
+      script: Write-Host "##vso[task.setvariable variable=NPMBuildNumber;isOutput=true]1.0.$(build.buildid)-$(System.StageAttempt)"
+      errorActionPreference: default
+      showWarnings: true
+      pwsh: true
