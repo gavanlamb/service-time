@@ -15,12 +15,11 @@ pr:
 pool:
   vmImage: ubuntu-latest
 
-variables:
-  - template: variables/preview.ap-southeast-2.yml@templates
-
 stages:
   - stage: build
     displayName: Build
+    variables:
+      - template: variables/preview.ap-southeast-2.yml@templates
     jobs:
       - job: setup
         displayName: Setup
@@ -60,7 +59,9 @@ stages:
         readonly: true
       - name: NPM_BUILD_NUMBER
         value: $[ stageDependencies.build.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
+      - template: variables/preview.ap-southeast-2.yml@templates
     jobs:
+
       - job: plan
         displayName: Plan
         steps:
@@ -70,6 +71,7 @@ stages:
               artifactName: $(ARTIFACT_NAME)
               workspaceName: service-time-$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)
               planAdditionalCommandOptions: '-var-file="variables/$(ENVIRONMENT).$(REGION).tfvars" -var="build_identifier=$(Build.BuildNumber)" -var="environment=Preview$(System.PullRequest.PullRequestNumber)" -var="subdomain=time$(System.PullRequest.PullRequestNumber)" -var="npm_build_identifier=$(NPM_BUILD_NUMBER)"'
+      
       - deployment: deploy
         displayName: Deploy
         dependsOn:
