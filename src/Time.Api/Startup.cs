@@ -70,14 +70,12 @@ namespace Time.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
+            app.UseXRay("Time.Api"); 
+            app.UseExceptionHandler();
+
             if (env.IsDevelopment() || env.EnvironmentName.StartsWith("Preview"))
             {
                 app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseXRay("Time.Api"); 
-                app.UseExceptionHandler();
             }
 
             app.UseSwagger();

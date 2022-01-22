@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Amazon.CodeDeploy;
 using Amazon.CodeDeploy.Model;
 using Amazon.Lambda.Core;
+using Amazon.XRay.Recorder.Core;
+using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using Expensely.Logging.Serilog.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -97,6 +99,8 @@ namespace Time.Database.Runner
                 .UseSerilog()
                 .ConfigureServices((hostContext, services) =>
                 {
+                    AWSXRayRecorder.InitializeInstance(hostContext.Configuration);
+                    AWSSDKHandler.RegisterXRayForAllServices();
                     services.AddOptions();
 
                     Logging.AddSerilog(hostContext.Configuration);

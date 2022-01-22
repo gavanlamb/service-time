@@ -399,7 +399,8 @@ data "aws_iam_policy_document" "api_logs" {
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents",
-      "logs:DescribeLogGroups"
+      "logs:DescribeLogGroups",
+      "xray:*"
     ]
     resources = [
       "arn:aws:logs:*:*:*"
