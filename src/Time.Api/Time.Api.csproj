@@ -8,6 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AWSSDK.XRay" Version="3.7.0.117" />
+        <PackageReference Include="AWSXRayRecorder.Core" Version="2.10.1" />
+        <PackageReference Include="AWSXRayRecorder.Handlers.AspNetCore" Version="2.7.3" />
+        <PackageReference Include="AWSXRayRecorder.Handlers.AwsSdk" Version="2.8.3" />
         <PackageReference Include="Expensely.Logging.Serilog" Version="1.0.1630.1" />
         <PackageReference Include="Expensely.Authentication.Cognito.Jwt" Version="1.0.1354.1" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.10" />

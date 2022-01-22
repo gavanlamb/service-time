@@ -1,4 +1,6 @@
 using System.Text.Json;
+using Amazon.XRay.Recorder.Core;
+using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using Expensely.Authentication.Cognito.Jwt.Extensions;
 using Expensely.Logging.Serilog.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -29,6 +31,9 @@ namespace Time.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            AWSXRayRecorder.InitializeInstance(Configuration);
+            AWSSDKHandler.RegisterXRayForAllServices();
+            
             services.AddControllers()
                 .AddJsonOptions(options =>
                 {
@@ -68,6 +73,11 @@ namespace Time.Api
             if (env.IsDevelopment() || env.EnvironmentName.StartsWith("Preview"))
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseXRay("Time.Api"); 
+                app.UseExceptionHandler();
             }
 
             app.UseSwagger();
