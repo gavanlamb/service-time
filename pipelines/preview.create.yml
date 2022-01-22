@@ -69,7 +69,7 @@ stages:
             parameters:
               artifactName: $(ARTIFACT_NAME)
               workspaceName: service-time-$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)
-              planAdditionalCommandOptions: '-var-file="variables/$(ENVIRONMENT).$(AWS_DEFAULT_REGION).tfvars" -var="build_identifier=$(Build.BuildNumber)" -var="environment=Preview$(System.PullRequest.PullRequestNumber)" -var="subdomain=time$(System.PullRequest.PullRequestNumber)" -var="npm_build_identifier=$(NPM_BUILD_NUMBER)"'
+              planAdditionalCommandOptions: '-var-file="variables/$(ENVIRONMENT).$(REGION).tfvars" -var="build_identifier=$(Build.BuildNumber)" -var="environment=Preview$(System.PullRequest.PullRequestNumber)" -var="subdomain=time$(System.PullRequest.PullRequestNumber)" -var="npm_build_identifier=$(NPM_BUILD_NUMBER)"'
       - deployment: deploy
         displayName: Deploy
         dependsOn:
