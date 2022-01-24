@@ -215,8 +215,10 @@ resource "aws_ecs_service" "api" {
     ignore_changes = [
       task_definition,
       desired_count,
-      load_balancer]
+      load_balancer
+    ]
   }
+  depends_on = [aws_alb_target_group.api_blue, aws_alb_target_group.api_green]
 }
 resource "aws_ecs_task_definition" "api" {
   family = "${local.api_name}-task"
