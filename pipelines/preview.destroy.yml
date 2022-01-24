@@ -121,4 +121,4 @@ stages:
                 - template: terraform/destroy.yml@templates 
                   parameters:
                     destroyAdditionalArguments: -var-file="variables/${{ variables.ENVIRONMENT }}$(PULL_REQUEST_ID).${{ variables.REGION }}.tfvars"
-                    workspaceName: service-time-$(ENVIRONMENT)$(PULL_REQUEST_ID)
+                    workspaceName: service-time-${{ variables.ENVIRONMENT }}$(PULL_REQUEST_ID)

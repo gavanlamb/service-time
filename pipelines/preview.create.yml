@@ -55,9 +55,6 @@ stages:
     dependsOn:
       - build
     variables:
-      - name: ARTIFACT_NAME
-        value: preview.terraform
-        readonly: true
       - name: NPM_BUILD_NUMBER
         value: $[ stageDependencies.build.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
     jobs:
@@ -102,8 +99,8 @@ stages:
               workingDirectory: $(Build.SourcesDirectory)/infrastructure/variables
           - template: terraform/plan.yml@templates
             parameters:
-              artifactName: $(ARTIFACT_NAME)
-              workspaceName: service-time-$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)
+              artifactName: ${{ variables.TF_ARTIFACT_NAME }}
+              workspaceName: service-time-${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
               planAdditionalCommandOptions: -var-file="variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.REGION }}.tfvars"
       - deployment: deploy
         displayName: Deploy
@@ -118,13 +115,13 @@ stages:
                 - template: aws/iam/configure.yml@templates
                 - template: terraform/apply.yml@templates
                   parameters:
-                    artifactName: $(ARTIFACT_NAME)
+                    artifactName: ${{ variables.TF_ARTIFACT_NAME }}
                 - template: aws/codedeploy/deploy.yml@templates
                   parameters:
                     appSpecFileName: $(Build.BuildNumber).yaml
-                    destinationPath: time/$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)
+                    destinationPath: time/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
                 - template: aws/s3/publish-test-results.yml@templates
                   parameters:
-                    sourcePath: time/$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)
+                    sourcePath: time/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
                     testResultsFileName: $(NPM_BUILD_NUMBER).xml
                     testRunTitle: Integration

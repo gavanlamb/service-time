@@ -54,9 +54,6 @@ stages:
     displayName: Production
     variables:
       - template: variables/production.ap-southeast-2.yml@templates
-      - name: artifactName
-        value: production.terraform
-        readonly: true
       - name: NPM_BUILD_NUMBER
         value: $[ stageDependencies.build.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
     jobs:
@@ -66,9 +63,9 @@ stages:
           - template: aws/iam/configure.yml@templates
           - template: terraform/plan.yml@templates
             parameters:
-              artifactName: $(ARTIFACT_NAME)
-              workspaceName: service-time-${{ variables.environment }}
-              planAdditionalCommandOptions: '-var-file="variables/$(ENVIRONMENT).$(REGION).tfvars" -var="build_identifier=$(Build.BuildNumber)" -var="npm_build_identifier=$(NPM_BUILD_NUMBER)"'
+              artifactName: ${{ variables.TF_ARTIFACT_NAME }}
+              workspaceName: service-time-${{ variables.ENVIRONMENT }}
+              planAdditionalCommandOptions: '-var-file="variables/${{ variables.ENVIRONMENT }}.${{ variables.REGION }}.tfvars" -var="build_identifier=$(Build.BuildNumber)" -var="npm_build_identifier=$(NPM_BUILD_NUMBER)"'
 
       - template: azure-devops/approve.yml@templates
         parameters:
@@ -88,13 +85,13 @@ stages:
                 - template: aws/iam/configure.yml@templates
                 - template: terraform/apply.yml@templates
                   parameters:
-                    artifactName: $(ARTIFACT_NAME)
+                    artifactName: ${{ variables.TF_ARTIFACT_NAME }}
                 - template: aws/codedeploy/deploy.yml@templates
                   parameters:
                     appSpecFileName: $(Build.BuildNumber).yaml
-                    destinationPath: time/${{ variables.environment }}
+                    destinationPath: time/${{ variables.ENVIRONMENT }}
                 - template: aws/s3/publish-test-results.yml@templates
                   parameters:
-                    sourcePath: time/$(ENVIRONMENT)
+                    sourcePath: time/${{ variables.ENVIRONMENT }}
                     testResultsFileName: $(NPM_BUILD_NUMBER).xml
                     testRunTitle: Integration
