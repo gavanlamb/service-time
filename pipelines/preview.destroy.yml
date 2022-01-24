@@ -38,15 +38,15 @@ stages:
               targetType: inline
               script: |
                 if(${{parameters.pullRequestNumber}} -gt 0) {
-                  write-host("##vso[task.setvariable variable=pullRequestId;isOutput=true]${{parameters.pullRequestNumber}}")
-                  write-host("##vso[task.setvariable variable=destroy;isOutput=true]true")
+                  write-host("##vso[task.setvariable variable=PULL_REQUEST_ID;isOutput=true]${{parameters.pullRequestNumber}}")
+                  write-host("##vso[task.setvariable variable=DESTROY;isOutput=true]true")
                 } else {
                   echo "$(Build.SourceVersionMessage)"
                   $found = "$(Build.SourceVersionMessage)" -match '\(\#([0-9]*)\)'
                   if ($found) {
                     $pullRequestNumber = $matches[1]
                     write-host("Identifier:$pullRequestNumber")
-                    write-host("##vso[task.setvariable variable=pullRequestId;isOutput=true]$pullRequestNumber")
+                    write-host("##vso[task.setvariable variable=PULL_REQUEST_ID;isOutput=true]$pullRequestNumber")
                     Try {
                       $url = "https://time$pullRequestNumber.preview.expensely.io/health"
                       write-host("Url: $url")
@@ -55,14 +55,14 @@ stages:
                       write-host("Status code: $statusCode")
                       if($statusCode -gt 0)
                       {
-                        write-host("##vso[task.setvariable variable=destroy;isOutput=true]true")
+                        write-host("##vso[task.setvariable variable=DESTROY;isOutput=true]true")
                       }
                     } Catch {
                       write-host $_.Exception.Message
-                      write-host("##vso[task.setvariable variable=destroy;isOutput=true]false")
+                      write-host("##vso[task.setvariable variable=DESTROY;isOutput=true]false")
                     }
                   } else {
-                    write-host("##vso[task.setvariable variable=destroy;isOutput=true]false")
+                    write-host("##vso[task.setvariable variable=DESTROY;isOutput=true]false")
                   }
                 }
             name: set_variables
@@ -73,8 +73,8 @@ stages:
         dependsOn:
           - setup
         variables:
-          pullRequestId: $[ dependencies.setup.outputs['set_variables.pullRequestId'] ]
-          destroy: $[ dependencies.setup.outputs['set_variables.destroy'] ]
+          PULL_REQUEST_ID: $[ dependencies.setup.outputs['set_variables.PULL_REQUEST_ID'] ]
+          DESTROY: $[ dependencies.setup.outputs['set_variables.DESTROY'] ]
         condition: and(succeeded(), eq(variables.destroy, true))
         environment: preview
         strategy:
@@ -83,7 +83,42 @@ stages:
               steps:
                 - checkout: self
                 - template: aws/iam/configure.yml@templates
+                - task: PowerShell@2
+                  displayName: Create tfvars file
+                  inputs:
+                    targetType: inline
+                    script: |
+                      $formatText = @'
+                      environment="Preview$(PULL_REQUEST_ID)"
+                      region="${{ variables.REGION }}"
+                      application_name="Time"
+                      build_identifier="$(Build.BuildNumber)"
+                      vpc_name="expensely"
+                      cluster_name="expensely"
+                      capacity_provider_name="linux"
+                      cognito_name="expensely-preview"
+                      codedeploy_role_name="expensely-code-deploy"
+                      codedeploy_bucket_name="expensely-code-deploy-production"
+                      zone_name="preview.expensely.io"
+                      subdomain="time$(PULL_REQUEST_ID)"
+                      alb_name="expensely"
+                      api_ecs_task_cpu=512
+                      api_ecs_task_memory=2042
+                      api_min_capacity=2
+                      api_max_capacity=10
+                      api_desired_count=2
+                      npm_build_identifier="$(NPM_BUILD_NUMBER)"
+                      test_results_bucket="expensely-test-results-production"
+                      test_results_bucket_policy_name="expensely-test-results"
+                      db_subnet_group_name="expensely"
+                      rds_delete_protection=false
+                      rds_database_name="time_api"
+                      '@ | Out-File -FilePath ${{ variables.ENVIRONMENT }}$(PULL_REQUEST_ID).${{ variables.REGION }}.tfvars
+                    errorActionPreference: default
+                    showWarnings: true
+                    pwsh: true
+                    workingDirectory: $(Build.SourcesDirectory)/infrastructure/variables
                 - template: terraform/destroy.yml@templates 
                   parameters:
-                    destroyAdditionalArguments: '-var-file="variables/$(ENVIRONMENT).$(REGION).tfvars" -var="build_identifier=1.0.0" -var="environment=Preview$(pullRequestId)" -var="subdomain=time" -var="npm_build_identifier=1.0.0"'
-                    workspaceName: service-time-$(ENVIRONMENT)$(pullRequestId)
+                    destroyAdditionalArguments: -var-file="variables/${{ variables.ENVIRONMENT }}$(PULL_REQUEST_ID).${{ variables.REGION }}.tfvars"
+                    workspaceName: service-time-$(ENVIRONMENT)$(PULL_REQUEST_ID)
