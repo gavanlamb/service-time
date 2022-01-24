@@ -55,9 +55,6 @@ stages:
     dependsOn:
       - build
     variables:
-      - name: ARTIFACT_NAME
-        value: preview.terraform
-        readonly: true
       - name: NPM_BUILD_NUMBER
         value: $[ stageDependencies.build.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
     jobs:
@@ -65,11 +62,46 @@ stages:
         displayName: Plan
         steps:
           - template: aws/iam/configure.yml@templates
+          - task: PowerShell@2
+            displayName: Create tfvars file
+            inputs:
+              targetType: inline
+              script: |
+                $formatText = @'
+                environment="Preview$(System.PullRequest.PullRequestNumber)"
+                region="${{ variables.REGION }}"
+                application_name="Time"
+                build_identifier="$(Build.BuildNumber)"
+                vpc_name="expensely"
+                cluster_name="expensely"
+                capacity_provider_name="linux"
+                cognito_name="expensely-preview"
+                codedeploy_role_name="expensely-code-deploy"
+                codedeploy_bucket_name="expensely-code-deploy-production"
+                zone_name="preview.expensely.io"
+                subdomain="time$(System.PullRequest.PullRequestNumber)"
+                alb_name="expensely"
+                api_ecs_task_cpu=512
+                api_ecs_task_memory=2042
+                api_min_capacity=2
+                api_max_capacity=10
+                api_desired_count=2
+                npm_build_identifier="$(NPM_BUILD_NUMBER)"
+                test_results_bucket="expensely-test-results-production"
+                test_results_bucket_policy_name="expensely-test-results"
+                db_subnet_group_name="expensely"
+                rds_delete_protection=false
+                rds_database_name="time_api"
+                '@ | Out-File -FilePath ${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.REGION }}.tfvars
+              errorActionPreference: default
+              showWarnings: true
+              pwsh: true
+              workingDirectory: $(Build.SourcesDirectory)/infrastructure/variables
           - template: terraform/plan.yml@templates
             parameters:
-              artifactName: $(ARTIFACT_NAME)
-              workspaceName: service-time-$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)
-              planAdditionalCommandOptions: '-var-file="variables/$(ENVIRONMENT).$(REGION).tfvars" -var="build_identifier=$(Build.BuildNumber)" -var="environment=Preview$(System.PullRequest.PullRequestNumber)" -var="subdomain=time$(System.PullRequest.PullRequestNumber)" -var="npm_build_identifier=$(NPM_BUILD_NUMBER)"'
+              artifactName: ${{ variables.TF_ARTIFACT_NAME }}
+              workspaceName: service-time-${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
+              planAdditionalCommandOptions: -var-file="variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.REGION }}.tfvars"
       - deployment: deploy
         displayName: Deploy
         dependsOn:
@@ -83,13 +115,13 @@ stages:
                 - template: aws/iam/configure.yml@templates
                 - template: terraform/apply.yml@templates
                   parameters:
-                    artifactName: $(ARTIFACT_NAME)
+                    artifactName: ${{ variables.TF_ARTIFACT_NAME }}
                 - template: aws/codedeploy/deploy.yml@templates
                   parameters:
                     appSpecFileName: $(Build.BuildNumber).yaml
-                    destinationPath: time/$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)
+                    destinationPath: time/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
                 - template: aws/s3/publish-test-results.yml@templates
                   parameters:
-                    sourcePath: time/$(ENVIRONMENT)$(System.PullRequest.PullRequestNumber)
+                    sourcePath: time/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
                     testResultsFileName: $(NPM_BUILD_NUMBER).xml
                     testRunTitle: Integration

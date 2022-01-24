@@ -587,6 +587,7 @@ module "postgres" {
     seconds_until_auto_pause = 300
     timeout_action = "ForceApplyCapacityChange"
   }
+  depends_on = [aws_cloudwatch_log_group.rds]
 }
 resource "aws_db_parameter_group" "postgresql" {
   name = "${local.rds_name}-aurora-pg-parameter-group"
@@ -667,6 +668,11 @@ resource "aws_ssm_parameter" "connection_string" {
   name  = "/${var.application_name}/${var.environment}/ConnectionStrings/Default"
   type  = "SecureString"
   value = "Host=${local.rds_endpoint};Port=${local.rds_port};Database=${var.rds_database_name};Username=${local.rds_username};Password=${local.rds_password};Keepalive=300;CommandTimeout=300;Timeout=300"
+}
+
+resource "aws_cloudwatch_log_group" "rds" {
+  name = "/aws/rds/cluster/${local.rds_name}/postgresql"
+  retention_in_days = 14
 }
 
 // Cloudwatch
