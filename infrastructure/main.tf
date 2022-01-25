@@ -213,12 +213,15 @@ resource "aws_ecs_service" "api" {
 
   lifecycle {
     ignore_changes = [
+      load_balancer,
       task_definition,
       desired_count,
-      load_balancer
     ]
   }
-  depends_on = [aws_alb_target_group.api_blue, aws_alb_target_group.api_green]
+  depends_on = [
+    aws_lb_listener_rule.api,
+    aws_lb_listener_rule.test
+  ]
 }
 resource "aws_ecs_task_definition" "api" {
   family = "${local.api_name}-task"

@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">=1.0.2"
+  required_version = ">=1.1.4"
   backend "s3" {
     key = "terraform.tfstate"
     encrypt = true
@@ -7,7 +7,7 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      version = "3.50.0"
+      version = "3.73.0"
     }
   }
 }

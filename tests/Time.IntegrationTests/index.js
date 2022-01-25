@@ -14,10 +14,8 @@ exports.handler = (event, context, callback) => {
     const resultsFile = `${buildNumber}.xml`;
     newman.run(
         {
-            abortOnFailure: true,
-            abortOnError: true,
             collection: './collections/time.postman_collection.json',
-            delayRequest: 1000,
+            delayRequest: 5000,
             envVar: [
                 {
                     "key": "baseUrl",
@@ -33,8 +31,6 @@ exports.handler = (event, context, callback) => {
             },
         },
         (newmanError, newmanData) => {
-            console.log(newmanError);
-            console.log(newmanData);
             if (resultsBucket) {
                 const s3 = new aws.S3();
                 const testResultsData = fs.readFileSync(`/tmp/${resultsFile}`, 'utf8');
@@ -52,9 +48,10 @@ exports.handler = (event, context, callback) => {
                             console.log(JSON.stringify(s3Data));
                         } 
                         
-                        if (newmanError || (newmanData.failures && newmanData.failures.length > 0)) {
-                            console.error(JSON.stringify(newmanError));
-                            console.error(JSON.stringify(newmanData));
+                        if (newmanError) {// || newmanData?.run?.failures?.length) {
+                            console.error(newmanError);
+                            console.error(newmanData);
+                            console.error(newmanData?.run?.failures);
                             const params = {
                                 deploymentId: event.DeploymentId,
                                 lifecycleEventHookExecutionId: event.LifecycleEventHookExecutionId,
@@ -72,7 +69,8 @@ exports.handler = (event, context, callback) => {
                                     }
                                 });
                         } else {
-                            console.log(JSON.stringify(newmanData));
+                            console.log(newmanData);
+                            console.log(newmanData?.run?.failures);
                             const params = {
                                 deploymentId: event.DeploymentId,
                                 lifecycleEventHookExecutionId: event.LifecycleEventHookExecutionId,

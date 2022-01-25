@@ -151,7 +151,7 @@ namespace Time.Api.V1.Controllers
         /// <param name="pageNumber">Page number to retrieve</param>
         /// <param name="pageSize">Amount of items to retrieve</param>
         /// <returns>A collection of records</returns>
-        [HttpPost]
+        [HttpGet]
         [Authorize("read")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

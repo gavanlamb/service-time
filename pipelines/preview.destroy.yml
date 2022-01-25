@@ -122,3 +122,4 @@ stages:
                   parameters:
                     destroyAdditionalArguments: -var-file="variables/${{ variables.ENVIRONMENT }}$(PULL_REQUEST_ID).${{ variables.REGION }}.tfvars"
                     workspaceName: service-time-${{ variables.ENVIRONMENT }}$(PULL_REQUEST_ID)
+                    version: 1.1.4
