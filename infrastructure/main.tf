@@ -214,8 +214,7 @@ resource "aws_ecs_service" "api" {
   lifecycle {
     ignore_changes = [
       load_balancer,
-      task_definition,
-      desired_count,
+      desired_count
     ]
   }
   depends_on = [
@@ -347,6 +346,10 @@ resource "aws_lb_listener_rule" "api" {
       action
     ]
   }
+  depends_on = [
+    aws_alb_target_group.api_blue,
+    aws_alb_target_group.api_green
+  ]
 }
 resource "aws_alb_target_group" "api_blue" {
   name = "${local.api_name}-blue"
