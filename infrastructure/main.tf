@@ -323,7 +323,7 @@ resource "aws_lb_listener_rule" "test" {
 
   lifecycle {
     ignore_changes = [
-      "action.0.target_group_arn"
+      action.0.target_group_arn
     ]
   }
 }
@@ -345,7 +345,7 @@ resource "aws_lb_listener_rule" "api" {
 
   lifecycle {
     ignore_changes = [
-      "action.0.target_group_arn"
+      action.0.target_group_arn
     ]
   }
 }
