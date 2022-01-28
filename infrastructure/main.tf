@@ -193,12 +193,6 @@ resource "aws_ecs_service" "api" {
     }
   }
 
-  capacity_provider_strategy {
-    base = var.api_min_capacity
-    capacity_provider = var.capacity_provider_name
-    weight = 100
-  }
-
   deployment_controller {
     type = "CODE_DEPLOY"
   }
@@ -217,15 +211,12 @@ resource "aws_ecs_service" "api" {
   ]
   lifecycle {
     ignore_changes = [
-      task_definition,
       desired_count,
-      capacity_provider_strategy.0.base,
-      capacity_provider_strategy.0.capacity_provider,
-      capacity_provider_strategy.0.weight,
-      load_balancer.0.target_group_arn,
-      load_balancer.0.container_name,
-      load_balancer.0.container_port
+      task_definition,
+      capacity_provider_strategy,
+      load_balancer
     ]
+    create_before_destroy = true
   }
 }
 resource "aws_ecs_task_definition" "api" {
