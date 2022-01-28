@@ -193,6 +193,12 @@ resource "aws_ecs_service" "api" {
     }
   }
 
+  capacity_provider_strategy {
+    base = var.api_min_capacity
+    capacity_provider = var.capacity_provider_name
+    weight = 100
+  }
+
   deployment_controller {
     type = "CODE_DEPLOY"
   }
