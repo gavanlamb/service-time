@@ -211,11 +211,17 @@ resource "aws_ecs_service" "api" {
 
   propagate_tags = "TASK_DEFINITION"
 
+  depends_on = [
+    aws_lb_listener_rule.api,
+    aws_lb_listener_rule.test
+  ]
   lifecycle {
     ignore_changes = [
-      task_definition,
       desired_count,
-      load_balancer]
+      task_definition,
+      capacity_provider_strategy,
+      load_balancer
+    ]
   }
 }
 resource "aws_ecs_task_definition" "api" {
@@ -307,6 +313,7 @@ resource "aws_lb_listener_rule" "test" {
   action {
     type = "forward"
     target_group_arn = aws_alb_target_group.api_blue.arn
+    order = 1
   }
 
   condition {
@@ -318,7 +325,7 @@ resource "aws_lb_listener_rule" "test" {
 
   lifecycle {
     ignore_changes = [
-      action
+      action.0.target_group_arn
     ]
   }
 }
@@ -328,6 +335,7 @@ resource "aws_lb_listener_rule" "api" {
   action {
     type = "forward"
     target_group_arn = aws_alb_target_group.api_blue.arn
+    order = 1
   }
 
   condition {
@@ -339,7 +347,7 @@ resource "aws_lb_listener_rule" "api" {
 
   lifecycle {
     ignore_changes = [
-      action
+      action.0.target_group_arn
     ]
   }
 }
@@ -403,23 +411,7 @@ data "aws_iam_policy_document" "api_logs" {
 //// Task
 resource "aws_iam_role" "api_task" {
   name = "${local.api_name}-task-role"
-  assume_role_policy = <<EOF
-{
-  "Version": "2008-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": [
-          "ecs-tasks.amazonaws.com",
-          "ecs.amazonaws.com"
-        ]
-      },
-      "Effect": "Allow"
-    }
-  ]
-}
-EOF
+  assume_role_policy = data.aws_iam_policy_document.api_task.json
 }
 resource "aws_iam_role_policy_attachment" "api_task_logs_task" {
   role = aws_iam_role.api_task.name
@@ -437,23 +429,7 @@ resource "aws_iam_role_policy_attachment" "api_task_cognito" {
 //// Execution
 resource "aws_iam_role" "api_execution" {
   name = "${local.api_name}-execution-role"
-  assume_role_policy = <<EOF
-{
-  "Version": "2008-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": [
-          "ecs-tasks.amazonaws.com",
-          "ecs.amazonaws.com"
-        ]
-      },
-      "Effect": "Allow"
-    }
-  ]
-}
-EOF
+  assume_role_policy = data.aws_iam_policy_document.api_execution.json
 }
 resource "aws_iam_role_policy_attachment" "api_execution_role_policy" {
   role = aws_iam_role.api_execution.name

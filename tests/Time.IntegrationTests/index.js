@@ -15,7 +15,7 @@ exports.handler = (event, context, callback) => {
     newman.run(
         {
             collection: './collections/time.postman_collection.json',
-            delayRequest: 1000,
+            delayRequest: 10000,
             envVar: [
                 {
                     "key": "baseUrl",
@@ -31,13 +31,6 @@ exports.handler = (event, context, callback) => {
             },
         },
         (newmanError, newmanData) => {
-            
-            if (newmanError) {
-                console.error(newmanError);
-            } else if (newmanData) {
-                console.log(newmanData);
-            }
-            
             if (resultsBucket) {
                 const s3 = new aws.S3();
                 const testResultsData = fs.readFileSync(`/tmp/${resultsFile}`, 'utf8');
@@ -50,12 +43,15 @@ exports.handler = (event, context, callback) => {
                     },
                     function (s3Error, s3Data) {
                         if (s3Error) {
-                            console.error(s3Error);
+                            console.error(JSON.stringify(s3Error));
                         } else if (s3Data) {
-                            console.log(s3Data);
+                            console.log(JSON.stringify(s3Data));
                         } 
                         
-                        if (newmanError) {
+                        if (newmanError) {// || newmanData?.run?.failures?.length) {
+                            console.error(newmanError);
+                            console.error(newmanData);
+                            console.error(newmanData?.run?.failures);
                             const params = {
                                 deploymentId: event.DeploymentId,
                                 lifecycleEventHookExecutionId: event.LifecycleEventHookExecutionId,
@@ -73,6 +69,8 @@ exports.handler = (event, context, callback) => {
                                     }
                                 });
                         } else {
+                            console.log(newmanData);
+                            console.log(newmanData?.run?.failures);
                             const params = {
                                 deploymentId: event.DeploymentId,
                                 lifecycleEventHookExecutionId: event.LifecycleEventHookExecutionId,
@@ -92,7 +90,6 @@ exports.handler = (event, context, callback) => {
                         }
                     });
             }
-            
         }
     );
 }
