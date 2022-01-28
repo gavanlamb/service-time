@@ -57,3 +57,32 @@ data "aws_iam_policy" "test_results_bucket"{
 }
 
 data "aws_caller_identity" "current" {}
+
+data "aws_iam_policy_document" "api_task" {
+  version = "2008-10-17"
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      identifiers = [
+        "ecs-tasks.amazonaws.com",
+        "ecs.amazonaws.com"
+      ]
+      type = "Service"
+    }
+    effect = "Allow"
+  }
+}
+data "aws_iam_policy_document" "api_execution" {
+  version = "2008-10-17"
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      identifiers = [
+        "ecs-tasks.amazonaws.com",
+        "ecs.amazonaws.com"
+      ]
+      type = "Service"
+    }
+    effect = "Allow"
+  }
+}

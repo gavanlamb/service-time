@@ -409,23 +409,7 @@ data "aws_iam_policy_document" "api_logs" {
 //// Task
 resource "aws_iam_role" "api_task" {
   name = "${local.api_name}-task-role"
-  assume_role_policy = <<EOF
-{
-  "Version": "2008-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": [
-          "ecs-tasks.amazonaws.com",
-          "ecs.amazonaws.com"
-        ]
-      },
-      "Effect": "Allow"
-    }
-  ]
-}
-EOF
+  assume_role_policy = data.aws_iam_policy_document.api_task.json
 }
 resource "aws_iam_role_policy_attachment" "api_task_logs_task" {
   role = aws_iam_role.api_task.name
@@ -443,23 +427,7 @@ resource "aws_iam_role_policy_attachment" "api_task_cognito" {
 //// Execution
 resource "aws_iam_role" "api_execution" {
   name = "${local.api_name}-execution-role"
-  assume_role_policy = <<EOF
-{
-  "Version": "2008-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": [
-          "ecs-tasks.amazonaws.com",
-          "ecs.amazonaws.com"
-        ]
-      },
-      "Effect": "Allow"
-    }
-  ]
-}
-EOF
+  assume_role_policy = data.aws_iam_policy_document.api_execution.json
 }
 resource "aws_iam_role_policy_attachment" "api_execution_role_policy" {
   role = aws_iam_role.api_execution.name
