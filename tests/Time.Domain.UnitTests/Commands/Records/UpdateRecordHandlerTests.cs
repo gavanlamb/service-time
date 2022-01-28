@@ -31,8 +31,8 @@ namespace Time.Domain.UnitTests.Commands.Records
                 Id = 1,
                 Name = "One",
                 UserId = "user-id0",
-                Start = DateTime.UtcNow.AddDays(-3),
-                Created = DateTime.UtcNow.AddDays(-3),
+                Start = DateTimeOffset.UtcNow.AddDays(-3),
+                Created = DateTimeOffset.UtcNow.AddDays(-3),
             });
             _context.SaveChanges();
                 
@@ -47,8 +47,8 @@ namespace Time.Domain.UnitTests.Commands.Records
                 Id = 1,
                 Name = "Next",
                 UserId = "user-id0",
-                Start = DateTime.UtcNow.AddDays(-3),
-                End = DateTime.UtcNow
+                Start = DateTimeOffset.UtcNow.AddDays(-3),
+                End = DateTimeOffset.UtcNow
             };
             
             var record = await _handler.Handle(command, CancellationToken.None);

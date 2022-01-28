@@ -7,6 +7,6 @@ namespace Time.Domain.Commands.Records
     {
         public string Name { get; init; }
         public string UserId { get; init; }
-        public DateTime Start { get; init; }
+        public DateTimeOffset Start { get; init; }
     }
 }

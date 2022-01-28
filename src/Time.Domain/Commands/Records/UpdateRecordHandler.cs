@@ -35,7 +35,7 @@ namespace Time.Domain.Commands.Records
             record.Name = request.Name;
             record.Start = request.Start;
             record.End = request.End;
-            record.Modified = DateTime.UtcNow;
+            record.Modified = DateTimeOffset.UtcNow;
             
             if (record.End != null)
                 record.Duration = request.End - request.Start;

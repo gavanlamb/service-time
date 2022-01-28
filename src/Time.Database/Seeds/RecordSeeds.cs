@@ -25,8 +25,8 @@ namespace Time.Database.Seeds
                 var userRecords = _db.Records.Any(r => r.UserId == userId);
                 if (!userRecords)
                 {
-                    var start = DateTime.UtcNow.AddMinutes(-3306);
-                    var end = DateTime.UtcNow.AddMinutes(-3246);
+                    var start = DateTimeOffset.UtcNow.AddMinutes(-3306);
+                    var end = DateTimeOffset.UtcNow.AddMinutes(-3246);
                     var duration = end - start;
                     _db.Records.Add(new Record
                     {
@@ -39,8 +39,8 @@ namespace Time.Database.Seeds
                         Modified = end
                     });
                     
-                    start = DateTime.UtcNow.AddMinutes(-3245);
-                    end = DateTime.UtcNow.AddMinutes(-3215);
+                    start = DateTimeOffset.UtcNow.AddMinutes(-3245);
+                    end = DateTimeOffset.UtcNow.AddMinutes(-3215);
                     duration = end - start;
                     _db.Records.Add(new Record
                     {
@@ -53,8 +53,8 @@ namespace Time.Database.Seeds
                         Modified = end
                     });
                     
-                    start = DateTime.UtcNow.AddMinutes(-3214);
-                    end = DateTime.UtcNow.AddMinutes(-3179);
+                    start = DateTimeOffset.UtcNow.AddMinutes(-3214);
+                    end = DateTimeOffset.UtcNow.AddMinutes(-3179);
                     duration = end - start;
                     _db.Records.Add(new Record
                     {
@@ -67,8 +67,8 @@ namespace Time.Database.Seeds
                         Modified = end
                     });
                     
-                    start = DateTime.UtcNow.AddMinutes(-3178);
-                    end = DateTime.UtcNow.AddMinutes(-3118);
+                    start = DateTimeOffset.UtcNow.AddMinutes(-3178);
+                    end = DateTimeOffset.UtcNow.AddMinutes(-3118);
                     duration = end - start;
                     _db.Records.Add(new Record
                     {
@@ -81,8 +81,8 @@ namespace Time.Database.Seeds
                         Modified = end
                     });
                     
-                    start = DateTime.UtcNow.AddMinutes(-3117);
-                    end = DateTime.UtcNow.AddMinutes(-3018);
+                    start = DateTimeOffset.UtcNow.AddMinutes(-3117);
+                    end = DateTimeOffset.UtcNow.AddMinutes(-3018);
                     duration = end - start;
                     _db.Records.Add(new Record
                     {

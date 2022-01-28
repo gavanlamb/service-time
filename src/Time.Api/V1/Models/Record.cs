@@ -23,13 +23,13 @@ namespace Time.Api.V1.Models
         /// The start date and time, in UTC, for this record.
         /// </summary>
         /// <example>2021-10-31T04:46:32.3044710Z</example>
-        public DateTime Start { get; set; }
+        public DateTimeOffset Start { get; set; }
         
         /// <summary>
         /// The end date and time, in UTC for, this record. This value might be null if the record is still active.
         /// </summary>
         /// <example>2021-10-31T06:46:32.3044710Z</example>
-        public DateTime? End { get; set; }
+        public DateTimeOffset? End { get; set; }
 
         /// <summary>
         /// The duration for this record. This might be null if the end time is not set.

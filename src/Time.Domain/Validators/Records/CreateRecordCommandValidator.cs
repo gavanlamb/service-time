@@ -12,7 +12,7 @@ namespace Time.Domain.Validators.Records
                 .MinimumLength(2).WithMessage("The name needs to be 2 characters or more");
             
             RuleFor(r => r.Start)
-                .Must(DateTimeValidator.BeInThePast).WithMessage("The start time must be in the past");
+                .Must(DateTimeOffsetValidator.BeInThePast).WithMessage("The start time must be in the past");
         }
     }
 }
