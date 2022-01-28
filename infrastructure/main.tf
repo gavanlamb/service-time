@@ -211,12 +211,6 @@ resource "aws_ecs_service" "api" {
 
   propagate_tags = "TASK_DEFINITION"
 
-  lifecycle {
-    ignore_changes = [
-      load_balancer,
-      desired_count
-    ]
-  }
   depends_on = [
     aws_lb_listener_rule.api,
     aws_lb_listener_rule.test
@@ -319,12 +313,6 @@ resource "aws_lb_listener_rule" "test" {
         local.api_url]
     }
   }
-
-  lifecycle {
-    ignore_changes = [
-      action
-    ]
-  }
 }
 resource "aws_lb_listener_rule" "api" {
   listener_arn = data.aws_lb_listener.expensely_https.arn
@@ -340,16 +328,6 @@ resource "aws_lb_listener_rule" "api" {
         local.api_url]
     }
   }
-
-  lifecycle {
-    ignore_changes = [
-      action
-    ]
-  }
-  depends_on = [
-    aws_alb_target_group.api_blue,
-    aws_alb_target_group.api_green
-  ]
 }
 resource "aws_alb_target_group" "api_blue" {
   name = "${local.api_name}-blue"
