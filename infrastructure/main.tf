@@ -211,11 +211,6 @@ resource "aws_ecs_service" "api" {
 
   propagate_tags = "TASK_DEFINITION"
   
-  deployment_circuit_breaker {
-    enable   = false
-    rollback = false
-  }
-
   depends_on = [
     aws_lb_listener_rule.api,
     aws_lb_listener_rule.test
@@ -316,6 +311,7 @@ resource "aws_lb_listener_rule" "test" {
   action {
     type = "forward"
     target_group_arn = aws_alb_target_group.api_blue.arn
+    order = 1
   }
 
   condition {
@@ -327,7 +323,7 @@ resource "aws_lb_listener_rule" "test" {
 
   lifecycle {
     ignore_changes = [
-      "action.0.order"
+      "action.0.target_group_arn"
     ]
   }
 }
@@ -337,6 +333,7 @@ resource "aws_lb_listener_rule" "api" {
   action {
     type = "forward"
     target_group_arn = aws_alb_target_group.api_blue.arn
+    order = 1
   }
 
   condition {
@@ -348,7 +345,7 @@ resource "aws_lb_listener_rule" "api" {
 
   lifecycle {
     ignore_changes = [
-      "action.0.order"
+      "action.0.target_group_arn"
     ]
   }
 }
