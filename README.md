@@ -35,9 +35,4 @@ cd src
 dotnet ef migrations add { migration name } --output-dir Migrations --startup-project ./Time.Database.Runner --project ./Time.Database
 ```
 
-
-
-
-
 https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters#add-authorization-to-summary
-
