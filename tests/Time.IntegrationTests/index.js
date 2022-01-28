@@ -15,7 +15,7 @@ exports.handler = (event, context, callback) => {
     newman.run(
         {
             collection: './collections/time.postman_collection.json',
-            delayRequest: 5000,
+            delayRequest: 10000,
             envVar: [
                 {
                     "key": "baseUrl",
