@@ -16,13 +16,11 @@ namespace Time.Api.V1.Models
         /// <summary>
         /// Time the record started
         /// </summary>
-        /// <example>2021-10-31T04:46:32.3044710Z</example>
-        public DateTime Start { get; init; }
+        public DateTimeOffset Start { get; init; }
         
         /// <summary>
         /// Time the record started
         /// </summary>
-        /// <example>2021-10-31T06:46:32.3044710Z</example>
-        public DateTime? End { get; set; }
+        public DateTimeOffset? End { get; set; }
     }
 }

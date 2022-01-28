@@ -26,7 +26,7 @@ namespace Time.Domain.Commands.Records
             CancellationToken cancellationToken)
         {
             var recordEntity = _mapper.Map<RecordEntity>(request);
-            recordEntity.Created = DateTime.UtcNow;
+            recordEntity.Created = DateTimeOffset.UtcNow;
             
             await _context.Records.AddAsync(
                 recordEntity, 

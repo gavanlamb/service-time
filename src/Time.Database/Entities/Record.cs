@@ -10,14 +10,14 @@ namespace Time.Database.Entities
 
         public string Name { get; set; }
         
-        public DateTime Start { get; set; }
+        public DateTimeOffset Start { get; set; }
         
-        public DateTime? End { get; set; }
+        public DateTimeOffset? End { get; set; }
 
         public TimeSpan? Duration { get; set; }
         
-        public DateTime Created { get; set; }
+        public DateTimeOffset Created { get; set; }
         
-        public DateTime? Modified { get; set; }
+        public DateTimeOffset? Modified { get; set; }
     }
 }

@@ -27,7 +27,7 @@ namespace Time.Domain.UnitTests.Profiles
             {
                 UserId = "id",
                 Name = "Test",
-                Start = new DateTime(2020, 01, 01, 01, 01, 01)
+                Start = new DateTimeOffset(2020, 01, 01, 01, 01, 01, TimeSpan.Zero)
             };
 
             var record = mapper.Map<RecordEntity>(command);
@@ -47,8 +47,8 @@ namespace Time.Domain.UnitTests.Profiles
                 UserId = "id",
                 Name = "Test",
                 Duration = new TimeSpan(1,1,1,1),
-                Start = new DateTime(2020, 01, 01, 01, 01,  01),
-                End = new DateTime(2020, 01, 01, 01, 01,  59),
+                Start = new DateTimeOffset(2020, 01, 01, 01, 01, 01, TimeSpan.Zero),
+                End = new DateTimeOffset(2020, 01, 01, 01, 01, 59, TimeSpan.Zero)
             };
             
             var recordDomain = mapper.Map<RecordDomain>(recordEntity);

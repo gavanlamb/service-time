@@ -31,22 +31,22 @@ namespace Time.Domain.UnitTests.Queries.Records
                 Id = 1,
                 Name = "One",
                 UserId = "user-id0",
-                Start = DateTime.UtcNow.AddDays(-3),
-                End = DateTime.UtcNow,
-                Created = DateTime.UtcNow.AddDays(-3),
-                Modified = DateTime.UtcNow,
-                Duration = DateTime.UtcNow - DateTime.UtcNow.AddDays(-3)
+                Start = DateTimeOffset.UtcNow.AddDays(-3),
+                End = DateTimeOffset.UtcNow,
+                Created = DateTimeOffset.UtcNow.AddDays(-3),
+                Modified = DateTimeOffset.UtcNow,
+                Duration = DateTimeOffset.UtcNow - DateTimeOffset.UtcNow.AddDays(-3)
             });
             _context.Records.Add(new RecordEntity
             {
                 Id = 2,
                 Name = "two",
                 UserId = "user-id0",
-                Start = DateTime.UtcNow.AddDays(-2),
-                End = DateTime.UtcNow,
-                Created = DateTime.UtcNow.AddDays(-2),
-                Modified = DateTime.UtcNow,
-                Duration = DateTime.UtcNow - DateTime.UtcNow.AddDays(-2)
+                Start = DateTimeOffset.UtcNow.AddDays(-2),
+                End = DateTimeOffset.UtcNow,
+                Created = DateTimeOffset.UtcNow.AddDays(-2),
+                Modified = DateTimeOffset.UtcNow,
+                Duration = DateTimeOffset.UtcNow - DateTimeOffset.UtcNow.AddDays(-2)
             });
             _context.SaveChanges();
                 
