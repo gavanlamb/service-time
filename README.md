@@ -40,3 +40,4 @@ dotnet ef migrations add { migration name } --output-dir Migrations --startup-pr
 
 
 https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters#add-authorization-to-summary
+
