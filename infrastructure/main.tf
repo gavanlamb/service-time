@@ -219,7 +219,13 @@ resource "aws_ecs_service" "api" {
     ignore_changes = [
       task_definition,
       desired_count,
-      load_balancer]
+      capacity_provider_strategy.0.base,
+      capacity_provider_strategy.0.capacity_provider,
+      capacity_provider_strategy.0.weight,
+      load_balancer.0.target_group_arn,
+      load_balancer.0.container_name,
+      load_balancer.0.container_port
+    ]
   }
 }
 resource "aws_ecs_task_definition" "api" {
