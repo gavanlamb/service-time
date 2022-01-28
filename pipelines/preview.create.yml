@@ -19,41 +19,41 @@ variables:
   - template: variables/preview.ap-southeast-2.yml@templates
 
 stages:
-#  - stage: build
-#    displayName: Build
-#    jobs:
-#      - job: setup
-#        displayName: Setup
-#        steps:
-#          - checkout: none
-#          - template: templates/build.numbers.yml
-#      - job: api
-#        displayName: Api
-#        dependsOn:
-#          - setup
-#        steps:
-#          - template: templates/build.api.yml
-#          - template: aws/iam/configure.yml@templates
-#          - template: templates/push.api.yml
-#      - job: integration_tests
-#        displayName: Integration Tests
-#        dependsOn:
-#          - setup
-#        variables:
-#          NPM_BUILD_NUMBER: $[ dependencies.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
-#        steps:
-#          - template: templates/build.integration-tests.yml
-#            parameters:
-#              buildNumber: $(NPM_BUILD_NUMBER)
-#          - template: aws/iam/configure.yml@templates
-#          - template: templates/push.integration-tests.yml
-#            parameters:
-#              buildNumber: $(NPM_BUILD_NUMBER)
+  - stage: build
+    displayName: Build
+    jobs:
+      - job: setup
+        displayName: Setup
+        steps:
+          - checkout: none
+          - template: templates/build.numbers.yml
+      - job: api
+        displayName: Api
+        dependsOn:
+          - setup
+        steps:
+          - template: templates/build.api.yml
+          - template: aws/iam/configure.yml@templates
+          - template: templates/push.api.yml
+      - job: integration_tests
+        displayName: Integration Tests
+        dependsOn:
+          - setup
+        variables:
+          NPM_BUILD_NUMBER: $[ dependencies.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
+        steps:
+          - template: templates/build.integration-tests.yml
+            parameters:
+              buildNumber: $(NPM_BUILD_NUMBER)
+          - template: aws/iam/configure.yml@templates
+          - template: templates/push.integration-tests.yml
+            parameters:
+              buildNumber: $(NPM_BUILD_NUMBER)
 
   - stage: preview
     displayName: Preview
-#    dependsOn:
-#      - build
+    dependsOn:
+      - build
     variables:
       - name: NPM_BUILD_NUMBER
         value: $[ stageDependencies.build.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
