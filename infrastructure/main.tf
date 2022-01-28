@@ -210,6 +210,11 @@ resource "aws_ecs_service" "api" {
   }
 
   propagate_tags = "TASK_DEFINITION"
+  
+  deployment_circuit_breaker {
+    enable   = false
+    rollback = false
+  }
 
   depends_on = [
     aws_lb_listener_rule.api,
@@ -322,7 +327,7 @@ resource "aws_lb_listener_rule" "test" {
 
   lifecycle {
     ignore_changes = [
-      action
+      "action.0.order"
     ]
   }
 }
@@ -343,7 +348,7 @@ resource "aws_lb_listener_rule" "api" {
 
   lifecycle {
     ignore_changes = [
-      action
+      "action.0.order"
     ]
   }
 }
