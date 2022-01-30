@@ -439,6 +439,10 @@ resource "aws_iam_role_policy_attachment" "api_task_cognito" {
   role = aws_iam_role.api_task.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonCognitoReadOnly"
 }
+resource "aws_iam_role_policy_attachment" "api_task_x_ray_daemon" {
+  role = aws_iam_role.api_task.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
+}
 
 //// Execution
 resource "aws_iam_role" "api_execution" {
