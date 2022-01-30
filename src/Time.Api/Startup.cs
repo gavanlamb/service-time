@@ -33,6 +33,7 @@ namespace Time.Api
         {
             AWSXRayRecorder.InitializeInstance(Configuration);
             AWSSDKHandler.RegisterXRayForAllServices();
+            // AWSXRayRecorder.RegisterLogger(Amazon.LoggingOptions.Console);
             
             services.AddControllers()
                 .AddJsonOptions(options =>
@@ -70,7 +71,7 @@ namespace Time.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
-            app.UseXRay("Time.Api"); 
+            app.UseXRay("TimeApi"); 
             //app.UseExceptionHandler();
 
             if (env.IsDevelopment() || env.EnvironmentName.StartsWith("Preview"))

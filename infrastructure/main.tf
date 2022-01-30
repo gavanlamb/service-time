@@ -253,6 +253,10 @@ resource "aws_ecs_task_definition" "api" {
         {
           name = "DOTNET_ENVIRONMENT",
           value = var.environment
+        },
+        {
+          name = "AWS_XRAY_DAEMON_ADDRESS",
+          value = "${local.xray_daemon_name}:2000"
         }
       ]
       portMappings = [
@@ -260,9 +264,12 @@ resource "aws_ecs_task_definition" "api" {
           protocol = "tcp"
           containerPort = 80
         }
+      ],
+      links = [
+        local.xray_daemon_name
       ]
     },{
-      name = "x-ray-daemon-${var.environment}"
+      name = local.xray_daemon_name
       image = "public.ecr.aws/xray/aws-xray-daemon:latest"
       essential = false
       cpu = 32
@@ -271,6 +278,7 @@ resource "aws_ecs_task_definition" "api" {
       portMappings = [
         {
           protocol = "udp"
+          hostPort = 0,
           containerPort = 2000
         }
       ]
