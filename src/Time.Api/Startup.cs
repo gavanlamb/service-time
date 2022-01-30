@@ -31,9 +31,7 @@ namespace Time.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            AWSXRayRecorder.InitializeInstance(Configuration);
             AWSSDKHandler.RegisterXRayForAllServices();
-            // AWSXRayRecorder.RegisterLogger(Amazon.LoggingOptions.Console);
             
             services.AddControllers()
                 .AddJsonOptions(options =>
@@ -71,7 +69,7 @@ namespace Time.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
-            app.UseXRay("TimeApi"); 
+            app.UseXRay("Time.Api", Configuration); 
             //app.UseExceptionHandler();
 
             if (env.IsDevelopment() || env.EnvironmentName.StartsWith("Preview"))

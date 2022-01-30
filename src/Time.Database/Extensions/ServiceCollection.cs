@@ -14,7 +14,12 @@ namespace Time.Database.Extensions
             ServiceLifetime contextLifeCycle = ServiceLifetime.Scoped)
         {
             services.AddDbContext<TimeContext>(
-                options => options.UseNpgsql(configuration.GetConnectionString("Default")).UseSnakeCaseNamingConvention().AddXRayInterceptor(true), 
+                options =>
+                {
+                    options.UseNpgsql(configuration.GetConnectionString("Default"));
+                    options.UseSnakeCaseNamingConvention();
+                    options.AddXRayInterceptor();
+                }, 
                 contextLifeCycle);
             services.AddScoped<Runner>();
             services.AddScoped<RecordSeeds>();
