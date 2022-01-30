@@ -1,4 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine AS base
+﻿FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine AS base
 ARG BUILD_NUMBER=0.0.0.1
 ARG PAT
 WORKDIR /expensely-time
@@ -22,7 +22,7 @@ ENTRYPOINT dotnet test --collect:"XPlat Code Coverage" --no-build --configuratio
 FROM base AS publish-api
 RUN dotnet publish "src/Time.Api/Time.Api.csproj" -c Release -o /app/publish --no-build
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0-alpine AS api
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine AS api
 WORKDIR /app
 COPY --from=publish-api /app/publish .
 ENTRYPOINT ["dotnet", "Time.Api.dll"]
@@ -31,12 +31,12 @@ ENTRYPOINT ["dotnet", "Time.Api.dll"]
 FROM base AS publish-migration
 RUN dotnet publish "src/Time.Database.Runner/Time.Database.Runner.csproj" -c Release -o /app/publish --no-build 
 
-FROM amazon/aws-lambda-dotnet:5.0 AS migration
+FROM amazon/aws-lambda-dotnet:6 AS migration
 WORKDIR /var/task/
 COPY --from=publish-migration /app/publish .
 CMD ["Time.Database.Runner::Time.Database.Runner.Program::Handler"]
 
-FROM amazon/aws-lambda-dotnet:5.0 AS migration-local
+FROM amazon/aws-lambda-dotnet:6.0 AS migration-local
 WORKDIR /var/task/
 COPY --from=publish-migration /app/publish .
 ENTRYPOINT ["dotnet", "Time.Database.Runner.dll"]
