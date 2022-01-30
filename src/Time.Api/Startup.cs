@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Amazon;
 using Amazon.XRay.Recorder.Core;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using Expensely.Authentication.Cognito.Jwt.Extensions;
@@ -32,7 +33,8 @@ namespace Time.Api
         public void ConfigureServices(IServiceCollection services)
         {
             AWSSDKHandler.RegisterXRayForAllServices();
-            
+            AWSXRayRecorder.RegisterLogger(LoggingOptions.Console);
+
             services.AddControllers()
                 .AddJsonOptions(options =>
                 {
@@ -69,8 +71,7 @@ namespace Time.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
-            app.UseXRay("Time.Api", Configuration); 
-            //app.UseExceptionHandler();
+            app.UseXRay("Time.Api", Configuration);
 
             if (env.IsDevelopment() || env.EnvironmentName.StartsWith("Preview"))
             {
