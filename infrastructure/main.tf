@@ -261,6 +261,19 @@ resource "aws_ecs_task_definition" "api" {
           containerPort = 80
         }
       ]
+    },{
+      name = "x-ray-daemon-${var.environment}"
+      image = "public.ecr.aws/xray/aws-xray-daemon:latest"
+      essential = false
+      cpu = 32
+      memory = 256
+
+      portMappings = [
+        {
+          protocol = "udp"
+          containerPort = 2000
+        }
+      ]
     }
   ])
 }
