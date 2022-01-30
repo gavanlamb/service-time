@@ -17,8 +17,8 @@ namespace Time.Database.Extensions
                 options =>
                 {
                     options.UseNpgsql(configuration.GetConnectionString("Default"));
+                    options.AddXRayInterceptor(true);
                     options.UseSnakeCaseNamingConvention();
-                    options.AddXRayInterceptor();
                 }, 
                 contextLifeCycle);
             services.AddScoped<Runner>();
