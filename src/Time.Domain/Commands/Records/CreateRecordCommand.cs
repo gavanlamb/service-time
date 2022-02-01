@@ -1,12 +1,11 @@
 using System;
 using Time.Domain.Models;
 
-namespace Time.Domain.Commands.Records
+namespace Time.Domain.Commands.Records;
+
+public class CreateRecordCommand : ICommand<Record>
 {
-    public class CreateRecordCommand : ICommand<Record>
-    {
-        public string Name { get; init; }
-        public string UserId { get; init; }
-        public DateTimeOffset Start { get; init; }
-    }
+    public string Name { get; init; }
+    public string UserId { get; init; }
+    public DateTimeOffset Start { get; init; }
 }

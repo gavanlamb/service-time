@@ -1,8 +1,7 @@
 using MediatR;
 
-namespace Time.Domain.Queries
+namespace Time.Domain.Queries;
+
+public interface IQuery<out TResponse> : IRequest<TResponse>
 {
-    public interface IQuery<out TResponse> : IRequest<TResponse>
-    {
-    }
 }

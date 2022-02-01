@@ -18,90 +18,89 @@ using Time.Api.Middleware;
 using Time.Api.Setup;
 using Time.Domain.Extensions;
 
-namespace Time.Api
+namespace Time.Api;
+
+public class Startup
 {
-    public class Startup
+    public Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
+        Configuration = configuration;
+    }
+
+    private IConfiguration Configuration { get; }
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+        AWSXRayRecorder.InitializeInstance(Configuration);
+        AWSSDKHandler.RegisterXRayForAllServices();
+
+        services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.IgnoreNullValues = true;
+            });
+
+        services.AddMvcCore()
+            .AddApiExplorer();
+        services.AddApiVersioning(options =>
         {
-            Configuration = configuration;
+            options.ReportApiVersions = true;
+            options.DefaultApiVersion = new ApiVersion(1, 0);
+        });
+        services.AddVersionedApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'VVV";
+            options.SubstituteApiVersionInUrl = true;
+        });
+        services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigureOptions>();
+        services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
+            
+        services.AddHealthChecks();
+            
+        services.AddCognitoJwt(Configuration);
+            
+        services.AddHttpContextAccessor();
+        Logging.AddSerilog(Configuration);
+            
+        services.AddAutoMapper(typeof(Startup));
+            
+        services.AddTimeDomain(Configuration);
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
+    {
+        app.UseXRay("Time.Api");
+
+        if (env.IsDevelopment() || env.EnvironmentName.StartsWith("Preview"))
+        {
+            app.UseDeveloperExceptionPage();
         }
 
-        private IConfiguration Configuration { get; }
+        app.UseSwagger();
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        app.UseSwaggerUI(options =>
         {
-            AWSXRayRecorder.InitializeInstance(Configuration);
-            AWSSDKHandler.RegisterXRayForAllServices();
-
-            services.AddControllers()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                    options.JsonSerializerOptions.IgnoreNullValues = true;
-                });
-
-            services.AddMvcCore()
-                .AddApiExplorer();
-            services.AddApiVersioning(options =>
+            foreach (var desc in provider.ApiVersionDescriptions)
             {
-                options.ReportApiVersions = true;
-                options.DefaultApiVersion = new ApiVersion(1, 0);
-            });
-            services.AddVersionedApiExplorer(options =>
-            {
-                options.GroupNameFormat = "'v'VVV";
-                options.SubstituteApiVersionInUrl = true;
-            });
-            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigureOptions>();
-            services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
-            
-            services.AddHealthChecks();
-            
-            services.AddCognitoJwt(Configuration);
-            
-            services.AddHttpContextAccessor();
-            Logging.AddSerilog(Configuration);
-            
-            services.AddAutoMapper(typeof(Startup));
-            
-            services.AddTimeDomain(Configuration);
-        }
-
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
-        {
-            app.UseXRay("Time.Api");
-
-            if (env.IsDevelopment() || env.EnvironmentName.StartsWith("Preview"))
-            {
-                app.UseDeveloperExceptionPage();
+                options.SwaggerEndpoint($"/swagger/{desc.GroupName}/swagger.json", $"Version {desc.ApiVersion}");
+                options.DefaultModelsExpandDepth(-1);
             }
-
-            app.UseSwagger();
-
-            app.UseSwaggerUI(options =>
-            {
-                foreach (var desc in provider.ApiVersionDescriptions)
-                {
-                    options.SwaggerEndpoint($"/swagger/{desc.GroupName}/swagger.json", $"Version {desc.ApiVersion}");
-                    options.DefaultModelsExpandDepth(-1);
-                }
-            });
+        });
             
-            app.UseSerilogRequestLogging();
+        app.UseSerilogRequestLogging();
 
-            app.UseMiddleware(typeof(ErrorHandling));
+        app.UseMiddleware(typeof(ErrorHandling));
             
-            app.UseRouting();
+        app.UseRouting();
 
-            app.UseAuth();
+        app.UseAuth();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapHealthChecks("/health");
-                endpoints.MapControllers();
-            });
-        }
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapHealthChecks("/health");
+            endpoints.MapControllers();
+        });
     }
 }

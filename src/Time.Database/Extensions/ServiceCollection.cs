@@ -4,27 +4,26 @@ using Microsoft.Extensions.DependencyInjection;
 using Time.Database.Options;
 using Time.Database.Seeds;
 
-namespace Time.Database.Extensions
+namespace Time.Database.Extensions;
+
+public static class ServiceCollection
 {
-    public static class ServiceCollection
+    public static IServiceCollection AddTimeContext(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        ServiceLifetime contextLifeCycle = ServiceLifetime.Scoped)
     {
-        public static IServiceCollection AddTimeContext(
-            this IServiceCollection services,
-            IConfiguration configuration,
-            ServiceLifetime contextLifeCycle = ServiceLifetime.Scoped)
-        {
-            services.AddDbContext<TimeContext>(
-                options =>
-                {
-                    options.UseNpgsql(configuration.GetConnectionString("Default"));
-                    options.AddXRayInterceptor(true);
-                    options.UseSnakeCaseNamingConvention();
-                }, 
-                contextLifeCycle);
-            services.AddScoped<Runner>();
-            services.AddScoped<RecordSeeds>();
-            services.Configure<Seed>(configuration.GetSection("Data"));
-            return services;
-        }
+        services.AddDbContext<TimeContext>(
+            options =>
+            {
+                options.UseNpgsql(configuration.GetConnectionString("Default"));
+                options.AddXRayInterceptor(true);
+                options.UseSnakeCaseNamingConvention();
+            }, 
+            contextLifeCycle);
+        services.AddScoped<Runner>();
+        services.AddScoped<RecordSeeds>();
+        services.Configure<Seed>(configuration.GetSection("Data"));
+        return services;
     }
 }

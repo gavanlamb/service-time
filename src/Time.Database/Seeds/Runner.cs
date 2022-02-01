@@ -1,27 +1,26 @@
 using Microsoft.Extensions.Options;
 using Time.Database.Options;
 
-namespace Time.Database.Seeds
+namespace Time.Database.Seeds;
+
+public class Runner
 {
-    public class Runner
+    private readonly RecordSeeds _recordSeeds;
+    private readonly Seed _seedOptions;
+
+    public Runner(
+        RecordSeeds recordSeeds,
+        IOptions<Seed> seedOptions)
     {
-        private readonly RecordSeeds _recordSeeds;
-        private readonly Seed _seedOptions;
+        _recordSeeds = recordSeeds;
+        _seedOptions = seedOptions.Value;
+    }
 
-        public Runner(
-            RecordSeeds recordSeeds,
-            IOptions<Seed> seedOptions)
+    public void Run()
+    {
+        if (_seedOptions.Run)
         {
-            _recordSeeds = recordSeeds;
-            _seedOptions = seedOptions.Value;
-        }
-
-        public void Run()
-        {
-            if (_seedOptions.Run)
-            {
-                _recordSeeds.Add();
-            }
+            _recordSeeds.Add();
         }
     }
 }
