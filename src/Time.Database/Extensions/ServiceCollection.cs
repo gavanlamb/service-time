@@ -17,9 +17,9 @@ public static class ServiceCollection
             options =>
             {
                 options.UseNpgsql(configuration.GetConnectionString("Default"));
-                options.AddXRayInterceptor(true);
                 options.EnableSensitiveDataLogging();
                 options.UseSnakeCaseNamingConvention();
+                options.AddXRayInterceptor(true);
             }, 
             contextLifeCycle);
         services.AddScoped<Runner>();
