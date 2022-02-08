@@ -28,11 +28,9 @@ public class CreateRecordHandler : ICommandHandler<CreateRecordCommand, Record>
         var recordEntity = _mapper.Map<RecordEntity>(request);
         recordEntity.Created = DateTimeOffset.UtcNow;
             
-        await _context.Records.AddAsync(
-            recordEntity, 
-            cancellationToken);
-        await _context.SaveChangesAsync(
-            cancellationToken);
+        _context.Records.Add(
+            recordEntity); 
+        _context.SaveChanges();
             
         return _mapper.Map<Record>(recordEntity);
     }

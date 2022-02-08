@@ -26,11 +26,11 @@ public class UpdateRecordHandler : ICommandHandler<UpdateRecordCommand, Record>
         UpdateRecordCommand request, 
         CancellationToken cancellationToken)
     {
-        var record = await _context
+        var record = _context
             .Records
             .Where(r => r.Id == request.Id)
             .Where(r => r.UserId == request.UserId)
-            .FirstAsync(cancellationToken);
+            .First();
             
         record.Name = request.Name;
         record.Start = request.Start;

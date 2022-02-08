@@ -32,7 +32,7 @@ public class DeleteRecordHandler : ICommandHandler<DeleteRecordCommand, bool>
                 .Records
                 .Remove(record);
             
-            await _context.SaveChangesAsync(cancellationToken);
+            _context.SaveChanges();
 
             return true;
         }
