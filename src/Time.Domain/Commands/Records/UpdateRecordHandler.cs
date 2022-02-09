@@ -40,7 +40,7 @@ public class UpdateRecordHandler : ICommandHandler<UpdateRecordCommand, Record>
         if (record.End != null)
             record.Duration = request.End - request.Start;
             
-        await _context.SaveChangesAsync(cancellationToken);
+        _context.SaveChanges();
             
         return _mapper.Map<Record>(record);
     }
