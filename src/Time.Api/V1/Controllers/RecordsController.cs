@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Expensely.Authentication.Cognito.Jwt.Extensions;
@@ -54,13 +55,16 @@ public class RecordsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Record>> Post(
-        [FromBody] CreateRecord createRecord)
+        [FromBody] CreateRecord createRecord,
+        CancellationToken cancellationToken)
     {
         var userId = HttpContext.User.GetSubject();
             
         var command = _mapper.Map<CreateRecordCommand>(createRecord, opt => opt.Items["UserId"] = userId);
             
-        var recordDomain = await _mediatr.Send(command);
+        var recordDomain = await _mediatr.Send(
+            command, 
+            cancellationToken);
             
         var record = _mapper.Map<Record>(recordDomain);
             
@@ -79,7 +83,8 @@ public class RecordsController : ControllerBase
     [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Record>> Put(
         [FromRoute] long id,
-        [FromBody] UpdateRecord updateRecord)
+        [FromBody] UpdateRecord updateRecord,
+        CancellationToken cancellationToken)
     {
         var userId = HttpContext.User.GetSubject();
             
@@ -91,7 +96,9 @@ public class RecordsController : ControllerBase
                 opt.Items["Id"] = id;
             });
             
-        var recordDomain = await _mediatr.Send(command);
+        var recordDomain = await _mediatr.Send(
+            command,
+            cancellationToken);
             
         var record = _mapper.Map<Record>(recordDomain);
 
@@ -107,13 +114,16 @@ public class RecordsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Delete(
-        [FromRoute] long id)
+        [FromRoute] long id,
+        CancellationToken cancellationToken)
     {
         var userId = HttpContext.User.GetSubject();
             
         var command = _mapper.Map<DeleteRecordCommand>(id, opt => opt.Items["UserId"] = userId);
 
-        await _mediatr.Send(command);
+        await _mediatr.Send(
+            command, 
+            cancellationToken);
             
         return Ok();
     }
@@ -128,13 +138,16 @@ public class RecordsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Record>> Get(
-        [FromRoute] long id)
+        [FromRoute] long id,
+        CancellationToken cancellationToken)
     {
         var userId = HttpContext.User.GetSubject();
             
         var query = _mapper.Map<GetRecordByIdQuery>(id, opt => opt.Items["UserId"] = userId);
             
-        var result = await _mediatr.Send(query);
+        var result = await _mediatr.Send(
+            query,
+            cancellationToken);
         if (result == null)
         {
             return NotFound();
@@ -157,7 +170,8 @@ public class RecordsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<ActionResult<IEnumerable<Record>>> Fetch(
         [FromQuery] int pageNumber,
-        [FromQuery] int pageSize)
+        [FromQuery] int pageSize,
+        CancellationToken cancellationToken)
     {
         var userId = HttpContext.User.GetSubject();
             
@@ -168,7 +182,9 @@ public class RecordsController : ControllerBase
             UserId = userId
         };
             
-        var result = await _mediatr.Send(query);
+        var result = await _mediatr.Send(
+            query,
+            cancellationToken);
         if (!result.Items.Any())
             return NoContent();
 
