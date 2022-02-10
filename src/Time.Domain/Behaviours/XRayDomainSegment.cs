@@ -7,14 +7,14 @@ namespace Time.Domain.Behaviours;
 
 public class XRaySegment<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
 {
-    public Task<TResponse> Handle(
+    public async Task<TResponse> Handle(
         TRequest request, 
         CancellationToken cancellationToken, 
         RequestHandlerDelegate<TResponse> next)
     {
         AWSXRayRecorder.Instance.BeginSubsegment("Request");
         
-        var response = next();
+        var response = await next();
         
         AWSXRayRecorder.Instance.EndSubsegment();
 
