@@ -272,6 +272,14 @@ resource "aws_ecs_task_definition" "api" {
       name = local.open_telemetry_name
       image = "public.ecr.aws/aws-observability/aws-otel-collector:latest"
       essential = false
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group = aws_cloudwatch_log_group.open_telemetry.name
+          awslogs-region = var.region
+          awslogs-stream-prefix = "/ecs"
+        }
+      }
       cpu = 32
       memory = 256
 
@@ -416,7 +424,11 @@ resource "aws_alb_target_group" "api_green" {
 
 /// Cloudwatch
 resource "aws_cloudwatch_log_group" "api" {
-  name = "/${lower(var.application_name)}/${lower(var.environment)}"
+  name = "/${lower(var.application_name)}/${lower(var.environment)}/api"
+  retention_in_days = 14
+}
+resource "aws_cloudwatch_log_group" "open_telemetry" {
+  name = "/${lower(var.application_name)}/${lower(var.environment)}/open-telemetry"
   retention_in_days = 14
 }
 resource "aws_iam_policy" "api_logs" {
