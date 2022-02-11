@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -43,13 +44,16 @@ public class Startup
 
         services.AddOpenTelemetryTracing(builder => builder
             .AddAspNetCoreInstrumentation()
+            .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                .AddTelemetrySdk()
+                .AddEnvironmentVariableDetector())
             .AddXRayTraceId()
             .AddAWSInstrumentation()
             .AddHttpClientInstrumentation()
             .AddEntityFrameworkCoreInstrumentation()
             .AddOtlpExporter(options => 
             {
-                options.Endpoint = new Uri(Configuration.GetValue<string>("OpenTelemetry:Endpoint"));
+                options.Endpoint = new Uri(Configuration.GetValue<string>("OpenTelemetry__Endpoint"));
             })
             .Build());
 
