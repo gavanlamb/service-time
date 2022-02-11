@@ -270,7 +270,7 @@ resource "aws_ecs_task_definition" "api" {
       ]
     },{
       name = local.open_telemetry_name
-      image = "public.ecr.aws/amazon/aws-otel-collector:latest"
+      image = "public.ecr.aws/aws-observability/aws-otel-collector:latest"
       essential = false
       cpu = 32
       memory = 256
