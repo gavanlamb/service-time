@@ -34,6 +34,7 @@ public class Validation<TRequest, TResponse> : IPipelineBehavior<TRequest, TResp
 
         if (validationErrors.Any())
         {
+            AWSXRayRecorder.Instance.EndSubsegment();
             throw new ValidationException(validationErrors);
         }
         AWSXRayRecorder.Instance.EndSubsegment();
