@@ -50,7 +50,8 @@ public class Startup
             .AddOtlpExporter(options => 
             {
                 options.Endpoint = new Uri(Configuration.GetValue<string>("OpenTelemetry:Endpoint"));
-            }));
+            })
+            .Build());
 
         services.AddApiVersioning(options =>
         {
