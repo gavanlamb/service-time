@@ -1,5 +1,4 @@
-using System.Threading;
-using System.Threading.Tasks;
+using System.Linq;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Time.Database;
@@ -16,15 +15,14 @@ public class DeleteRecordCommandValidator : AbstractValidator<DeleteRecordComman
         _context = context;
             
         RuleFor(r => r.Id)
-            .MustAsync(DoesRecordExistForUser).WithMessage("The time record can only be deleted by the owner.");
+            .Must(DoesRecordExistForUser).WithMessage("The time record can only be deleted by the owner.");
     }
 
-    private async Task<bool> DoesRecordExistForUser(
+    private bool DoesRecordExistForUser(
         DeleteRecordCommand command, 
-        long id,
-        CancellationToken cancellationToken) =>
-        await _context
+        long id) =>
+        _context
             .Records
             .AsNoTracking()
-            .AnyAsync(x => x.Id == id && x.UserId == command.UserId, cancellationToken);
+            .Any(x => x.Id == id && x.UserId == command.UserId);
 }
