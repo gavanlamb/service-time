@@ -20,11 +20,11 @@ public class DeleteRecordHandler : ICommandHandler<DeleteRecordCommand, bool>
         DeleteRecordCommand request, 
         CancellationToken cancellationToken)
     {
-        var record = await _context
+        var record = _context
             .Records
             .Where(r => r.Id == request.Id)
             .Where(r => r.UserId == request.UserId)
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefault();
 
         if (record != null)
         {
