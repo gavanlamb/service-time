@@ -256,7 +256,7 @@ resource "aws_ecs_task_definition" "api" {
         },
         {
           name = "OpenTelemetry__Endpoint",
-          value = "${local.open_telemetry_name}:2000"
+          value = "http://${local.open_telemetry_name}:2000"
         }
       ]
       portMappings = [
