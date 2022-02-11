@@ -1,6 +1,5 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Amazon.XRay.Recorder.Core;
 using MediatR;
 
 namespace Time.Domain.Behaviours;
@@ -12,11 +11,7 @@ public class XRaySegment<TRequest, TResponse> : IPipelineBehavior<TRequest, TRes
         CancellationToken cancellationToken, 
         RequestHandlerDelegate<TResponse> next)
     {
-        AWSXRayRecorder.Instance.BeginSubsegment("Request");
-        
         var response = await next();
-        
-        AWSXRayRecorder.Instance.EndSubsegment();
 
         return response;
     }

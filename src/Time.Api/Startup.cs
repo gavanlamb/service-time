@@ -1,7 +1,5 @@
+using System;
 using System.Text.Json;
-using Amazon;
-using Amazon.XRay.Recorder.Core;
-using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using Expensely.Authentication.Cognito.Jwt.Extensions;
 using Expensely.Logging.Serilog.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using OpenTelemetry.Trace;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Time.Api.Middleware;
@@ -32,9 +31,6 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-        AWSXRayRecorder.InitializeInstance(Configuration);
-        AWSSDKHandler.RegisterXRayForAllServices();
-
         services.AddControllers()
             .AddJsonOptions(options =>
             {
@@ -44,6 +40,18 @@ public class Startup
 
         services.AddMvcCore()
             .AddApiExplorer();
+
+        services.AddOpenTelemetryTracing(builder => builder
+            .AddAspNetCoreInstrumentation()
+            .AddXRayTraceId()
+            .AddAWSInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddEntityFrameworkCoreInstrumentation()
+            .AddOtlpExporter(options => 
+            {
+                options.Endpoint = new Uri(Configuration.GetValue<string>("OpenTelemetry:Endpoint"));
+            }));
+
         services.AddApiVersioning(options =>
         {
             options.ReportApiVersions = true;
@@ -71,8 +79,6 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
     {
-        app.UseXRay("Time.Api");
-
         if (env.IsDevelopment() || env.EnvironmentName.StartsWith("Preview"))
         {
             app.UseDeveloperExceptionPage();

@@ -255,8 +255,8 @@ resource "aws_ecs_task_definition" "api" {
           value = var.environment
         },
         {
-          name = "AWS_XRAY_DAEMON_ADDRESS",
-          value = "${local.xray_daemon_name}:2000"
+          name = "OpenTelemetry__Endpoint",
+          value = "${local.open_telemetry_name}:2000"
         }
       ]
       portMappings = [
@@ -266,11 +266,11 @@ resource "aws_ecs_task_definition" "api" {
         }
       ],
       links = [
-        local.xray_daemon_name
+        local.open_telemetry_name
       ]
     },{
-      name = local.xray_daemon_name
-      image = "public.ecr.aws/xray/aws-xray-daemon:latest"
+      name = local.open_telemetry_name
+      image = "public.ecr.aws/amazon/aws-otel-collector:latest"
       essential = false
       cpu = 32
       memory = 256
@@ -280,6 +280,16 @@ resource "aws_ecs_task_definition" "api" {
           protocol = "udp"
           hostPort = 0,
           containerPort = 2000
+        },
+        {
+          protocol = "tcp"
+          hostPort = 0,
+          containerPort = 4317
+        },
+        {
+          protocol = "udp"
+          hostPort = 0,
+          containerPort = 8125
         }
       ]
     }
@@ -420,8 +430,8 @@ data "aws_iam_policy_document" "api_logs" {
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents",
-      "logs:DescribeLogGroups",
-      "xray:*"
+      "logs:DescribeLogStreams",
+      "logs:DescribeLogGroups"
     ]
     resources = [
       "arn:aws:logs:*:*:*"

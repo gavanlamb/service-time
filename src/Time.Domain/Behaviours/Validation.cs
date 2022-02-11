@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Amazon.XRay.Recorder.Core;
 using FluentValidation;
 using MediatR;
 using Time.Domain.Commands;
@@ -23,7 +22,6 @@ public class Validation<TRequest, TResponse> : IPipelineBehavior<TRequest, TResp
         CancellationToken cancellationToken, 
         RequestHandlerDelegate<TResponse> next)
     {
-        AWSXRayRecorder.Instance.BeginSubsegment("Validation");
         var context = new ValidationContext<TRequest>(request);
 
         var validationErrors = _validators
@@ -34,10 +32,8 @@ public class Validation<TRequest, TResponse> : IPipelineBehavior<TRequest, TResp
 
         if (validationErrors.Any())
         {
-            AWSXRayRecorder.Instance.EndSubsegment();
             throw new ValidationException(validationErrors);
         }
-        AWSXRayRecorder.Instance.EndSubsegment();
 
         return await next();
     }
