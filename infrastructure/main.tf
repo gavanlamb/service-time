@@ -256,7 +256,7 @@ resource "aws_ecs_task_definition" "api" {
         },
         {
           name = "OpenTelemetry__Endpoint",
-          value = "http://${local.open_telemetry_name}:2000"
+          value = "${local.open_telemetry_name}:2000"
         }
       ]
       portMappings = [
@@ -298,6 +298,12 @@ resource "aws_ecs_task_definition" "api" {
           protocol = "udp"
           hostPort = 0,
           containerPort = 8125
+        }
+      ]
+      environment = [
+        {
+          name = "AOT_CONFIG_CONTENT",
+          valueFrom = aws_ssm_parameter.open_telemetry_config.arn
         }
       ]
     }
@@ -470,9 +476,48 @@ resource "aws_iam_role_policy_attachment" "api_task_cognito" {
   role = aws_iam_role.api_task.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonCognitoReadOnly"
 }
-resource "aws_iam_role_policy_attachment" "api_task_x_ray_daemon" {
+resource "aws_iam_role_policy_attachment" "api_task_open_telemetry_daemon" {
   role = aws_iam_role.api_task.name
   policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
+}
+resource "aws_ssm_parameter" "open_telemetry_config" {
+  name  = "/${var.application_name}/${var.environment}/OpenTelemetry/Config"
+  type  = "String"
+  value = <<EOF
+extensions:
+  health_check:
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch/traces:
+    timeout: 1s
+    send_batch_size: 50
+  resourcedetection:
+    detectors:
+      - env
+      - system
+      - ecs
+      - ec2
+
+exporters:
+  awsxray:
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [resourcedetection, batch/traces]
+      exporters: [awsxray]
+
+  extensions: [health_check]
+EOF
 }
 
 //// Execution
