@@ -84,7 +84,7 @@ public class Startup
             .AddEntityFrameworkCoreInstrumentation()
             .AddOtlpExporter(options => 
             {
-                options.Endpoint = new Uri(Configuration.GetValue<string>("OpenTelemetry__Endpoint"));
+                options.Endpoint = new Uri(Configuration.GetValue<string>("OpenTelemetry:Endpoint"));
             })
             .Build();
 
