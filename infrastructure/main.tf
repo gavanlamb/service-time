@@ -290,7 +290,7 @@ resource "aws_ecs_task_definition" "api" {
           containerPort = 4317
         }
       ]
-      environment = [
+      secrets = [
         {
           name = "AOT_CONFIG_CONTENT",
           valueFrom = aws_ssm_parameter.open_telemetry_config.arn
