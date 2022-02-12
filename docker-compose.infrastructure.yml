@@ -29,3 +29,16 @@ services:
       - ./local/pgadmin/data:/var/lib/pgadmin
     ports:
       - 7011:80
+
+  open-telemetry-collector:
+    image: public.ecr.aws/aws-observability/aws-otel-collector:latest
+    environment:
+      - AWS_ACCESS_KEY_ID=AKIAVYHFAOJHDKWPXMNB
+      - AWS_SECRET_ACCESS_KEY=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
+      - AWS_REGION=ap-southeast-2
+    volumes:
+      - ~/.aws:/root/.aws
+    ports:
+      - 7012:2000
+      - 7013:4317
+      - 7014:8000
