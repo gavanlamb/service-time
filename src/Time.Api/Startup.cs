@@ -11,7 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using OpenTelemetry.Contrib.Extensions.AWSXRay.Resources;
+using OpenTelemetry;
+using OpenTelemetry.Contrib.Extensions.AWSXRay.Trace;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
@@ -68,26 +69,26 @@ public class Startup
             
         services.AddTimeDomain(Configuration);
 
-        services.AddOpenTelemetryTracing(builder => builder
-            .AddAspNetCoreInstrumentation()
+        Sdk.CreateTracerProviderBuilder()
             .SetResourceBuilder(ResourceBuilder
                 .CreateDefault()
-                .AddDetector(new AWSECSResourceDetector())
-                .AddTelemetrySdk()
-                .AddEnvironmentVariableDetector()
                 .AddService(
                     Assembly.GetEntryAssembly()?.GetName().Name,
                     "Expensely",
                     Assembly.GetEntryAssembly()?.GetName().Version.ToString())
-            )
+                .AddTelemetrySdk())
             .AddXRayTraceId()
             .AddAWSInstrumentation()
+            .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
             .AddEntityFrameworkCoreInstrumentation()
             .AddOtlpExporter(options => 
             {
                 options.Endpoint = new Uri(Configuration.GetValue<string>("OpenTelemetry__Endpoint"));
-            }));
+            })
+            .Build();
+
+        Sdk.SetDefaultTextMapPropagator(new AWSXRayPropagator());
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
