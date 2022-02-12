@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Text.Json;
 using Expensely.Authentication.Cognito.Jwt.Extensions;
 using Expensely.Logging.Serilog.Extensions;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using OpenTelemetry.Contrib.Extensions.AWSXRay.Resources;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
@@ -42,21 +44,6 @@ public class Startup
         services.AddMvcCore()
             .AddApiExplorer();
 
-        services.AddOpenTelemetryTracing(builder => builder
-            .AddAspNetCoreInstrumentation()
-            .SetResourceBuilder(ResourceBuilder.CreateDefault()
-                .AddTelemetrySdk()
-                .AddEnvironmentVariableDetector())
-            .AddXRayTraceId()
-            .AddAWSInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddEntityFrameworkCoreInstrumentation()
-            .AddOtlpExporter(options => 
-            {
-                options.Endpoint = new Uri(Configuration.GetValue<string>("OpenTelemetry__Endpoint"));
-            })
-            .Build());
-
         services.AddApiVersioning(options =>
         {
             options.ReportApiVersions = true;
@@ -80,6 +67,27 @@ public class Startup
         services.AddAutoMapper(typeof(Startup));
             
         services.AddTimeDomain(Configuration);
+
+        services.AddOpenTelemetryTracing(builder => builder
+            .AddAspNetCoreInstrumentation()
+            .SetResourceBuilder(ResourceBuilder
+                .CreateDefault()
+                .AddDetector(new AWSECSResourceDetector())
+                .AddTelemetrySdk()
+                .AddEnvironmentVariableDetector()
+                .AddService(
+                    Assembly.GetEntryAssembly()?.GetName().Name,
+                    "Expensely",
+                    Assembly.GetEntryAssembly()?.GetName().Version.ToString())
+            )
+            .AddXRayTraceId()
+            .AddAWSInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddEntityFrameworkCoreInstrumentation()
+            .AddOtlpExporter(options => 
+            {
+                options.Endpoint = new Uri(Configuration.GetValue<string>("OpenTelemetry__Endpoint"));
+            }));
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
