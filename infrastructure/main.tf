@@ -256,7 +256,7 @@ resource "aws_ecs_task_definition" "api" {
         },
         {
           name = "OpenTelemetry__Endpoint",
-          value = "http://${local.open_telemetry_name}:4317"
+          value = "http://${local.open_telemetry_name}:4318"
         }
       ]
       portMappings = [
@@ -288,6 +288,11 @@ resource "aws_ecs_task_definition" "api" {
           protocol = "tcp"
           hostPort = 0,
           containerPort = 4317
+        },
+        {
+          protocol = "tcp"
+          hostPort = 0,
+          containerPort = 4318
         }
       ]
       secrets = [
