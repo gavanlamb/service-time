@@ -256,7 +256,7 @@ resource "aws_ecs_task_definition" "api" {
         },
         {
           name = "OpenTelemetry__Endpoint",
-          value = "${local.open_telemetry_name}:2000"
+          value = "http://${local.open_telemetry_name}:4317"
         }
       ]
       portMappings = [
@@ -285,19 +285,9 @@ resource "aws_ecs_task_definition" "api" {
 
       portMappings = [
         {
-          protocol = "udp"
-          hostPort = 0,
-          containerPort = 2000
-        },
-        {
           protocol = "tcp"
           hostPort = 0,
           containerPort = 4317
-        },
-        {
-          protocol = "udp"
-          hostPort = 0,
-          containerPort = 8125
         }
       ]
       environment = [
