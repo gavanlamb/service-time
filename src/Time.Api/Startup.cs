@@ -64,14 +64,12 @@ public class Startup
         services.AddCognitoJwt(Configuration);
             
         services.AddHttpContextAccessor();
-        Logging.AddSerilog(Configuration);
             
         services.AddAutoMapper(typeof(Startup));
             
         services.AddTimeDomain(Configuration);
 
         Sdk.CreateTracerProviderBuilder()
-            .AddXRayTraceId()
             .SetResourceBuilder(ResourceBuilder
                 .CreateDefault()
                 .AddService(
@@ -79,8 +77,10 @@ public class Startup
                     "Expensely",
                     Assembly.GetEntryAssembly()?.GetName().Version.ToString())
                 .AddTelemetrySdk())
+            .AddXRayTraceId()
             .AddAWSInstrumentation()
             .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
             .AddNpgsql()
             .SetErrorStatusOnException()
             .AddOtlpExporter(options => 
@@ -90,6 +90,7 @@ public class Startup
             .Build();
 
         Sdk.SetDefaultTextMapPropagator(new AWSXRayPropagator());
+        Logging.AddSerilog(Configuration);
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
