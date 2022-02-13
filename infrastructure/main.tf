@@ -754,7 +754,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 6,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Information\"\n| stats count(*) as Count by Template, Version\n| sort Count desc, Version, Template\n| display Count, Version, Template\n| limit 20",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Information\"\n| stats count(*) as Count by Template, Version\n| sort Count desc, Version desc, Template\n| display Count, Version, Template\n| limit 20",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Top information templates",
@@ -792,7 +792,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.StatusCode\n| filter MessageTemplate = \"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\"\n| filter Properties.RequestPath = \"/health\"\n| stats count(*) as Count by Properties.StatusCode\n",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.StatusCode\n| filter MessageTemplate = \"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\"\n| filter Properties.RequestPath = \"/health\"\n| stats count(*) as Count by Properties.StatusCode\n| sort by Code\n",
                 "region": "${var.region}",
                 "stacked": false,
                 "view": "pie",
@@ -1064,7 +1064,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 6,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Warning\"\n| stats count(*) as Count by Template, Version\n| sort Count desc, Version, Template\n| display Count, Version, Template\n| limit 20",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Warning\"\n| stats count(*) as Count by Template, Version\n| sort Count desc, Version desc, Template\n| display Count, Version, Template\n| limit 20",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Top warning templates",
@@ -1078,7 +1078,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 6,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Error\"\n| stats count(*) as Count by Template, Version\n| sort Count desc, Version, Template\n| display Count, Version, Template\n| limit 20",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Error\"\n| stats count(*) as Count by Template, Version\n| sort Count desc, Version desc, Template\n| display Count, Version, Template\n| limit 20",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Top error templates",
@@ -1092,7 +1092,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Information\"\n| stats count(*) as Count by Version\n| sort by Count\n",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Information\"\n| stats count(*) as Count by Version\n| sort by Version desc, Count\n",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Info by version",
@@ -1106,7 +1106,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Error\"\n| stats count(*) as Count by Version\n| sort by Count\n",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Error\"\n| stats count(*) as Count by Version\n| sort by Version desc, Count\n",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Errors by version",
@@ -1120,7 +1120,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Warning\"\n| stats count(*) as Count by Version\n| sort by Count\n",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Warning\"\n| stats count(*) as Count by Version\n| sort by Version desc, Count\n",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Warnings by version",
