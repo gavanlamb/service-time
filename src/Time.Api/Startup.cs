@@ -80,8 +80,8 @@ public class Startup
             .AddXRayTraceId()
             .AddAWSInstrumentation()
             .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddEntityFrameworkCoreInstrumentation()
+            //.AddHttpClientInstrumentation()
+            //.AddEntityFrameworkCoreInstrumentation(options => options.SetDbStatementForText = false)
             .AddOtlpExporter(options => 
             {
                 options.Endpoint = new Uri(Configuration.GetValue<string>("OpenTelemetry:Endpoint"));
