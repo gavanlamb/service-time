@@ -71,6 +71,7 @@ public class Startup
         services.AddTimeDomain(Configuration);
 
         Sdk.CreateTracerProviderBuilder()
+            .AddXRayTraceId()
             .SetResourceBuilder(ResourceBuilder
                 .CreateDefault()
                 .AddService(
@@ -78,7 +79,6 @@ public class Startup
                     "Expensely",
                     Assembly.GetEntryAssembly()?.GetName().Version.ToString())
                 .AddTelemetrySdk())
-            .AddXRayTraceId()
             .AddAWSInstrumentation()
             .AddAspNetCoreInstrumentation()
             .AddNpgsql()
