@@ -22,7 +22,6 @@ public static class ServiceCollection
         AssemblyScanner.FindValidatorsInAssembly(executingAssembly).ForEach(item => services.AddScoped(item.InterfaceType, item.ValidatorType));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Logging<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Validation<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(XRaySegment<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Transaction<,>));
             
         return services;
