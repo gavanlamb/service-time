@@ -21,11 +21,11 @@ public class Transaction<TRequest, TResponse> : IPipelineBehavior<TRequest, TRes
         CancellationToken cancellationToken,
         RequestHandlerDelegate<TResponse> next)
     {
-        using var transaction = _timeContext.Database.BeginTransaction();
+        await using var transaction = await _timeContext.Database.BeginTransactionAsync(cancellationToken);
 
         var response = await next();
             
-        transaction.Commit();
+        transaction.CommitAsync(cancellationToken);
 
         return response;
     }

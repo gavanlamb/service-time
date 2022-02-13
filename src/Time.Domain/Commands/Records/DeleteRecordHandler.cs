@@ -20,11 +20,11 @@ public class DeleteRecordHandler : ICommandHandler<DeleteRecordCommand, bool>
         DeleteRecordCommand request, 
         CancellationToken cancellationToken)
     {
-        var record = _context
+        var record = await _context
             .Records
             .Where(r => r.Id == request.Id)
             .Where(r => r.UserId == request.UserId)
-            .FirstOrDefault();
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (record != null)
         {
@@ -32,9 +32,9 @@ public class DeleteRecordHandler : ICommandHandler<DeleteRecordCommand, bool>
                 .Records
                 .Remove(record);
             
-            _context.SaveChanges();
+            var result = await _context.SaveChangesAsync(cancellationToken);
 
-            return true;
+            return result == 1;
         }
 
         return false;

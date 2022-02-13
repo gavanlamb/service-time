@@ -26,11 +26,11 @@ public class UpdateRecordHandler : ICommandHandler<UpdateRecordCommand, Record>
         UpdateRecordCommand request, 
         CancellationToken cancellationToken)
     {
-        var record = _context
+        var record = await _context
             .Records
             .Where(r => r.Id == request.Id)
             .Where(r => r.UserId == request.UserId)
-            .First();
+            .FirstAsync(cancellationToken);
             
         record.Name = request.Name;
         record.Start = request.Start;
@@ -40,8 +40,9 @@ public class UpdateRecordHandler : ICommandHandler<UpdateRecordCommand, Record>
         if (record.End != null)
             record.Duration = request.End - request.Start;
             
-        _context.SaveChanges();
+        var result = await _context.SaveChangesAsync(
+            cancellationToken);
             
-        return _mapper.Map<Record>(record);
+        return result == 1 ? _mapper.Map<Record>(record) : null;
     }
 }

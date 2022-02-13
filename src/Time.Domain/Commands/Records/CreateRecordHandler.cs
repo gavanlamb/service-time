@@ -28,10 +28,12 @@ public class CreateRecordHandler : ICommandHandler<CreateRecordCommand, Record>
         var recordEntity = _mapper.Map<RecordEntity>(request);
         recordEntity.Created = DateTimeOffset.UtcNow;
             
-        _context.Records.Add(
-            recordEntity); 
-        _context.SaveChanges();
-            
-        return _mapper.Map<Record>(recordEntity);
+        await _context.Records.AddAsync(
+            recordEntity,
+            cancellationToken); 
+        var result = await _context.SaveChangesAsync(
+            cancellationToken);
+
+        return result == 1 ? _mapper.Map<Record>(recordEntity) : null;
     }
 }
