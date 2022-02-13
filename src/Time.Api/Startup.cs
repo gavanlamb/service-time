@@ -82,8 +82,7 @@ public class Startup
             .AddAWSInstrumentation()
             .AddAspNetCoreInstrumentation()
             .AddNpgsql()
-            //.AddHttpClientInstrumentation()
-            //.AddEntityFrameworkCoreInstrumentation(options => options.SetDbStatementForText = false)
+            .SetErrorStatusOnException()
             .AddOtlpExporter(options => 
             {
                 options.Endpoint = new Uri(Configuration.GetValue<string>("OpenTelemetry:Endpoint"));
