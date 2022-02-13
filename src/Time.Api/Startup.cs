@@ -1,8 +1,9 @@
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json;
 using Expensely.Authentication.Cognito.Jwt.Extensions;
-using Expensely.Logging.Serilog.Extensions;
+using Expensely.Logging.Serilog.Enrichers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,11 @@ using OpenTelemetry.Contrib.Extensions.AWSXRay.Trace;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
+using Serilog.Configuration;
+using Serilog.Enrichers.Span;
+using Serilog.Exceptions;
+using Serilog.Formatting;
+using Serilog.Formatting.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Time.Api.Middleware;
 using Time.Api.Setup;
@@ -69,6 +75,8 @@ public class Startup
             
         services.AddTimeDomain(Configuration);
 
+        // TODO create package with opentracing
+        Activity.DefaultIdFormat = ActivityIdFormat.Hierarchical;
         Sdk.CreateTracerProviderBuilder()
             .SetResourceBuilder(ResourceBuilder
                 .CreateDefault()
@@ -88,9 +96,27 @@ public class Startup
                 options.Endpoint = new Uri(Configuration.GetValue<string>("OpenTelemetry:Endpoint"));
             })
             .Build();
-
         Sdk.SetDefaultTextMapPropagator(new AWSXRayPropagator());
-        Logging.AddSerilog(Configuration);
+
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(Configuration)
+            .Enrich.WithAssemblyName()
+            .Enrich.WithAssemblyVersion()
+            .Enrich.WithMachineName()
+            .Enrich.WithProperty("Environment", Configuration.GetValue<string>("DOTNET_ENVIRONMENT"))
+            .Enrich.FromLogContext()
+            .Enrich.WithMessageTemplate()
+            .Enrich.WithProcessId()
+            .Enrich.WithProcessName()
+            .Enrich.WithThreadId()
+            .Enrich.WithThreadName()
+            .Enrich.WithExceptionDetails()
+            .Enrich.WithRequestUserId()
+            .Enrich.With<RoutePattern>()
+            .Enrich.With<OTel>()
+            .Enrich.WithSpan()
+            .WriteTo.Console(new JsonFormatter((string) null, true, (IFormatProvider) null)).CreateLogger();
+        Log.Information("test");
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
