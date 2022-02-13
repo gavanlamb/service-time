@@ -25,7 +25,7 @@ public class Transaction<TRequest, TResponse> : IPipelineBehavior<TRequest, TRes
 
         var response = await next();
             
-        transaction.CommitAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
 
         return response;
     }
