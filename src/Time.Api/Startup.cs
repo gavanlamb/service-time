@@ -48,32 +48,6 @@ public class Startup
                 options.JsonSerializerOptions.IgnoreNullValues = true;
             });
 
-        services.AddMvcCore()
-            .AddApiExplorer();
-
-        services.AddApiVersioning(options =>
-        {
-            options.ReportApiVersions = true;
-            options.DefaultApiVersion = new ApiVersion(1, 0);
-        });
-        services.AddVersionedApiExplorer(options =>
-        {
-            options.GroupNameFormat = "'v'VVV";
-            options.SubstituteApiVersionInUrl = true;
-        });
-        services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigureOptions>();
-        services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
-            
-        services.AddHealthChecks();
-            
-        services.AddCognitoJwt(Configuration);
-            
-        services.AddHttpContextAccessor();
-            
-        services.AddAutoMapper(typeof(Startup));
-            
-        services.AddTimeDomain(Configuration);
-
         // TODO create package with opentracing
         Activity.DefaultIdFormat = ActivityIdFormat.Hierarchical;
         Sdk.CreateTracerProviderBuilder()
@@ -116,6 +90,32 @@ public class Startup
             .Enrich.WithSpan()
             .WriteTo.Console(new JsonFormatter((string) null, true, (IFormatProvider) null)).CreateLogger();
         Log.Information("test");
+        
+        services.AddMvcCore()
+            .AddApiExplorer();
+
+        services.AddApiVersioning(options =>
+        {
+            options.ReportApiVersions = true;
+            options.DefaultApiVersion = new ApiVersion(1, 0);
+        });
+        services.AddVersionedApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'VVV";
+            options.SubstituteApiVersionInUrl = true;
+        });
+        services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigureOptions>();
+        services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
+        
+        services.AddHealthChecks();
+            
+        services.AddCognitoJwt(Configuration);
+            
+        services.AddHttpContextAccessor();
+            
+        services.AddAutoMapper(typeof(Startup));
+            
+        services.AddTimeDomain(Configuration);
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
@@ -146,6 +146,7 @@ public class Startup
 
         app.UseEndpoints(endpoints =>
         {
+            // TODO health check requests don't include trace id - please fix
             endpoints.MapHealthChecks("/health");
             endpoints.MapControllers();
         });
