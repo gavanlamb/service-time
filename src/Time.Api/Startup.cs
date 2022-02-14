@@ -21,7 +21,6 @@ using Serilog;
 using Serilog.Configuration;
 using Serilog.Enrichers.Span;
 using Serilog.Exceptions;
-using Serilog.Formatting;
 using Serilog.Formatting.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Time.Api.Middleware;
@@ -97,7 +96,7 @@ public class Startup
             })
             .Build();
         Sdk.SetDefaultTextMapPropagator(new AWSXRayPropagator());
-
+        
         Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(Configuration)
             .Enrich.WithAssemblyName()

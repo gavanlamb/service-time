@@ -1,7 +1,9 @@
 using System.Diagnostics;
+using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Serilog.Core;
 using Serilog.Events;
+
 
 namespace Expensely.Logging.Serilog.Enrichers
 {
@@ -22,10 +24,11 @@ namespace Expensely.Logging.Serilog.Enrichers
 
             if (activity != null)
             {
-                logEvent.AddPropertyIfAbsent(new LogEventProperty("RootId", new ScalarValue(activity.RootId)));
-                logEvent.AddPropertyIfAbsent(new LogEventProperty("ParentId", new ScalarValue(activity.ParentId)));
+                var epochHex = activity.TraceId.ToString().Substring(0,  8);
+                var randomHex = activity.TraceId.ToString().Substring(8);
+                var amazonTraceId = $"1-{epochHex}-{randomHex}";
+                logEvent.AddPropertyIfAbsent(new LogEventProperty("TraceId", new ScalarValue(amazonTraceId)));
                 logEvent.AddPropertyIfAbsent(new LogEventProperty("SpanId", new ScalarValue(activity.SpanId)));
-                logEvent.AddPropertyIfAbsent(new LogEventProperty("TraceId", new ScalarValue(activity.TraceId)));
             }
         }
     }
