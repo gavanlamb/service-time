@@ -8,42 +8,41 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Time.Api.Setup
+namespace Time.Api.Setup;
+
+public class SwaggerConfigureOptions : IConfigureOptions<SwaggerGenOptions>
 {
-    public class SwaggerConfigureOptions : IConfigureOptions<SwaggerGenOptions>
+    private readonly IApiVersionDescriptionProvider _provider;
+
+    public SwaggerConfigureOptions(IApiVersionDescriptionProvider provider) => _provider = provider;
+
+    public void Configure(SwaggerGenOptions options)
     {
-        private readonly IApiVersionDescriptionProvider _provider;
-
-        public SwaggerConfigureOptions(IApiVersionDescriptionProvider provider) => _provider = provider;
-
-        public void Configure(SwaggerGenOptions options)
+        foreach (var desc in _provider.ApiVersionDescriptions)
         {
-            foreach (var desc in _provider.ApiVersionDescriptions)
-            {
-                options.SwaggerDoc(
-                    desc.GroupName, 
-                    new OpenApiInfo
-                    {
-                        Title = "Time API", 
-                        Version = $"Version {desc.ApiVersion}",
-                    });
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
-                options.IncludeXmlComments(xmlPath);
-                options.CustomSchemaIds(x => x.FullName);
-            }
-                
-                
-            options.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
-            options.OperationFilter<SecurityRequirementsOperationFilter>();
-            options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-            {
-                Description = "Standard Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
-                In = ParameterLocation.Header,
-                Name = "Authorization",
-                Scheme = "bearer",
-                BearerFormat = "JWT",
-                Type = SecuritySchemeType.Http
-            });
+            options.SwaggerDoc(
+                desc.GroupName, 
+                new OpenApiInfo
+                {
+                    Title = "Time API", 
+                    Version = $"Version {desc.ApiVersion}",
+                });
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
+            options.IncludeXmlComments(xmlPath);
+            options.CustomSchemaIds(x => x.FullName);
         }
+                
+                
+        options.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
+        options.OperationFilter<SecurityRequirementsOperationFilter>();
+        options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+        {
+            Description = "Standard Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
+            In = ParameterLocation.Header,
+            Name = "Authorization",
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            Type = SecuritySchemeType.Http
+        });
     }
 }

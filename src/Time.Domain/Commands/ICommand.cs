@@ -1,8 +1,7 @@
 using MediatR;
 
-namespace Time.Domain.Commands
+namespace Time.Domain.Commands;
+
+public interface ICommand<out TResponse> : IRequest<TResponse>
 {
-    public interface ICommand<out TResponse> : IRequest<TResponse>
-    {
-    }
 }

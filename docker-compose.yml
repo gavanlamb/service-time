@@ -68,3 +68,4 @@ services:
         environment:
             DOTNET_ENVIRONMENT: Development
             ConnectionStrings__Default: Host=db;Port=7010;Database=time;Username=admin;Password=Password21
+            OpenTelemetry__Endpoint: http://open-telemetry-collector:4317

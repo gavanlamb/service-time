@@ -1,9 +1,8 @@
-namespace Time.Domain.Commands.Records
+namespace Time.Domain.Commands.Records;
+
+public class DeleteRecordCommand : ICommand<bool>
 {
-    public class DeleteRecordCommand : ICommand<bool>
-    {
-        public long Id { get; init; }
+    public long Id { get; init; }
         
-        public string UserId { get; init; }
-    }
+    public string UserId { get; init; }
 }

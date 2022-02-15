@@ -75,14 +75,14 @@ EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "collections", "collections", "{8CF15B7D-7986-459D-957E-19866FF7DEA4}"
 ProjectSection(SolutionItems) = preProject
-	tests\Time.IntegrationTests\collections\Time.API.postman_collection.json = tests\Time.IntegrationTests\collections\Time.API.postman_collection.json
+	tests\Time.IntegrationTests\collections\time.postman_collection.json = tests\Time.IntegrationTests\collections\time.postman_collection.json
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "environments", "environments", "{BAF41277-8C65-4772-8F2E-8800133585AA}"
 ProjectSection(SolutionItems) = preProject
-	tests\Time.IntegrationTests\environments\Time.Local.postman_environment.json = tests\Time.IntegrationTests\environments\Time.Local.postman_environment.json
-	tests\Time.IntegrationTests\environments\Time.Preview.postman_environment.json = tests\Time.IntegrationTests\environments\Time.Preview.postman_environment.json
-	tests\Time.IntegrationTests\environments\Time.Production.postman_environment.json = tests\Time.IntegrationTests\environments\Time.Production.postman_environment.json
+	tests\Time.IntegrationTests\environments\local.postman_environment.json = tests\Time.IntegrationTests\environments\local.postman_environment.json
+	tests\Time.IntegrationTests\environments\preview.postman_environment.json = tests\Time.IntegrationTests\environments\preview.postman_environment.json
+	tests\Time.IntegrationTests\environments\production.postman_environment.json = tests\Time.IntegrationTests\environments\production.postman_environment.json
 EndProjectSection
 EndProject
 Global

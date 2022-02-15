@@ -253,12 +253,52 @@ resource "aws_ecs_task_definition" "api" {
         {
           name = "DOTNET_ENVIRONMENT",
           value = var.environment
+        },
+        {
+          name = "OpenTelemetry__Endpoint",
+          value = "http://${local.open_telemetry_name}:4317"
         }
       ]
       portMappings = [
         {
           protocol = "tcp"
           containerPort = 80
+        }
+      ],
+      links = [
+        local.open_telemetry_name
+      ]
+    },{
+      name = local.open_telemetry_name
+      image = "public.ecr.aws/aws-observability/aws-otel-collector:latest"
+      essential = false
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group = aws_cloudwatch_log_group.open_telemetry.name
+          awslogs-region = var.region
+          awslogs-stream-prefix = "/ecs"
+        }
+      }
+      cpu = 32
+      memory = 256
+
+      portMappings = [
+        {
+          protocol = "tcp"
+          hostPort = 0,
+          containerPort = 4317
+        },
+        {
+          protocol = "tcp"
+          hostPort = 0,
+          containerPort = 4318
+        }
+      ]
+      secrets = [
+        {
+          name = "AOT_CONFIG_CONTENT",
+          valueFrom = aws_ssm_parameter.open_telemetry_config.arn
         }
       ]
     }
@@ -385,7 +425,11 @@ resource "aws_alb_target_group" "api_green" {
 
 /// Cloudwatch
 resource "aws_cloudwatch_log_group" "api" {
-  name = "/${lower(var.application_name)}/${lower(var.environment)}"
+  name = "/${lower(var.application_name)}/${lower(var.environment)}/api"
+  retention_in_days = 14
+}
+resource "aws_cloudwatch_log_group" "open_telemetry" {
+  name = "/${lower(var.application_name)}/${lower(var.environment)}/open-telemetry"
   retention_in_days = 14
 }
 resource "aws_iam_policy" "api_logs" {
@@ -399,7 +443,9 @@ data "aws_iam_policy_document" "api_logs" {
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents",
-      "logs:DescribeLogGroups"
+      "logs:DescribeLogStreams",
+      "logs:DescribeLogGroups",
+      "xray:*"
     ]
     resources = [
       "arn:aws:logs:*:*:*"
@@ -424,6 +470,49 @@ resource "aws_iam_role_policy_attachment" "api_task_parameters" {
 resource "aws_iam_role_policy_attachment" "api_task_cognito" {
   role = aws_iam_role.api_task.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonCognitoReadOnly"
+}
+resource "aws_iam_role_policy_attachment" "api_task_open_telemetry_daemon" {
+  role = aws_iam_role.api_task.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
+}
+resource "aws_ssm_parameter" "open_telemetry_config" {
+  name  = "/${var.application_name}/${var.environment}/OpenTelemetry/Config"
+  type  = "String"
+  value = <<EOF
+extensions:
+  health_check:
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch/traces:
+    timeout: 1s
+    send_batch_size: 50
+  resourcedetection:
+    detectors:
+      - env
+      - system
+      - ecs
+      - ec2
+
+exporters:
+  awsxray:
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [resourcedetection, batch/traces]
+      exporters: [awsxray]
+
+  extensions: [health_check]
+EOF
 }
 
 //// Execution
@@ -665,7 +754,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 6,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Information\"\n| stats count(*) as Count by Template, Version\n| sort Count desc, Version, Template\n| display Count, Version, Template\n| limit 20",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Information\"\n| stats count(*) as Count by Template, Version\n| sort Count desc, Version desc, Template\n| display Count, Version, Template\n| limit 20",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Top information templates",
@@ -703,7 +792,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.StatusCode\n| filter MessageTemplate = \"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\"\n| filter Properties.RequestPath = \"/health\"\n| stats count(*) as Count by Properties.StatusCode\n",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.StatusCode\n| filter MessageTemplate = \"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\"\n| filter Properties.RequestPath = \"/health\"\n| stats count(*) as Count by Properties.StatusCode\n| sort by Code\n",
                 "region": "${var.region}",
                 "stacked": false,
                 "view": "pie",
@@ -975,7 +1064,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 6,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Warning\"\n| stats count(*) as Count by Template, Version\n| sort Count desc, Version, Template\n| display Count, Version, Template\n| limit 20",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Warning\"\n| stats count(*) as Count by Template, Version\n| sort Count desc, Version desc, Template\n| display Count, Version, Template\n| limit 20",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Top warning templates",
@@ -989,7 +1078,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 6,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Error\"\n| stats count(*) as Count by Template, Version\n| sort Count desc, Version, Template\n| display Count, Version, Template\n| limit 20",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version, MessageTemplate as Template\n| filter Level = \"Error\"\n| stats count(*) as Count by Template, Version\n| sort Count desc, Version desc, Template\n| display Count, Version, Template\n| limit 20",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Top error templates",
@@ -1003,7 +1092,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Information\"\n| stats count(*) as Count by Version\n| sort by Count\n",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Information\"\n| stats count(*) as Count by Version\n| sort by Version desc, Count\n",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Info by version",
@@ -1017,7 +1106,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Error\"\n| stats count(*) as Count by Version\n| sort by Count\n",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Error\"\n| stats count(*) as Count by Version\n| sort by Version desc, Count\n",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Errors by version",
@@ -1031,7 +1120,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Warning\"\n| stats count(*) as Count by Version\n| sort by Count\n",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api.name}' | fields Properties.AssemblyVersion as Version\n| filter Level = \"Warning\"\n| stats count(*) as Count by Version\n| sort by Version desc, Count\n",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Warnings by version",
@@ -1767,3 +1856,4 @@ resource "aws_cloudwatch_log_metric_filter" "request_time" {
     }
   }
 }
+

@@ -16,9 +16,6 @@ pr: none
 pool:
   vmImage: ubuntu-latest
 
-variables:
-  - template: variables/preview.ap-southeast-2.yml@templates
-
 parameters:
   - name: pullRequestNumber
     displayName: Number of the pull request
@@ -28,6 +25,8 @@ parameters:
 stages:
   - stage: preview
     displayName: Preview
+    variables:
+      - template: variables/preview.ap-southeast-2.yml@templates
     jobs:
       - job: setup
         displayName: Setup
