@@ -271,7 +271,7 @@ resource "aws_ecs_task_definition" "api" {
     },{
       name = local.open_telemetry_name
       image = "public.ecr.aws/aws-observability/aws-otel-collector:latest"
-      essential = false
+      essential = true
       logConfiguration = {
         logDriver = "awslogs"
         options = {
