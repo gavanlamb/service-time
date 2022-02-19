@@ -1,13 +1,12 @@
 using System;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using Time.Api.V1.Models;
 
 namespace Time.Api.Middleware;
@@ -15,11 +14,11 @@ namespace Time.Api.Middleware;
 public class ErrorHandling
 {
     private readonly RequestDelegate _next;
-    private readonly ILogger<ErrorHandling> _logger;
+    private readonly ILogger _logger;
         
     public ErrorHandling(
         RequestDelegate next, 
-        ILogger<ErrorHandling> logger)
+        ILogger logger)
     {
         _next = next;
         _logger = logger;
@@ -33,7 +32,7 @@ public class ErrorHandling
         }
         catch (ValidationException exception)
         {
-            _logger.LogError(exception, "ValidationException occured while executing the request");
+            _logger.Error(exception, "ValidationException occured while executing the request");
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             var response = exception.Errors
@@ -51,7 +50,7 @@ public class ErrorHandling
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Exception occured while executing the request");
+            _logger.Error(exception, "Exception occured while executing the request");
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             var response = new GeneralException

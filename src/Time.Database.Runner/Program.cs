@@ -99,7 +99,7 @@ public class Program
             {
                 services.AddOptions();
 
-                Logging.AddSerilog(hostContext.Configuration);
+                services.AddSerilog(hostContext.Configuration);
 
                 services.AddTimeContext(
                     hostContext.Configuration, 

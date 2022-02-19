@@ -14,7 +14,7 @@
         <PackageReference Include="Amazon.Lambda.Serialization.Json" Version="2.0.0" />
         <PackageReference Include="Amazon.Extensions.Configuration.SystemsManager" Version="3.0.0" />
         <PackageReference Include="AWSSDK.CodeDeploy" Version="3.7.0.119" />
-        <PackageReference Include="Expensely.Logging.Serilog" Version="1.0.2132.1" />
+        <PackageReference Include="Expensely.Logging.Serilog" Version="2.0.2147.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
