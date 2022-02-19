@@ -74,8 +74,7 @@ public class Startup
             .Build();
         Sdk.SetDefaultTextMapPropagator(new AWSXRayPropagator());
 
-        Logging.AddSerilog(Configuration);
-        services.AddSingleton(Log.Logger);
+        services.AddSerilog(Configuration);
 
         services.AddMvcCore()
             .AddApiExplorer();
