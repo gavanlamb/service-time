@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Expensely.Authentication.Cognito.Jwt.Extensions;
 using Expensely.Logging.Serilog.Extensions;
+using Expensely.Tracing.OpenTelemetry.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -36,11 +37,12 @@ public class Startup
                 options.JsonSerializerOptions.IgnoreNullValues = true;
             });
 
+        Tracing.AddOpenTelemetry(Configuration);
+        
         services.AddSerilog(Configuration);
 
         services.AddMvcCore()
             .AddApiExplorer();
-
         services.AddApiVersioning(options =>
         {
             options.ReportApiVersions = true;
@@ -53,7 +55,7 @@ public class Startup
         });
         services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigureOptions>();
         services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
-        
+
         services.AddHealthChecks();
             
         services.AddCognitoJwt(Configuration);
