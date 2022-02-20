@@ -1,10 +1,7 @@
-using System;
-using System.Diagnostics;
-using System.Reflection;
 using System.Text.Json;
 using Expensely.Authentication.Cognito.Jwt.Extensions;
-using Expensely.Logging.Serilog.Enrichers;
 using Expensely.Logging.Serilog.Extensions;
+using Expensely.Tracing.OpenTelemetry.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -12,22 +9,11 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Npgsql;
-using OpenTelemetry;
-using OpenTelemetry.Contrib.Extensions.AWSXRay.Trace;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
 using Serilog;
-using Serilog.Configuration;
-using Serilog.Enrichers.Span;
-using Serilog.Exceptions;
-using Serilog.Formatting.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Time.Api.Middleware;
 using Time.Api.Setup;
-using Time.Domain.Behaviours;
 using Time.Domain.Extensions;
 
 namespace Time.Api;
@@ -51,34 +37,12 @@ public class Startup
                 options.JsonSerializerOptions.IgnoreNullValues = true;
             });
 
-        // TODO create package with opentracing
-        Activity.DefaultIdFormat = ActivityIdFormat.Hierarchical;
-        Sdk.CreateTracerProviderBuilder()
-            .SetResourceBuilder(ResourceBuilder
-                .CreateDefault()
-                .AddService(
-                    Assembly.GetEntryAssembly()?.GetName().Name,
-                    "Expensely",
-                    Assembly.GetEntryAssembly()?.GetName().Version.ToString())
-                .AddTelemetrySdk())
-            .AddXRayTraceId()
-            .AddAWSInstrumentation()
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddNpgsql()
-            .SetErrorStatusOnException()
-            .AddOtlpExporter(options => 
-            {
-                options.Endpoint = new Uri(Configuration.GetValue<string>("OpenTelemetry:Endpoint"));
-            })
-            .Build();
-        Sdk.SetDefaultTextMapPropagator(new AWSXRayPropagator());
-
+        Tracing.AddOpenTelemetry(Configuration);
+        
         services.AddSerilog(Configuration);
 
         services.AddMvcCore()
             .AddApiExplorer();
-
         services.AddApiVersioning(options =>
         {
             options.ReportApiVersions = true;
@@ -91,12 +55,10 @@ public class Startup
         });
         services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigureOptions>();
         services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
-        
+
         services.AddHealthChecks();
             
         services.AddCognitoJwt(Configuration);
-            
-        services.AddHttpContextAccessor();
             
         services.AddAutoMapper(typeof(Startup));
             
