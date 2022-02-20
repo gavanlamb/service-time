@@ -8,5 +8,5 @@ Resources:
           ContainerName: "${application_container_name}"
           ContainerPort: 80
 Hooks:
-  - AfterInstall : "${migration_lambda_arn}"
-  - AfterAllowTestTraffic: "${integration_tests_lambda_arn}"
+  - AfterInstall : "${migrator_lambda_arn}"
+  - AfterAllowTestTraffic: "${api_tests_lambda_arn}"

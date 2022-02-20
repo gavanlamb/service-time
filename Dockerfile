@@ -5,7 +5,7 @@ WORKDIR /expensely-time
 COPY "Time.sln" "Time.sln"
 COPY "src/Time.Api/Time.Api.csproj" "src/Time.Api/"
 COPY "src/Time.Database/Time.Database.csproj" "src/Time.Database/"
-COPY "src/Time.Database.Runner/Time.Database.Runner.csproj" "src/Time.Database.Runner/"
+COPY "src/Time.Database.Migrator/Time.Database.Migrator.csproj" "src/Time.Database.Migrator/"
 COPY "src/Time.Domain/Time.Domain.csproj" "src/Time.Domain/"
 COPY "tests/Time.Domain.UnitTests/Time.Domain.UnitTests.csproj" "tests/Time.Domain.UnitTests/"
 COPY "build/nuget.config" "nuget.config"
@@ -29,14 +29,14 @@ ENTRYPOINT ["dotnet", "Time.Api.dll"]
 
 
 FROM base AS publish-migration
-RUN dotnet publish "src/Time.Database.Runner/Time.Database.Runner.csproj" -c Release -o /app/publish --no-build 
+RUN dotnet publish "src/Time.Database.Migrator/Time.Database.Migrator.csproj" -c Release -o /app/publish --no-build 
 
 FROM amazon/aws-lambda-dotnet:6 AS migration
 WORKDIR /var/task/
 COPY --from=publish-migration /app/publish .
-CMD ["Time.Database.Runner::Time.Database.Runner.Program::Handler"]
+CMD ["Time.Database.Migrator::Time.Database.Migrator.Program::Handler"]
 
 FROM amazon/aws-lambda-dotnet:6.0 AS migration-local
 WORKDIR /var/task/
 COPY --from=publish-migration /app/publish .
-ENTRYPOINT ["dotnet", "Time.Database.Runner.dll"]
+ENTRYPOINT ["dotnet", "Time.Database.Migrator.dll"]

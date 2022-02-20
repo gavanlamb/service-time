@@ -117,15 +117,16 @@ locals {
   rds_endpoint = replace(module.postgres.rds_cluster_endpoint, ":${module.postgres.rds_cluster_port}", "")
   
   api_name = "${lower(var.application_name)}-${lower(var.environment)}"
-  migration_name = "${lower(var.application_name)}-migration-${lower(var.environment)}"
-  integration_tests_name = "${lower(var.application_name)}-integration-tests-${lower(var.environment)}"
+  migrator_name = "${lower(var.application_name)}-migrator-${lower(var.environment)}"
+  api_tests_name = "${lower(var.application_name)}-api-tests-${lower(var.environment)}"
   open_telemetry_name = "open-telemetry-${lower(var.environment)}"
 
   api_url = "${var.subdomain}.${trimsuffix(data.aws_route53_zone.expensely_io.name, ".")}"
 
   default_tags = {
-    Application = "Expensely"
-    Team = "Time"
+    Service = var.application_name
+    Application = "Tracker"
+    Team = "Tracker"
     ManagedBy = "Terraform"
     Environment = var.environment
   }

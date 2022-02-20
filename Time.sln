@@ -49,7 +49,7 @@ ProjectSection(SolutionItems) = preProject
 	build\nuget.config = build\nuget.config
 EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Database.Runner", "src\Time.Database.Runner\Time.Database.Runner.csproj", "{D3689F9B-8DD9-4A22-A3B3-600A8B310270}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Database.Migrator", "src\Time.Database.Migrator\Time.Database.Migrator.csproj", "{D3689F9B-8DD9-4A22-A3B3-600A8B310270}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{8F0DA939-E41B-47DA-8545-60FA2524BC91}"
 ProjectSection(SolutionItems) = preProject
