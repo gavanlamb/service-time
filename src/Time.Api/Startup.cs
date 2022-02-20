@@ -60,8 +60,6 @@ public class Startup
             
         services.AddCognitoJwt(Configuration);
             
-        services.AddHttpContextAccessor();
-            
         services.AddAutoMapper(typeof(Startup));
             
         services.AddTimeDomain(Configuration);
