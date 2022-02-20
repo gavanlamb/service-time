@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Expensely.Authentication.Cognito.Jwt.Extensions;
 using Expensely.Logging.Serilog.Extensions;
 using Expensely.Swagger.Extensions;
@@ -31,7 +32,7 @@ public class Startup
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                options.JsonSerializerOptions.IgnoreNullValues = true;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             });
 
         Tracing.AddOpenTelemetry(Configuration);
