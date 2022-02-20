@@ -45,11 +45,11 @@ data "aws_kms_alias" ssm_default_key{
 data "aws_ecr_repository" "api" {
   name = "${lower(var.application_name)}-api"
 }
-data "aws_ecr_repository" "migration" {
-  name = "${lower(var.application_name)}-migration"
+data "aws_ecr_repository" "migrator" {
+  name = "${lower(var.application_name)}-migrator"
 }
-data "aws_ecr_repository" "integration_tests" {
-  name = "${lower(var.application_name)}-integration-tests"
+data "aws_ecr_repository" "api_tests" {
+  name = "${lower(var.application_name)}-api-tests"
 }
 
 data "aws_iam_policy" "test_results_bucket"{

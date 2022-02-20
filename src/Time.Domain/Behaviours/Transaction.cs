@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -17,16 +18,24 @@ public class Transaction<TRequest, TResponse> : IPipelineBehavior<TRequest, TRes
     }
 
     public async Task<TResponse> Handle(
-        TRequest request, 
+        TRequest request,
         CancellationToken cancellationToken,
         RequestHandlerDelegate<TResponse> next)
     {
         await using var transaction = await _timeContext.Database.BeginTransactionAsync(cancellationToken);
-
-        var response = await next();
+        
+        try
+        {
+            var response = await next();
             
-        await transaction.CommitAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
 
-        return response;
+            return response;
+        }
+        catch (Exception _)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 }

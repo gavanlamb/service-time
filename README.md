@@ -32,7 +32,7 @@ Any dotnet tools used in the development of this application must be specified i
 Run the migration from the `src` folder 
 ```bash
 cd src
-dotnet ef migrations add { migration name } --output-dir Migrations --startup-project ./Time.Database.Runner --project ./Time.Database
+dotnet ef migrations add { migration name } --output-dir Migrations --startup-project ./Time.Database.Migrator --project ./Time.Database
 ```
 
 https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters#add-authorization-to-summary

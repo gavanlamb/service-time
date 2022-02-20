@@ -12,7 +12,7 @@ using Serilog;
 using Time.Database.Extensions;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
-namespace Time.Database.Runner;
+namespace Time.Database.Migrator;
 
 public class Program
 {

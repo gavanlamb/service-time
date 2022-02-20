@@ -49,7 +49,10 @@ public class RecordsController : ControllerBase
     /// Create a record
     /// </summary>
     /// <param name="createRecord">Record details</param>
+    /// 
     /// <returns>Created record</returns>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The created record</returns>
     [HttpPost]
     [Authorize("create")]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -76,6 +79,7 @@ public class RecordsController : ControllerBase
     /// </summary>
     /// <param name="id" example="1">Identifier of the record to update</param>
     /// <param name="updateRecord">Record details</param>
+    /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Update record</returns>
     [HttpPut("{id:long}")]
     [Authorize("update")]
@@ -109,6 +113,7 @@ public class RecordsController : ControllerBase
     /// Delete a record
     /// </summary>
     /// <param name="id" example="1">Identifier of the record to delete</param>
+    /// <param name="cancellationToken">Cancellation token</param>
     [HttpDelete("{id:long}")]
     [Authorize("delete")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -132,6 +137,7 @@ public class RecordsController : ControllerBase
     /// Get a record
     /// </summary>
     /// <param name="id" example="1">Identifier of the record to get</param>
+    /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Found record</returns>
     [HttpGet("{id:long}")]
     [Authorize("read")]
@@ -163,6 +169,7 @@ public class RecordsController : ControllerBase
     /// </summary>
     /// <param name="pageNumber">Page number to retrieve</param>
     /// <param name="pageSize">Amount of items to retrieve</param>
+    /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>A collection of records</returns>
     [HttpGet]
     [Authorize("read")]
@@ -202,7 +209,7 @@ public class RecordsController : ControllerBase
                 new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    IgnoreNullValues = true,
+                    //IgnoreNullValues = true,
                     Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                 })
         );

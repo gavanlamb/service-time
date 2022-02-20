@@ -69,8 +69,8 @@ data "template_file" "api_app_spec" {
   vars = {
     application_task_definition = aws_ecs_task_definition.api.arn
     application_container_name = local.api_name
-    migration_lambda_arn = aws_lambda_function.migration.qualified_arn
-    integration_tests_lambda_arn = aws_lambda_function.integration_tests.qualified_arn
+    migrator_lambda_arn = aws_lambda_function.migrator.qualified_arn
+    api_tests_lambda_arn = aws_lambda_function.api_tests.qualified_arn
   }
 }
 
@@ -89,17 +89,17 @@ data "template_file" "code_deployment" {
   }
 }
 
-// Migrations
+// Migrator
 /// Lambda
-resource "aws_lambda_function" "migration" {
-  function_name = local.migration_name
-  role = aws_iam_role.migration.arn
+resource "aws_lambda_function" "migrator" {
+  function_name = local.migrator_name
+  role = aws_iam_role.migrator.arn
   description = "Time database migrations"
 
   package_type = "Image"
   publish = true
 
-  image_uri = "${data.aws_ecr_repository.migration.repository_url}:${var.build_identifier}"
+  image_uri = "${data.aws_ecr_repository.migrator.repository_url}:${var.build_identifier}"
 
   memory_size = 2048
 
@@ -122,14 +122,14 @@ resource "aws_lambda_function" "migration" {
 }
 
 /// Cloudwatch
-resource "aws_cloudwatch_log_group" "migration" {
-  name = "/aws/lambda/${aws_lambda_function.migration.function_name}"
+resource "aws_cloudwatch_log_group" "migrator" {
+  name = "/aws/lambda/${aws_lambda_function.migrator.function_name}"
   retention_in_days = 14
 }
 
 /// IAM 
-resource "aws_iam_role" "migration" {
-  name = local.migration_name
+resource "aws_iam_role" "migrator" {
+  name = local.migrator_name
 
   assume_role_policy = <<EOF
 {
@@ -146,16 +146,16 @@ resource "aws_iam_role" "migration" {
 }
 EOF
 }
-resource "aws_iam_role_policy_attachment" "migration_vpc" {
-  role = aws_iam_role.migration.name
+resource "aws_iam_role_policy_attachment" "migrator_vpc" {
+  role = aws_iam_role.migrator.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
-resource "aws_iam_role_policy_attachment" "migration_codedeploy" {
-  role = aws_iam_role.migration.name
+resource "aws_iam_role_policy_attachment" "migrator_codedeploy" {
+  role = aws_iam_role.migrator.name
   policy_arn = aws_iam_policy.codedeploy.arn
 }
-resource "aws_iam_role_policy_attachment" "migration_ssm_read" {
-  role = aws_iam_role.migration.name
+resource "aws_iam_role_policy_attachment" "migrator_ssm_read" {
+  role = aws_iam_role.migrator.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
 }
 
@@ -533,17 +533,17 @@ resource "aws_iam_role_policy_attachment" "api_execution_parameters" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
 }
 
-// Integration tests
+// API tests
 /// lambda
-resource "aws_lambda_function" "integration_tests" {
-  function_name = local.integration_tests_name
-  role = aws_iam_role.integration_tests.arn
-  description = "Time integration tests"
+resource "aws_lambda_function" "api_tests" {
+  function_name = local.api_tests_name
+  role = aws_iam_role.api_tests.arn
+  description = "Time API tests"
 
   package_type = "Image"
   publish = true
 
-  image_uri = "${data.aws_ecr_repository.integration_tests.repository_url}:${var.npm_build_identifier}"
+  image_uri = "${data.aws_ecr_repository.api_tests.repository_url}:${var.npm_build_identifier}"
 
   memory_size = 2048
 
@@ -561,13 +561,13 @@ resource "aws_lambda_function" "integration_tests" {
   }
 }
 /// cloudwatch
-resource "aws_cloudwatch_log_group" "integration_tests" {
-  name = "/aws/lambda/${aws_lambda_function.integration_tests.function_name}"
+resource "aws_cloudwatch_log_group" "api_tests" {
+  name = "/aws/lambda/${aws_lambda_function.api_tests.function_name}"
   retention_in_days = 14
 }
 /// IAM
-resource "aws_iam_role" "integration_tests" {
-  name = local.integration_tests_name
+resource "aws_iam_role" "api_tests" {
+  name = local.api_tests_name
 
   assume_role_policy = <<EOF
 {
@@ -584,16 +584,16 @@ resource "aws_iam_role" "integration_tests" {
 }
 EOF
 }
-resource "aws_iam_role_policy_attachment" "integration_tests_vpc" {
-  role = aws_iam_role.integration_tests.name
+resource "aws_iam_role_policy_attachment" "api_tests_vpc" {
+  role = aws_iam_role.api_tests.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
-resource "aws_iam_role_policy_attachment" "integration_tests_codedeploy" {
-  role = aws_iam_role.integration_tests.name
+resource "aws_iam_role_policy_attachment" "api_tests_codedeploy" {
+  role = aws_iam_role.api_tests.name
   policy_arn = aws_iam_policy.codedeploy.arn
 }
-resource "aws_iam_role_policy_attachment" "integration_tests_bucket_upload" {
-  role = aws_iam_role.integration_tests.name
+resource "aws_iam_role_policy_attachment" "api_tests_bucket_upload" {
+  role = aws_iam_role.api_tests.name
   policy_arn = data.aws_iam_policy.test_results_bucket.arn
 }
 
@@ -782,7 +782,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 0,
             "type": "text",
             "properties": {
-                "markdown": "# Integration tests "
+                "markdown": "# API tests "
             }
         },
         {
@@ -1602,7 +1602,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 0,
             "type": "text",
             "properties": {
-                "markdown": "# Migrations "
+                "markdown": "# Migrator "
             }
         },
         {
@@ -1612,7 +1612,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.integration_tests.name}' | fields @message\n| sort @timestamp desc",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api_tests.name}' | fields @message\n| sort @timestamp desc",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Top log templates",
@@ -1627,7 +1627,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.integration_tests.function_name}" ]
+                    [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.api_tests.function_name}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1658,7 +1658,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Errors", "FunctionName", "${aws_lambda_function.integration_tests.function_name}" ]
+                    [ "AWS/Lambda", "Errors", "FunctionName", "${aws_lambda_function.api_tests.function_name}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1689,7 +1689,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.integration_tests.function_name}" ]
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.api_tests.function_name}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1719,7 +1719,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.migration.name}' | fields MessageTemplate as Template, Level\n| filter isPresent(Template)\n| stats count(*) as Count by Template, Level\n| sort Count desc\n| display Count, Level, Template\n| limit 50",
+                "query": "SOURCE '${aws_cloudwatch_log_group.migrator.name}' | fields MessageTemplate as Template, Level\n| filter isPresent(Template)\n| stats count(*) as Count by Template, Level\n| sort Count desc\n| display Count, Level, Template\n| limit 50",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Top log templates",
@@ -1734,7 +1734,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Errors", "FunctionName", "${aws_lambda_function.migration.function_name}" ]
+                    [ "AWS/Lambda", "Errors", "FunctionName", "${aws_lambda_function.migrator.function_name}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1765,7 +1765,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.migration.function_name}" ]
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.migrator.function_name}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1796,7 +1796,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.migration.function_name}" ]
+                    [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.migrator.function_name}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,

@@ -35,18 +35,18 @@ stages:
           - template: templates/build.api.yml
           - template: aws/iam/configure.yml@templates
           - template: templates/push.api.yml
-      - job: integration_tests
-        displayName: Integration Tests
+      - job: api_tests
+        displayName: API Tests
         dependsOn:
           - setup
         variables:
           NPM_BUILD_NUMBER: $[ dependencies.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
         steps:
-          - template: templates/build.integration-tests.yml
+          - template: templates/build.api-tests.yml
             parameters:
               buildNumber: $(NPM_BUILD_NUMBER)
           - template: aws/iam/configure.yml@templates
-          - template: templates/push.integration-tests.yml
+          - template: templates/push.api-tests.yml
             parameters:
               buildNumber: $(NPM_BUILD_NUMBER)
 
@@ -126,4 +126,4 @@ stages:
                   parameters:
                     sourcePath: time/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
                     testResultsFileName: $(NPM_BUILD_NUMBER).xml
-                    testRunTitle: Integration
+                    testRunTitle: API

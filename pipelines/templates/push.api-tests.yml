@@ -6,6 +6,6 @@ parameters:
 steps:
   - template: ./aws/ecr/push.yml@templates
     parameters:
-      imageName: integration-tests
-      repositoryName: time-integration-tests
+      imageName: api-tests
+      repositoryName: time-api-tests
       tag: ${{ parameters.buildNumber }}

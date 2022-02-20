@@ -13,7 +13,7 @@ public class Program
     {
         try
         {
-            CreateHostBuilder(args).Build().Run();
+            await CreateHostBuilder(args).Build().RunAsync();
         }
         catch (Exception exception)
         {

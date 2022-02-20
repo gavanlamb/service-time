@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
@@ -43,7 +44,7 @@ public class ErrorHandling
                 new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    IgnoreNullValues = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                     Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                 });
             await context.Response.WriteAsync(serialisedResponse);
@@ -62,7 +63,7 @@ public class ErrorHandling
                 new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    IgnoreNullValues = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                     Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                 });
             await context.Response.WriteAsync(serialisedResponse);
