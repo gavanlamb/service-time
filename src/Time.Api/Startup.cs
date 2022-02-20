@@ -1,19 +1,16 @@
 using System.Text.Json;
 using Expensely.Authentication.Cognito.Jwt.Extensions;
 using Expensely.Logging.Serilog.Extensions;
+using Expensely.Swagger.Extensions;
 using Expensely.Tracing.OpenTelemetry.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Serilog;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Time.Api.Middleware;
-using Time.Api.Setup;
 using Time.Domain.Extensions;
 
 namespace Time.Api;
@@ -41,27 +38,14 @@ public class Startup
         
         services.AddSerilog(Configuration);
 
-        services.AddMvcCore()
-            .AddApiExplorer();
-        services.AddApiVersioning(options =>
-        {
-            options.ReportApiVersions = true;
-            options.DefaultApiVersion = new ApiVersion(1, 0);
-        });
-        services.AddVersionedApiExplorer(options =>
-        {
-            options.GroupNameFormat = "'v'VVV";
-            options.SubstituteApiVersionInUrl = true;
-        });
-        services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigureOptions>();
-        services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
-
+        services.AddSwagger();
+        
         services.AddHealthChecks();
-            
+        
         services.AddCognitoJwt(Configuration);
-            
+        
         services.AddAutoMapper(typeof(Startup));
-            
+        
         services.AddTimeDomain(Configuration);
     }
 
@@ -72,16 +56,7 @@ public class Startup
             app.UseDeveloperExceptionPage();
         }
 
-        app.UseSwagger();
-
-        app.UseSwaggerUI(options =>
-        {
-            foreach (var desc in provider.ApiVersionDescriptions)
-            {
-                options.SwaggerEndpoint($"/swagger/{desc.GroupName}/swagger.json", $"Version {desc.ApiVersion}");
-                options.DefaultModelsExpandDepth(-1);
-            }
-        });
+        app.UseSwagger(provider);
             
         app.UseSerilogRequestLogging();
 
@@ -93,7 +68,6 @@ public class Startup
 
         app.UseEndpoints(endpoints =>
         {
-            // TODO health check requests don't include trace id - please fix
             endpoints.MapHealthChecks("/health");
             endpoints.MapControllers();
         });
