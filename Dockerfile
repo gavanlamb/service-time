@@ -28,15 +28,15 @@ COPY --from=publish-api /app/publish .
 ENTRYPOINT ["dotnet", "Time.Api.dll"]
 
 
-FROM base AS publish-migration
+FROM base AS publish-migrator
 RUN dotnet publish "src/Time.Database.Migrator/Time.Database.Migrator.csproj" -c Release -o /app/publish --no-build 
 
-FROM amazon/aws-lambda-dotnet:6 AS migration
+FROM amazon/aws-lambda-dotnet:6 AS migrator
 WORKDIR /var/task/
-COPY --from=publish-migration /app/publish .
+COPY --from=publish-migrator /app/publish .
 CMD ["Time.Database.Migrator::Time.Database.Migrator.Program::Handler"]
 
-FROM amazon/aws-lambda-dotnet:6.0 AS migration-local
+FROM amazon/aws-lambda-dotnet:6.0 AS migrator-local
 WORKDIR /var/task/
-COPY --from=publish-migration /app/publish .
+COPY --from=publish-migrator /app/publish .
 ENTRYPOINT ["dotnet", "Time.Database.Migrator.dll"]

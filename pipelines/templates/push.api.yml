@@ -6,5 +6,5 @@ steps:
 
   - template: ./aws/ecr/push.yml@templates
     parameters:
-      imageName: migration
-      repositoryName: time-migration
+      imageName: migrator
+      repositoryName: time-migrator

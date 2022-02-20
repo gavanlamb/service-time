@@ -1,4 +1,4 @@
-FROM amazon/aws-lambda-nodejs:14 as integration-tests
+FROM amazon/aws-lambda-nodejs:14 as api-tests
 ARG BUILD_NUMBER=1.0.0-0
 WORKDIR /var/task
 COPY . ./

@@ -6,7 +6,7 @@ parameters:
 steps:
   - template: ./docker/build.yml@templates
     parameters:
-      target: integration-tests
-      workingDirectory: tests/Time.IntegrationTests
+      target: api-tests
+      workingDirectory: tests/Time.ApiTests
       arguments: "--build-arg BUILD_NUMBER=${{ parameters.buildNumber }}"
       tag: ${{ parameters.buildNumber }}
