@@ -20,5 +20,5 @@ steps:
 
   - template: ./docker/build.yml@templates
     parameters:
-      target: migration
+      target: migrator
       arguments: "--build-arg BUILD_NUMBER=$(Build.BuildNumber) --build-arg PAT=$(System.AccessToken)"
