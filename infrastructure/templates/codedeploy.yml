@@ -10,3 +10,4 @@ Resources:
 Hooks:
   - AfterInstall : "${migrator_lambda_arn}"
   - AfterAllowTestTraffic: "${api_tests_lambda_arn}"
+  - BeforeAllowTraffic: "${load_tests_lambda_arn}"

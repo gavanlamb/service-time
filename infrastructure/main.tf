@@ -71,6 +71,7 @@ data "template_file" "api_app_spec" {
     application_container_name = local.api_name
     migrator_lambda_arn = aws_lambda_function.migrator.qualified_arn
     api_tests_lambda_arn = aws_lambda_function.api_tests.qualified_arn
+    load_tests_lambda_arn = aws_lambda_function.api_tests.qualified_arn
   }
 }
 
