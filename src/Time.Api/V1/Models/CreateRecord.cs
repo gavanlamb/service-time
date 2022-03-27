@@ -16,6 +16,6 @@ public class CreateRecord
     /// <summary>
     /// Time the record started
     /// </summary>
-    /// <example>2021-10-31T04:46:32.3044710Z</example>
+    /// <example>2021-03-27T01:37:40.123+11:00</example>
     public DateTimeOffset Start { get; init; }
 }
