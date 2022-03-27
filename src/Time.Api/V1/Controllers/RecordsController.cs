@@ -209,7 +209,6 @@ public class RecordsController : ControllerBase
                 new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    //IgnoreNullValues = true,
                     Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                 })
         );

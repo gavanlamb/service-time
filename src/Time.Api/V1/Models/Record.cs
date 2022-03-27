@@ -22,18 +22,17 @@ public class Record
     /// <summary>
     /// The start date and time, in UTC, for this record.
     /// </summary>
-    /// <example>2021-10-31T04:46:32.3044710Z</example>
+    /// <example>2021-03-27T01:37:40.123+00:00</example>
     public DateTimeOffset Start { get; set; }
         
     /// <summary>
     /// The end date and time, in UTC for, this record. This value might be null if the record is still active.
     /// </summary>
-    /// <example>2021-10-31T06:46:32.3044710Z</example>
+    /// <example>2021-03-27T02:37:40.123+00:00</example>
     public DateTimeOffset? End { get; set; }
 
     /// <summary>
     /// The duration for this record. This might be null if the end time is not set.
     /// </summary>
-    /// <example></example>
-    public TimeSpan? Duration { get; set; }
+    public int Duration { get; set; }
 }
