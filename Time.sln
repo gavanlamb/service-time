@@ -64,26 +64,25 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Domain", "src\Time.Dom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Domain.UnitTests", "tests\Time.Domain.UnitTests\Time.Domain.UnitTests.csproj", "{2056D836-C10F-40B9-800C-16958208180A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Time.IntegrationTests", "Time.IntegrationTests", "{5167A528-7507-4D0F-995F-A8E1FE042E65}"
-ProjectSection(SolutionItems) = preProject
-	tests\Time.IntegrationTests\package-lock.json = tests\Time.IntegrationTests\package-lock.json
-	tests\Time.IntegrationTests\package.json = tests\Time.IntegrationTests\package.json
-	tests\Time.IntegrationTests\Dockerfile = tests\Time.IntegrationTests\Dockerfile
-	tests\Time.IntegrationTests\.eslintrc.yml = tests\Time.IntegrationTests\.eslintrc.yml
-	tests\Time.IntegrationTests\index.js = tests\Time.IntegrationTests\index.js
-EndProjectSection
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Time.ApiTests", "Time.ApiTests", "{939742E7-C135-4C4E-97CF-1610805B16CF}"
+	ProjectSection(SolutionItems) = preProject
+		tests\Time.ApiTests\Dockerfile = tests\Time.ApiTests\Dockerfile
+		tests\Time.ApiTests\index.js = tests\Time.ApiTests\index.js
+		tests\Time.ApiTests\package-lock.json = tests\Time.ApiTests\package-lock.json
+		tests\Time.ApiTests\package.json = tests\Time.ApiTests\package.json
+	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "collections", "collections", "{8CF15B7D-7986-459D-957E-19866FF7DEA4}"
-ProjectSection(SolutionItems) = preProject
-	tests\Time.IntegrationTests\collections\time.postman_collection.json = tests\Time.IntegrationTests\collections\time.postman_collection.json
-EndProjectSection
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "collections", "collections", "{C56576A6-AB79-4C2E-A561-F80F04C9D9BA}"
+	ProjectSection(SolutionItems) = preProject
+		tests\Time.ApiTests\collections\time.postman_collection.json = tests\Time.ApiTests\collections\time.postman_collection.json
+	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "environments", "environments", "{BAF41277-8C65-4772-8F2E-8800133585AA}"
-ProjectSection(SolutionItems) = preProject
-	tests\Time.IntegrationTests\environments\local.postman_environment.json = tests\Time.IntegrationTests\environments\local.postman_environment.json
-	tests\Time.IntegrationTests\environments\preview.postman_environment.json = tests\Time.IntegrationTests\environments\preview.postman_environment.json
-	tests\Time.IntegrationTests\environments\production.postman_environment.json = tests\Time.IntegrationTests\environments\production.postman_environment.json
-EndProjectSection
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "environments", "environments", "{A08C845A-E86F-4F70-AB1F-399E05A1A2FA}"
+	ProjectSection(SolutionItems) = preProject
+		tests\Time.ApiTests\environments\local.postman_environment.json = tests\Time.ApiTests\environments\local.postman_environment.json
+		tests\Time.ApiTests\environments\preview.postman_environment.json = tests\Time.ApiTests\environments\preview.postman_environment.json
+		tests\Time.ApiTests\environments\production.postman_environment.json = tests\Time.ApiTests\environments\production.postman_environment.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -121,8 +120,8 @@ Global
 		{8F0DA939-E41B-47DA-8545-60FA2524BC91} = {A9FC12F9-2A43-4DAA-A48C-C357C253C403}
 		{5B0AB0AE-47BD-4BDE-A68A-A02BD6B10AC3} = {2C927D98-2973-4A2E-B2E7-F0C06BE0CF5D}
 		{2056D836-C10F-40B9-800C-16958208180A} = {D587B9B5-2365-4741-93FF-4DBBD6F56BFB}
-		{5167A528-7507-4D0F-995F-A8E1FE042E65} = {D587B9B5-2365-4741-93FF-4DBBD6F56BFB}
-		{8CF15B7D-7986-459D-957E-19866FF7DEA4} = {5167A528-7507-4D0F-995F-A8E1FE042E65}
-		{BAF41277-8C65-4772-8F2E-8800133585AA} = {5167A528-7507-4D0F-995F-A8E1FE042E65}
+		{939742E7-C135-4C4E-97CF-1610805B16CF} = {D587B9B5-2365-4741-93FF-4DBBD6F56BFB}
+		{C56576A6-AB79-4C2E-A561-F80F04C9D9BA} = {939742E7-C135-4C4E-97CF-1610805B16CF}
+		{A08C845A-E86F-4F70-AB1F-399E05A1A2FA} = {939742E7-C135-4C4E-97CF-1610805B16CF}
 	EndGlobalSection
 EndGlobal
