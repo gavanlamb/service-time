@@ -5,3 +5,4 @@ local/database/data
 local/pgadmin/data
 local/tests
 node_modules/
+local/
