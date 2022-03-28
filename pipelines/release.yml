@@ -28,7 +28,7 @@ stages:
           - checkout: none
           - template: templates/build.numbers.yml
       - job: api
-        displayName: Api
+        displayName: API
         dependsOn:
           - setup
         steps:
