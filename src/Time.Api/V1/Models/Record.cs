@@ -32,7 +32,7 @@ public class Record
     public DateTimeOffset? End { get; set; }
 
     /// <summary>
-    /// The duration for this record. This might be null if the end time is not set.
+    /// The duration in seconds for this record. This will be null if the end time is not set.
     /// </summary>
-    public int Duration { get; set; }
+    public double? Duration { get; set; }
 }

@@ -35,6 +35,6 @@ public class RecordsProfiles: Profile
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Start, opt => opt.MapFrom(src => src.Start))
             .ForMember(dest => dest.End, opt => opt.MapFrom(src => src.End))
-            .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Duration.Value.Ticks));
+            .ForMember(dest => dest.Duration, opt => opt.MapFrom(src =>  src.Duration.HasValue ? src.Duration.Value.TotalSeconds : (double?)null));
     }
 }
