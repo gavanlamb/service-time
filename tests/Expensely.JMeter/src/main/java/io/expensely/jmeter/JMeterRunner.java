@@ -30,6 +30,7 @@ public class JMeterRunner {
         SaveService.loadProperties();
 
         // Load JMX
+        Boolean exportHtmlReport = Boolean.parseBoolean(System.getenv("JMETER_EXPORT_HTML"));
         StandardJMeterEngine jMeter = new StandardJMeterEngine();
         File loadTestFile = new File(path + "/out/production/Time.Jmeter/io/expensely/time/load.jmx");
         HashTree testPlanTree = SaveService.loadTree(loadTestFile);

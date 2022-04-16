@@ -67,9 +67,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Time.ApiTests", "Time.ApiTests", "{939742E7-C135-4C4E-97CF-1610805B16CF}"
 	ProjectSection(SolutionItems) = preProject
 		tests\Time.ApiTests\Dockerfile = tests\Time.ApiTests\Dockerfile
-		tests\Time.ApiTests\index.js = tests\Time.ApiTests\index.js
-		tests\Time.ApiTests\package-lock.json = tests\Time.ApiTests\package-lock.json
-		tests\Time.ApiTests\package.json = tests\Time.ApiTests\package.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "collections", "collections", "{C56576A6-AB79-4C2E-A561-F80F04C9D9BA}"

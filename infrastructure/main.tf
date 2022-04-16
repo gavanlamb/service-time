@@ -554,10 +554,12 @@ resource "aws_lambda_function" "api_tests" {
 
   environment {
     variables = {
-      ENVIRONMENT = lower(var.environment),
-      BUILD_NUMBER = var.npm_build_identifier,
-      RESULTS_BUCKET = var.test_results_bucket,
-      BASEURL = "https://${local.api_url}:8443"
+      S3_BUCKET = var.test_results_bucket,
+      S3_BUCKET_PATH = "time/${lower(var.environment)}/postman"
+      POSTMAN_COLLECTION_FILE = "/postman/collections/time.postman_collection.json"
+      POSTMAN_ENVIRONMENT_FILE = "/postman/environments/${var.environment}.postman_environment.json"
+      POSTMAN_RESULTS_FILE = "${var.npm_build_identifier}.xml"
+      POSTMAN_VARIABLE_baseUrl = "https://${local.api_url}:8443"
     }
   }
 }
