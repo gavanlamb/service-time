@@ -124,6 +124,6 @@ stages:
                     destinationPath: time/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
                 - template: aws/s3/publish-test-results.yml@templates
                   parameters:
-                    sourcePath: time/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
+                    sourcePath: time/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/postman
                     testResultsFileName: $(NPM_BUILD_NUMBER).xml
                     testRunTitle: API
