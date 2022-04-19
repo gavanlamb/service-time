@@ -51,6 +51,9 @@ data "aws_ecr_repository" "migrator" {
 data "aws_ecr_repository" "api_tests" {
   name = "${lower(var.application_name)}-api-tests"
 }
+data "aws_ecr_repository" "load_tests" {
+  name = "${lower(var.application_name)}-load-tests"
+}
 
 data "aws_iam_policy" "test_results_bucket"{
   name = var.test_results_bucket_policy_name

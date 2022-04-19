@@ -71,7 +71,7 @@ data "template_file" "api_app_spec" {
     application_container_name = local.api_name
     migrator_lambda_arn = aws_lambda_function.migrator.qualified_arn
     api_tests_lambda_arn = aws_lambda_function.api_tests.qualified_arn
-    load_tests_lambda_arn = aws_lambda_function.api_tests.qualified_arn
+    load_tests_lambda_arn = aws_lambda_function.load_tests.qualified_arn
   }
 }
 
@@ -597,6 +597,69 @@ resource "aws_iam_role_policy_attachment" "api_tests_codedeploy" {
 }
 resource "aws_iam_role_policy_attachment" "api_tests_bucket_upload" {
   role = aws_iam_role.api_tests.name
+  policy_arn = data.aws_iam_policy.test_results_bucket.arn
+}
+
+// API tests
+/// lambda
+resource "aws_lambda_function" "load_tests" {
+  function_name = local.load_tests_name
+  role = aws_iam_role.load_tests.arn
+  description = "Time Load tests"
+
+  package_type = "Image"
+  publish = true
+
+  image_uri = "${data.aws_ecr_repository.load_tests.repository_url}:${var.npm_build_identifier}"
+
+  memory_size = 2048
+
+  reserved_concurrent_executions = 1
+
+  timeout = 900
+
+  environment {
+    variables = {
+      S3_BUCKET = var.test_results_bucket,
+      S3_BUCKET_PATH = "time/${lower(var.environment)}/jmeter/${var.build_identifier}",
+      UPLOAD_TO_S3 = true
+    }
+  }
+}
+/// cloudwatch
+resource "aws_cloudwatch_log_group" "load_tests" {
+  name = "/aws/lambda/${aws_lambda_function.load_tests.function_name}"
+  retention_in_days = 14
+}
+/// IAM
+resource "aws_iam_role" "load_tests" {
+  name = local.load_tests_name
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+resource "aws_iam_role_policy_attachment" "load_tests_vpc" {
+  role = aws_iam_role.load_tests.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+resource "aws_iam_role_policy_attachment" "load_tests_codedeploy" {
+  role = aws_iam_role.load_tests.name
+  policy_arn = aws_iam_policy.codedeploy.arn
+}
+resource "aws_iam_role_policy_attachment" "load_tests_bucket_upload" {
+  role = aws_iam_role.load_tests.name
   policy_arn = data.aws_iam_policy.test_results_bucket.arn
 }
 
@@ -1859,4 +1922,3 @@ resource "aws_cloudwatch_log_metric_filter" "request_time" {
     }
   }
 }
-

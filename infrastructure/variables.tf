@@ -119,6 +119,7 @@ locals {
   api_name = "${lower(var.application_name)}-${lower(var.environment)}"
   migrator_name = "${lower(var.application_name)}-migrator-${lower(var.environment)}"
   api_tests_name = "${lower(var.application_name)}-api-tests-${lower(var.environment)}"
+  load_tests_name = "${lower(var.application_name)}-load-tests-${lower(var.environment)}"
   open_telemetry_name = "open-telemetry-${lower(var.environment)}"
 
   api_url = "${var.subdomain}.${trimsuffix(data.aws_route53_zone.expensely_io.name, ".")}"
