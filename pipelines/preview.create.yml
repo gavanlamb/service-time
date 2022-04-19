@@ -49,6 +49,20 @@ stages:
           - template: templates/push.api-tests.yml
             parameters:
               buildNumber: $(NPM_BUILD_NUMBER)
+      - job: load_tests
+        displayName: Load Tests
+        dependsOn:
+          - setup
+        variables:
+          BUILD_NUMBER: $[ dependencies.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
+        steps:
+          - template: templates/build.load-tests.yml
+            parameters:
+              buildNumber: $(BUILD_NUMBER)
+          - template: aws/iam/configure.yml@templates
+          - template: templates/push.load-tests.yml
+            parameters:
+              buildNumber: $(BUILD_NUMBER)
 
   - stage: preview
     displayName: Preview
