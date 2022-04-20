@@ -102,7 +102,7 @@ resource "aws_lambda_function" "migrator" {
 
   image_uri = "${data.aws_ecr_repository.migrator.repository_url}:${var.build_identifier}"
 
-  memory_size = 2048
+  memory_size = 10240
 
   reserved_concurrent_executions = 1
 
@@ -546,7 +546,7 @@ resource "aws_lambda_function" "api_tests" {
 
   image_uri = "${data.aws_ecr_repository.api_tests.repository_url}:${var.npm_build_identifier}"
 
-  memory_size = 2048
+  memory_size = 10240
 
   reserved_concurrent_executions = 1
 
@@ -612,7 +612,7 @@ resource "aws_lambda_function" "load_tests" {
 
   image_uri = "${data.aws_ecr_repository.load_tests.repository_url}:${var.npm_build_identifier}"
 
-  memory_size = 2048
+  memory_size = 10240
 
   reserved_concurrent_executions = 1
 
