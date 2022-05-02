@@ -8,4 +8,3 @@ WORKDIR /jmeter
 COPY users.csv .
 COPY load.jmx .
 RUN mkdir /jmeter/temp
-RUN chmod -R 755 /jmeter/

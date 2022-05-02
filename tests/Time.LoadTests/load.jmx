@@ -116,16 +116,26 @@
           <boolProp name="CounterConfig.per_user">false</boolProp>
         </CounterConfig>
         <hashTree/>
-        <BeanShellAssertion guiclass="BeanShellAssertionGui" testclass="BeanShellAssertion" testname="Set properties" enabled="true">
-          <stringProp name="BeanShellAssertion.query">String numberOfUsers = vars.get(&quot;number_of_users&quot;);
-String name = &quot;user&quot; + numberOfUsers + &quot;_token&quot;;
-${__setProperty(name,${__V(name)})}
-${__setProperty(number_of_users,numberOfUsers)}
-</stringProp>
-          <stringProp name="BeanShellAssertion.filename"></stringProp>
-          <stringProp name="BeanShellAssertion.parameters"></stringProp>
-          <boolProp name="BeanShellAssertion.resetInterpreter">false</boolProp>
-        </BeanShellAssertion>
+        <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="Set properties" enabled="true">
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">String numberOfUsers = vars.get(&quot;number_of_users&quot;);
+log.info(numberOfUsers);
+
+String key = &quot;user&quot; + numberOfUsers + &quot;_token&quot;;
+log.info(key);
+
+String value = vars.get(key);
+log.info(value);
+
+props.put(key,value);
+props.put(&quot;number_of_users&quot;,numberOfUsers);
+
+// Hide sampler
+SampleResult.setIgnore();</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223Assertion>
         <hashTree/>
       </hashTree>
       <com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup guiclass="com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroupGui" testclass="com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup" testname="Create &amp; Update" enabled="true">
