@@ -54,6 +54,15 @@
           <stringProp name="variableNames">username,password</stringProp>
         </CSVDataSet>
         <hashTree/>
+        <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter" enabled="true">
+          <stringProp name="CounterConfig.start">1</stringProp>
+          <stringProp name="CounterConfig.end"></stringProp>
+          <stringProp name="CounterConfig.incr">1</stringProp>
+          <stringProp name="CounterConfig.name">number_of_users</stringProp>
+          <stringProp name="CounterConfig.format"></stringProp>
+          <boolProp name="CounterConfig.per_user">false</boolProp>
+        </CounterConfig>
+        <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Get JWT" enabled="true">
           <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
@@ -106,37 +115,26 @@
             <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
           </JSONPostProcessor>
           <hashTree/>
-        </hashTree>
-        <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter" enabled="true">
-          <stringProp name="CounterConfig.start">1</stringProp>
-          <stringProp name="CounterConfig.end"></stringProp>
-          <stringProp name="CounterConfig.incr">1</stringProp>
-          <stringProp name="CounterConfig.name">number_of_users</stringProp>
-          <stringProp name="CounterConfig.format"></stringProp>
-          <boolProp name="CounterConfig.per_user">false</boolProp>
-        </CounterConfig>
-        <hashTree/>
-        <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="Set properties" enabled="true">
-          <stringProp name="cacheKey">true</stringProp>
-          <stringProp name="filename"></stringProp>
-          <stringProp name="parameters"></stringProp>
-          <stringProp name="script">String numberOfUsers = vars.get(&quot;number_of_users&quot;);
-log.info(numberOfUsers);
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="script">String numberOfUsers = vars.get(&quot;number_of_users&quot;);
 
 String key = &quot;user&quot; + numberOfUsers + &quot;_token&quot;;
-log.info(key);
 
+// THIS IS NULL 
 String value = vars.get(key);
-log.info(value);
 
 props.put(key,value);
 props.put(&quot;number_of_users&quot;,numberOfUsers);
 
 // Hide sampler
 SampleResult.setIgnore();</stringProp>
-          <stringProp name="scriptLanguage">groovy</stringProp>
-        </JSR223Assertion>
-        <hashTree/>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+        </hashTree>
       </hashTree>
       <com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup guiclass="com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroupGui" testclass="com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup" testname="Create &amp; Update" enabled="true">
         <elementProp name="ThreadGroup.main_controller" elementType="com.blazemeter.jmeter.control.VirtualUserController"/>
