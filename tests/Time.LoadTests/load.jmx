@@ -109,7 +109,7 @@
             </collectionProp>
           </HeaderManager>
           <hashTree/>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Set JWT to variable" enabled="true">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Set JWT to variable" enabled="false">
             <stringProp name="JSONPostProcessor.referenceNames">${__V(user${number_of_users}_token)}</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">AuthenticationResult.AccessToken</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
@@ -119,18 +119,22 @@
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="filename"></stringProp>
             <stringProp name="parameters"></stringProp>
-            <stringProp name="script">String numberOfUsers = vars.get(&quot;number_of_users&quot;);
+            <stringProp name="script">import groovy.json.JsonSlurper;
 
-String key = &quot;user&quot; + numberOfUsers + &quot;_token&quot;;
+def failureMessage = &quot;&quot;;
 
-// THIS IS NULL 
-String value = vars.get(key);
+JsonSlurper JSON = new JsonSlurper();
 
+def response = JSON.parseText(prev.getResponseDataAsString());
+def accessToken = response.AuthenticationResult.AccessToken;
+
+def numberOfUsers = vars.get(&quot;number_of_users&quot;);
+def key = &quot;user&quot; + numberOfUsers + &quot;_token&quot;;
 props.put(key,value);
 props.put(&quot;number_of_users&quot;,numberOfUsers);
 
-// Hide sampler
-SampleResult.setIgnore();</stringProp>
+SampleResult.setIgnore();
+</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
           </JSR223PostProcessor>
           <hashTree/>
