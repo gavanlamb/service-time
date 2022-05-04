@@ -121,19 +121,14 @@
             <stringProp name="parameters"></stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper;
 
-def failureMessage = &quot;&quot;;
-
 JsonSlurper JSON = new JsonSlurper();
 
 def response = JSON.parseText(prev.getResponseDataAsString());
 def accessToken = response.AuthenticationResult.AccessToken;
-
 def numberOfUsers = vars.get(&quot;number_of_users&quot;);
 def key = &quot;user&quot; + numberOfUsers + &quot;_token&quot;;
-props.put(key,value);
+props.put(key,accessToken);
 props.put(&quot;number_of_users&quot;,numberOfUsers);
-
-SampleResult.setIgnore();
 </stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
           </JSR223PostProcessor>
@@ -143,13 +138,13 @@ SampleResult.setIgnore();
       <com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup guiclass="com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroupGui" testclass="com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup" testname="Create &amp; Update" enabled="true">
         <elementProp name="ThreadGroup.main_controller" elementType="com.blazemeter.jmeter.control.VirtualUserController"/>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-        <stringProp name="TargetLevel">${__property(number_of_users)}</stringProp>
-        <stringProp name="RampUp">1</stringProp>
-        <stringProp name="Steps">${__property(number_of_users)}</stringProp>
-        <stringProp name="Hold">1</stringProp>
+        <stringProp name="TargetLevel">10</stringProp>
+        <stringProp name="RampUp">300</stringProp>
+        <stringProp name="Steps">10</stringProp>
+        <stringProp name="Hold">300</stringProp>
         <stringProp name="LogFilename"></stringProp>
         <stringProp name="Iterations"></stringProp>
-        <stringProp name="Unit">M</stringProp>
+        <stringProp name="Unit">S</stringProp>
       </com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup>
       <hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create record" enabled="true">
