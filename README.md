@@ -39,7 +39,7 @@ https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters#add-authorization-to
 
 
 # TODO
-* API tests
+* API & Load tests
   * Look at moving the api tests to a separate repo and generalising the runner
     * Download tests from S3
     * Download config from s3
@@ -47,7 +47,3 @@ https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters#add-authorization-to
     * baseurl
     * path for results in s3
   * Must work locally 
-
-* Load tests
-  * https://www.blazemeter.com/blog/5-ways-launch-jmeter-test-without-using-jmeter-gui
-  * 
