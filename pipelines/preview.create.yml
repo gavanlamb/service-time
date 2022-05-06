@@ -110,7 +110,7 @@ stages:
               errorActionPreference: default
               showWarnings: true
               pwsh: true
-              workingDirectory: $(Pipeline.Workspace)/infrastructure/variables
+              workingDirectory: $(Build.SourcesDirectory)/infrastructure/variables
           - template: terraform/plan.yml@templates
             parameters:
               artifactName: ${{ variables.TF_ARTIFACT_NAME }}
@@ -146,7 +146,7 @@ stages:
                   condition: succeededOrFailed()
                   inputs:
                     targetType: inline
-                    script: aws s3 sync s3://$(TEST_RESULTS_BUCKET_NAME)/time/$(Build.BuildNumber)/load/report/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/report-genarator-html $(Pipeline.Workspace)/html-report
+                    script: aws s3 sync s3://$(TEST_RESULTS_BUCKET_NAME)/time/$(Build.BuildNumber)/load/report/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/report-genarator-html $(Build.SourcesDirectory)/html-report
                     errorActionPreference: default
                     showWarnings: true
                     pwsh: true
@@ -155,4 +155,4 @@ stages:
                   condition: succeededOrFailed()
                   inputs:
                     htmlType: Jmeter
-                    JmeterReportsPath: $(Pipeline.Workspace)/html-report/
+                    JmeterReportsPath: $(Build.SourcesDirectory)/html-report/
