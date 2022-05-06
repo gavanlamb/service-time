@@ -555,7 +555,7 @@ resource "aws_lambda_function" "api_tests" {
   environment {
     variables = {
       S3_BUCKET = var.test_results_bucket,
-      S3_BUCKET_PATH = "time/${lower(var.environment)}/postman"
+      S3_BUCKET_PATH = "time/${var.build_identifier}/api/results/${lower(var.environment)}",
       POSTMAN_COLLECTION_FILE = "/postman/collections/time.postman_collection.json"
       POSTMAN_ENVIRONMENT_FILE = substr(lower(var.environment), 0, 7) == "preview" ? "/postman/environments/preview.postman_environment.json" : "/postman/environments/${var.environment}.postman_environment.json"
       POSTMAN_RESULTS_FILE = "${var.npm_build_identifier}.xml"
@@ -621,7 +621,7 @@ resource "aws_lambda_function" "load_tests" {
   environment {
     variables = {
       S3_BUCKET = var.test_results_bucket,
-      S3_BUCKET_PATH = "time/${lower(var.environment)}/jmeter/${var.build_identifier}",
+      S3_BUCKET_PATH = "time/${var.build_identifier}/load/report/${lower(var.environment)}",
       UPLOAD_TO_S3 = true
     }
   }
