@@ -83,7 +83,7 @@ stages:
               script: |
                 $formatText = @'
                 environment="Preview$(System.PullRequest.PullRequestNumber)"
-                region="${{ variables.REGION }}"
+                region="${{ variables.AWS_DEFAULT_REGION }}"
                 application_name="Time"
                 build_identifier="$(Build.BuildNumber)"
                 vpc_name="expensely"
@@ -106,7 +106,7 @@ stages:
                 db_subnet_group_name="expensely"
                 rds_delete_protection=false
                 rds_database_name="time_api"
-                '@ | Out-File -FilePath ${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.REGION }}.tfvars
+                '@ | Out-File -FilePath ${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars
               errorActionPreference: default
               showWarnings: true
               pwsh: true
@@ -116,7 +116,7 @@ stages:
               artifactName: ${{ variables.TF_ARTIFACT_NAME }}
               workspaceName: service-time-${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
               version: 1.1.4
-              planAdditionalCommandOptions: -var-file="variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.REGION }}.tfvars"
+              planAdditionalCommandOptions: -var-file="variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars"
       - deployment: deploy
         displayName: Deploy
         dependsOn:
@@ -138,6 +138,20 @@ stages:
                     destinationPath: time/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
                 - template: aws/s3/publish-test-results.yml@templates
                   parameters:
-                    sourcePath: time/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/postman
+                    sourcePath: time/$(Build.BuildNumber)/api/results/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
                     testResultsFileName: $(NPM_BUILD_NUMBER).xml
                     testRunTitle: API
+                - task: PowerShell@2
+                  displayName: Download html report
+                  condition: succeededOrFailed()
+                  inputs:
+                    targetType: inline
+                    script: aws s3 sync s3://$(TEST_RESULTS_BUCKET_NAME)/time/$(Build.BuildNumber)/load/report/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber) ./html-report
+                    errorActionPreference: default
+                    showWarnings: true
+                    pwsh: true
+                - task: publishhtmlreport@1
+                  displayName: Publish HTMl report
+                  inputs:
+                    htmlType: Jmeter
+                    JmeterReportsPath: ./html-report
