@@ -109,12 +109,6 @@
             </collectionProp>
           </HeaderManager>
           <hashTree/>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Set JWT to variable" enabled="false">
-            <stringProp name="JSONPostProcessor.referenceNames">${__V(user${number_of_users}_token)}</stringProp>
-            <stringProp name="JSONPostProcessor.jsonPathExprs">AuthenticationResult.AccessToken</stringProp>
-            <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
-          </JSONPostProcessor>
-          <hashTree/>
           <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="filename"></stringProp>
@@ -127,8 +121,12 @@ def response = JSON.parseText(prev.getResponseDataAsString());
 def accessToken = response.AuthenticationResult.AccessToken;
 def numberOfUsers = vars.get(&quot;number_of_users&quot;);
 def key = &quot;user&quot; + numberOfUsers + &quot;_token&quot;;
+
 props.put(key,accessToken);
+log.info(key + &quot; : &quot; + accessToken);
+
 props.put(&quot;number_of_users&quot;,numberOfUsers);
+log.info(&quot;number_of_users&quot; + &quot; : &quot; + numberOfUsers);
 </stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
           </JSR223PostProcessor>
@@ -180,7 +178,7 @@ props.put(&quot;number_of_users&quot;,numberOfUsers);
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer ${__property(user${__threadNum}_token)}</stringProp>
+                <stringProp name="Header.value">Bearer ${__P(user${__threadNum}_token)}</stringProp>
               </elementProp>
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -234,7 +232,7 @@ props.put(&quot;number_of_users&quot;,numberOfUsers);
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer ${__property(user${__threadNum}_token)}</stringProp>
+                <stringProp name="Header.value">Bearer ${__P(user${__threadNum}_token)}</stringProp>
               </elementProp>
               <elementProp name="Content-Type" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -255,7 +253,7 @@ props.put(&quot;number_of_users&quot;,numberOfUsers);
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <intProp name="LoopController.loops">-1</intProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${__property(number_of_users)}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(number_of_users)}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
@@ -286,7 +284,7 @@ props.put(&quot;number_of_users&quot;,numberOfUsers);
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer ${__property(user${__threadNum}_token)}</stringProp>
+                <stringProp name="Header.value">Bearer ${__P(user${__threadNum}_token)}</stringProp>
               </elementProp>
               <elementProp name="Content-Type" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -368,7 +366,7 @@ props.put(&quot;number_of_users&quot;,numberOfUsers);
               <collectionProp name="HeaderManager.headers">
                 <elementProp name="" elementType="Header">
                   <stringProp name="Header.name">Authorization</stringProp>
-                  <stringProp name="Header.value">Bearer ${__property(user${__threadNum}_token)}</stringProp>
+                  <stringProp name="Header.value">Bearer ${__P(user${__threadNum}_token)}</stringProp>
                 </elementProp>
               </collectionProp>
             </HeaderManager>
