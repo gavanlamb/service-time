@@ -178,7 +178,7 @@ log.info(&quot;number_of_users&quot; + &quot; : &quot; + numberOfUsers);
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer ${__P(user${__threadNum}_token)}</stringProp>
+                <stringProp name="Header.value">Bearer ${__groovy(props.get(&quot;user&quot; + ${__threadNum} + &quot;_token&quot;))}</stringProp>
               </elementProp>
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -191,7 +191,7 @@ log.info(&quot;number_of_users&quot; + &quot; : &quot; + numberOfUsers);
             </collectionProp>
           </HeaderManager>
           <hashTree/>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Set JWT to variable" enabled="true">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Set record ID to variable" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">new_record_id</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">id</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
@@ -232,7 +232,7 @@ log.info(&quot;number_of_users&quot; + &quot; : &quot; + numberOfUsers);
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer ${__P(user${__threadNum}_token)}</stringProp>
+                <stringProp name="Header.value">Bearer ${__groovy(props.get(&quot;user&quot; + ${__threadNum} + &quot;_token&quot;))}</stringProp>
               </elementProp>
               <elementProp name="Content-Type" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -284,7 +284,7 @@ log.info(&quot;number_of_users&quot; + &quot; : &quot; + numberOfUsers);
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer ${__P(user${__threadNum}_token)}</stringProp>
+                <stringProp name="Header.value">Bearer ${__groovy(props.get(&quot;user&quot; + ${__threadNum} + &quot;_token&quot;))}</stringProp>
               </elementProp>
               <elementProp name="Content-Type" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -297,7 +297,7 @@ log.info(&quot;number_of_users&quot; + &quot; : &quot; + numberOfUsers);
             </collectionProp>
           </HeaderManager>
           <hashTree/>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Set record id to variable" enabled="true">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Set record ID to variable" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">user_record_id</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$..id</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
@@ -366,7 +366,7 @@ log.info(&quot;number_of_users&quot; + &quot; : &quot; + numberOfUsers);
               <collectionProp name="HeaderManager.headers">
                 <elementProp name="" elementType="Header">
                   <stringProp name="Header.name">Authorization</stringProp>
-                  <stringProp name="Header.value">Bearer ${__P(user${__threadNum}_token)}</stringProp>
+                  <stringProp name="Header.value">Bearer ${__groovy(props.get(&quot;user&quot; + ${__threadNum} + &quot;_token&quot;))}</stringProp>
                 </elementProp>
               </collectionProp>
             </HeaderManager>
