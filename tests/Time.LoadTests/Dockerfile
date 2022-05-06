@@ -7,4 +7,3 @@ ENV EXPORT_JMETER_HTML=TRUE
 WORKDIR /jmeter
 COPY users.csv .
 COPY load.jmx .
-RUN mkdir /jmeter/temp
