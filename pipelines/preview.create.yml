@@ -152,6 +152,7 @@ stages:
                     pwsh: true
                 - task: publishhtmlreport@1
                   displayName: Publish HTMl report
+                  condition: succeededOrFailed()
                   inputs:
                     htmlType: Jmeter
                     JmeterReportsPath: ./html-report
