@@ -146,7 +146,7 @@ stages:
                   condition: succeededOrFailed()
                   inputs:
                     targetType: inline
-                    script: aws s3 sync s3://$(TEST_RESULTS_BUCKET_NAME)/time/$(Build.BuildNumber)/load/report/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber) ./html-report
+                    script: aws s3 sync s3://$(TEST_RESULTS_BUCKET_NAME)/time/$(Build.BuildNumber)/load/report/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/report-genarator-html ./html-report
                     errorActionPreference: default
                     showWarnings: true
                     pwsh: true
