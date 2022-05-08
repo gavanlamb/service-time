@@ -53,6 +53,17 @@ stages:
               PathtoPublish: $(Build.SourcesDirectory)/tests/Time.ApiTests/
               ArtifactName: Time.ApiTests
               publishLocation: Container
+      - job: load_tests
+        displayName: Publish Load Tests
+        dependsOn:
+          - api_tests
+        steps:
+          - task: PublishBuildArtifacts@1
+            displayName: Publish Time.LoadTests
+            inputs:
+              PathtoPublish: $(Build.SourcesDirectory)/tests/Time.LoadTests/
+              ArtifactName: Time.LoadTests
+              publishLocation: Container
 
 #      - job: load_tests
 #        displayName: Load Tests
@@ -133,21 +144,38 @@ stages:
                   inputs:
                     buildType: current
                     artifactName: Time.ApiTests
-                    targetPath: $(Build.SourcesDirectory)
+                    targetPath: $(Build.SourcesDirectory)/Time.ApiTests
                 - task: PowerShell@2
                   displayName: Upload Time.ApiTests
                   inputs:
                     targetType: inline
                     script: |
-                      aws s3 cp api-tests/collections/time.postman_collection.json s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/api/tests/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
-                      aws s3 cp api-tests/environments/${{ variables.ENVIRONMENT }}.postman_environment.json s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/api/tests/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
+                      aws s3 cp collections/time.postman_collection.json s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/api-tests/tests/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/time.postman_collection.json
+                      aws s3 cp environments/${{ variables.ENVIRONMENT }}.postman_environment.json s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/api-tests/tests/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/${{ variables.ENVIRONMENT }}.postman_environment.json
                     errorActionPreference: default
                     showWarnings: true
                     pwsh: true
-                    workingDirectory: $(Build.SourcesDirectory)
-
-
-
+                    workingDirectory: $(Build.SourcesDirectory)/Time.ApiTests
+                - task: DownloadPipelineArtifact@2
+                  displayName: Download Time.LoadTests
+                  inputs:
+                    buildType: current
+                    artifactName: Time.LoadTests
+                    targetPath: $(Build.SourcesDirectory)/Time.LoadTests
+                - task: PowerShell@2
+                  displayName: Upload Time.LoadTests
+                  inputs:
+                    targetType: inline
+                    script: |
+                      aws s3 cp load.jmx s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/load-tests/tests/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
+                      aws s3 cp users.csv s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/load-tests/tests/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
+                    errorActionPreference: default
+                    showWarnings: true
+                    pwsh: true
+                    workingDirectory: $(Build.SourcesDirectory)/Time.LoadTests
+                    
+                    
+                    
                 - template: terraform/apply.yml@templates
                   parameters:
                     artifactName: ${{ variables.TF_ARTIFACT_NAME }}
@@ -155,7 +183,9 @@ stages:
                 - template: aws/codedeploy/deploy.yml@templates
                   parameters:
                     appSpecFileName: $(Build.BuildNumber).yaml
-                    destinationPath: time/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
+                    destinationPath: time/$(Build.BuildNumber)/codedeploy/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
+
+
                 - template: aws/s3/publish-test-results.yml@templates
                   parameters:
                     sourcePath: time/$(Build.BuildNumber)/api/results/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
