@@ -544,7 +544,7 @@ resource "aws_lambda_function" "api_tests" {
   package_type = "Image"
   publish = true
 
-  image_uri = "${data.aws_ecr_repository.api_tests.repository_url}:${var.npm_build_identifier}"
+  image_uri = "${data.aws_ecr_repository.lambda_postman.repository_url}:1.0.2364-1"
 
   memory_size = 10240
 
@@ -554,11 +554,10 @@ resource "aws_lambda_function" "api_tests" {
 
   environment {
     variables = {
-      S3_BUCKET = var.test_results_bucket,
-      S3_BUCKET_PATH = "time/${var.build_identifier}/api/results/${lower(var.environment)}",
-      POSTMAN_COLLECTION_FILE = "/postman/collections/time.postman_collection.json"
-      POSTMAN_ENVIRONMENT_FILE = substr(lower(var.environment), 0, 7) == "preview" ? "/postman/environments/preview.postman_environment.json" : "/postman/environments/${var.environment}.postman_environment.json"
-      POSTMAN_RESULTS_FILE = "${var.npm_build_identifier}.xml"
+      S3_BUCKET = var.codedeploy_bucket_name,
+      S3_BUCKET_PATH = "time/${var.build_identifier}/${lower(var.environment)}/api-tests",
+      POSTMAN_COLLECTION_FILE = "time.postman_collection.json"
+      POSTMAN_ENVIRONMENT_FILE = substr(lower(var.environment), 0, 7) == "preview" ? "preview.postman_environment.json" : "${var.environment}.postman_environment.json"
       POSTMAN_VARIABLE_baseUrl = "https://${local.api_url}:8443"
     }
   }
@@ -597,7 +596,7 @@ resource "aws_iam_role_policy_attachment" "api_tests_codedeploy" {
 }
 resource "aws_iam_role_policy_attachment" "api_tests_bucket_upload" {
   role = aws_iam_role.api_tests.name
-  policy_arn = data.aws_iam_policy.test_results_bucket.arn
+  policy_arn = data.aws_iam_policy.codedeploy_bucket.arn
 }
 
 // API tests
@@ -610,7 +609,7 @@ resource "aws_lambda_function" "load_tests" {
   package_type = "Image"
   publish = true
 
-  image_uri = "${data.aws_ecr_repository.load_tests.repository_url}:${var.npm_build_identifier}"
+  image_uri = "${data.aws_ecr_repository.lambda_postman.repository_url}:1.0.2364-1"
 
   memory_size = 10240
 
@@ -620,8 +619,8 @@ resource "aws_lambda_function" "load_tests" {
 
   environment {
     variables = {
-      S3_BUCKET = var.test_results_bucket,
-      S3_BUCKET_PATH = "time/${var.build_identifier}/load/report/${lower(var.environment)}",
+      S3_BUCKET = var.codedeploy_bucket_name,
+      S3_BUCKET_PATH = "time/${var.build_identifier}/${lower(var.environment)}/load-tests",
       UPLOAD_TO_S3 = true
     }
   }
@@ -659,8 +658,8 @@ resource "aws_iam_role_policy_attachment" "load_tests_codedeploy" {
   policy_arn = aws_iam_policy.codedeploy.arn
 }
 resource "aws_iam_role_policy_attachment" "load_tests_bucket_upload" {
-  role = aws_iam_role.load_tests.name
-  policy_arn = data.aws_iam_policy.test_results_bucket.arn
+  role = aws_iam_role.api_tests.name
+  policy_arn = data.aws_iam_policy.codedeploy_bucket.arn
 }
 
 // Shared IAM 

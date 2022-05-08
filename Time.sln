@@ -57,7 +57,6 @@ ProjectSection(SolutionItems) = preProject
 	pipelines\templates\build.integration-tests.yml = pipelines\templates\build.integration-tests.yml
 	pipelines\templates\push.api.yml = pipelines\templates\push.api.yml
 	pipelines\templates\push.integration-tests.yml = pipelines\templates\push.integration-tests.yml
-	pipelines\templates\build.numbers.yml = pipelines\templates\build.numbers.yml
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Domain", "src\Time.Domain\Time.Domain.csproj", "{5B0AB0AE-47BD-4BDE-A68A-A02BD6B10AC3}"
@@ -65,9 +64,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Time.Domain.UnitTests", "tests\Time.Domain.UnitTests\Time.Domain.UnitTests.csproj", "{2056D836-C10F-40B9-800C-16958208180A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Time.ApiTests", "Time.ApiTests", "{939742E7-C135-4C4E-97CF-1610805B16CF}"
-	ProjectSection(SolutionItems) = preProject
-		tests\Time.ApiTests\Dockerfile = tests\Time.ApiTests\Dockerfile
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "collections", "collections", "{C56576A6-AB79-4C2E-A561-F80F04C9D9BA}"
 	ProjectSection(SolutionItems) = preProject

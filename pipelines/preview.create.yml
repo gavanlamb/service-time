@@ -26,7 +26,14 @@ stages:
         displayName: Setup
         steps:
           - checkout: none
-          - template: templates/build.numbers.yml
+          - task: PowerShell@2
+            displayName: Set build identifier
+            inputs:
+              targetType: inline
+              script: Write-Host "##vso[build.updatebuildnumber]1.0.$(build.buildid).$(System.StageAttempt)"
+              errorActionPreference: default
+              showWarnings: true
+              pwsh: true
       - job: api
         displayName: API
         dependsOn:
@@ -36,41 +43,36 @@ stages:
           - template: aws/iam/configure.yml@templates
           - template: templates/push.api.yml
       - job: api_tests
-        displayName: API Tests
+        displayName: Publish API Tests
         dependsOn:
-          - setup
-        variables:
-          NPM_BUILD_NUMBER: $[ dependencies.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
+          - api
         steps:
-          - template: templates/build.api-tests.yml
-            parameters:
-              buildNumber: $(NPM_BUILD_NUMBER)
-          - template: aws/iam/configure.yml@templates
-          - template: templates/push.api-tests.yml
-            parameters:
-              buildNumber: $(NPM_BUILD_NUMBER)
-      - job: load_tests
-        displayName: Load Tests
-        dependsOn:
-          - setup
-        variables:
-          BUILD_NUMBER: $[ dependencies.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
-        steps:
-          - template: templates/build.load-tests.yml
-            parameters:
-              buildNumber: $(BUILD_NUMBER)
-          - template: aws/iam/configure.yml@templates
-          - template: templates/push.load-tests.yml
-            parameters:
-              buildNumber: $(BUILD_NUMBER)
+          - task: PublishBuildArtifacts@1
+            displayName: Publish Time.ApiTests
+            inputs:
+              PathtoPublish: $(Build.SourcesDirectory)/tests/Time.ApiTests/
+              ArtifactName: Time.ApiTests
+              publishLocation: Container
+
+#      - job: load_tests
+#        displayName: Load Tests
+#        dependsOn:
+#          - setup
+#        variables:
+#          BUILD_NUMBER: $[ dependencies.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
+#        steps:
+#          - template: templates/build.load-tests.yml
+#            parameters:
+#              buildNumber: $(BUILD_NUMBER)
+#          - template: aws/iam/configure.yml@templates
+#          - template: templates/push.load-tests.yml
+#            parameters:
+#              buildNumber: $(BUILD_NUMBER)
 
   - stage: preview
     displayName: Preview
     dependsOn:
       - build
-    variables:
-      - name: NPM_BUILD_NUMBER
-        value: $[ stageDependencies.build.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
     jobs:
       - job: plan
         displayName: Plan
@@ -91,7 +93,8 @@ stages:
                 capacity_provider_name="linux"
                 cognito_name="expensely-preview"
                 codedeploy_role_name="expensely-code-deploy"
-                codedeploy_bucket_name="expensely-code-deploy-production"
+                codedeploy_bucket_name="$(CODEDEPLOY_BUCKET_NAME)"
+                codedeploy_bucket_policy_name="expensely-code-deploy"
                 zone_name="preview.expensely.io"
                 subdomain="time$(System.PullRequest.PullRequestNumber)"
                 alb_name="expensely"
@@ -100,9 +103,6 @@ stages:
                 api_min_capacity=2
                 api_max_capacity=10
                 api_desired_count=2
-                npm_build_identifier="$(NPM_BUILD_NUMBER)"
-                test_results_bucket="expensely-test-results-production"
-                test_results_bucket_policy_name="expensely-test-results"
                 db_subnet_group_name="expensely"
                 rds_delete_protection=false
                 rds_database_name="time_api"
@@ -128,6 +128,26 @@ stages:
               steps:
                 - download: none
                 - template: aws/iam/configure.yml@templates
+                - task: DownloadPipelineArtifact@2
+                  displayName: Download Time.ApiTests
+                  inputs:
+                    buildType: current
+                    artifactName: Time.ApiTests
+                    targetPath: $(Build.SourcesDirectory)
+                - task: PowerShell@2
+                  displayName: Upload Time.ApiTests
+                  inputs:
+                    targetType: inline
+                    script: |
+                      aws s3 cp api-tests/collections/time.postman_collection.json s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/api/tests/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
+                      aws s3 cp api-tests/environments/${{ variables.ENVIRONMENT }}.postman_environment.json s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/api/tests/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
+                    errorActionPreference: default
+                    showWarnings: true
+                    pwsh: true
+                    workingDirectory: $(Build.SourcesDirectory)
+
+
+
                 - template: terraform/apply.yml@templates
                   parameters:
                     artifactName: ${{ variables.TF_ARTIFACT_NAME }}
@@ -139,7 +159,7 @@ stages:
                 - template: aws/s3/publish-test-results.yml@templates
                   parameters:
                     sourcePath: time/$(Build.BuildNumber)/api/results/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
-                    testResultsFileName: $(NPM_BUILD_NUMBER).xml
+                    testResultsFileName: results.xml
                     testRunTitle: API
                 - task: PowerShell@2
                   displayName: Download html report

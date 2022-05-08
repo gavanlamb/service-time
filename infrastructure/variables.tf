@@ -38,6 +38,10 @@ variable "codedeploy_role_name" {
   type = string
   default = null
 }
+variable "codedeploy_bucket_policy_name" {
+  type = string
+  default = null
+}
 variable "codedeploy_bucket_name" {
   type = string
   default = null
@@ -75,15 +79,6 @@ variable "api_max_capacity"{
 variable "api_desired_count"{
   type = number
   default = 2
-}
-variable "npm_build_identifier"{
-  type = string
-}
-variable "test_results_bucket"{
-  type = string
-}
-variable "test_results_bucket_policy_name"{
-  type = string
 }
 variable "db_subnet_group_name"{
   type = string
