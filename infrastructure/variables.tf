@@ -118,6 +118,8 @@ locals {
   open_telemetry_name = "open-telemetry-${lower(var.environment)}"
 
   api_url = "${var.subdomain}.${trimsuffix(data.aws_route53_zone.expensely_io.name, ".")}"
+  
+  s3_base_path = "${lower(var.application_name)}/${var.build_identifier}/${lower(var.environment)}"
 
   default_tags = {
     Service = var.application_name

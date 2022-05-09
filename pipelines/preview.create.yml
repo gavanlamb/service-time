@@ -146,12 +146,13 @@ stages:
                     artifactName: Time.ApiTests
                     targetPath: $(Build.SourcesDirectory)/Time.ApiTests
                 - task: PowerShell@2
-                  displayName: Upload Time.ApiTests
+                  displayName: Push Time.ApiTests files
                   inputs:
                     targetType: inline
                     script: |
-                      aws s3 cp collections/time.postman_collection.json s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/api-tests/tests/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/time.postman_collection.json
-                      aws s3 cp environments/${{ variables.ENVIRONMENT }}.postman_environment.json s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/api-tests/tests/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/${{ variables.ENVIRONMENT }}.postman_environment.json
+                      "${lower(var.application_name)}/${var.build_identifier}/${lower(var.environment)}"
+                      aws s3 cp collections/time.postman_collection.json s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/api-tests/tests/time.postman_collection.json
+                      aws s3 cp environments/${{ variables.ENVIRONMENT }}.postman_environment.json s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/api-tests/tests/${{ variables.ENVIRONMENT }}.postman_environment.json
                     errorActionPreference: default
                     showWarnings: true
                     pwsh: true
@@ -163,12 +164,12 @@ stages:
                     artifactName: Time.LoadTests
                     targetPath: $(Build.SourcesDirectory)/Time.LoadTests
                 - task: PowerShell@2
-                  displayName: Upload Time.LoadTests
+                  displayName: Push Time.LoadTests files
                   inputs:
                     targetType: inline
                     script: |
-                      aws s3 cp load.jmx s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/load-tests/tests/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
-                      aws s3 cp users.csv s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/load-tests/tests/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
+                      aws s3 cp load.jmx s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/load-tests/tests/load.jmx
+                      aws s3 cp users.csv s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/load-tests/tests/users.csv
                     errorActionPreference: default
                     showWarnings: true
                     pwsh: true
@@ -182,13 +183,11 @@ stages:
                     version: 1.1.4
                 - template: aws/codedeploy/deploy.yml@templates
                   parameters:
-                    appSpecFileName: $(Build.BuildNumber).yaml
-                    destinationPath: time/$(Build.BuildNumber)/codedeploy/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
-
-
+                    appSpecFileName: deploy.yaml
+                    destinationPath: time/$(Build.BuildNumber)/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/code-deploy
                 - template: aws/s3/publish-test-results.yml@templates
                   parameters:
-                    sourcePath: time/$(Build.BuildNumber)/api/results/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
+                    sourcePath: time/$(Build.BuildNumber)/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/api-tests/results
                     testResultsFileName: results.xml
                     testRunTitle: API
                 - task: PowerShell@2
@@ -196,7 +195,7 @@ stages:
                   condition: succeededOrFailed()
                   inputs:
                     targetType: inline
-                    script: aws s3 sync s3://$(TEST_RESULTS_BUCKET_NAME)/time/$(Build.BuildNumber)/load/report/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/report-genarator-html $(Build.SourcesDirectory)/html-report
+                    script: aws s3 sync s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/load-tests/report $(Build.SourcesDirectory)/html-report
                     errorActionPreference: default
                     showWarnings: true
                     pwsh: true

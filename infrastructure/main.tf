@@ -61,7 +61,7 @@ resource "aws_codedeploy_app" "api" {
 }
 resource "local_file" "api_app_spec" {
   content_base64 = base64encode(data.template_file.api_app_spec.rendered)
-  filename = "${var.build_identifier}.yaml"
+  filename = "deploy.yaml"
 }
 data "template_file" "api_app_spec" {
   template = file("./templates/codedeploy.yml")
@@ -84,7 +84,7 @@ data "template_file" "code_deployment" {
 
   vars = {
     codedeploy_bucket_name = var.codedeploy_bucket_name
-    app_spec_key = "${lower(var.application_name)}/${lower(var.environment)}/${var.build_identifier}.yaml"
+    app_spec_key = "${local.s3_base_path}/code-deploy/deploy.yaml"
     deployment_group_name = aws_codedeploy_deployment_group.api.deployment_group_name
     application_name = aws_codedeploy_app.api.name
   }
@@ -555,7 +555,7 @@ resource "aws_lambda_function" "api_tests" {
   environment {
     variables = {
       S3_BUCKET = var.codedeploy_bucket_name,
-      S3_BUCKET_PATH = "time/${var.build_identifier}/${lower(var.environment)}/api-tests",
+      S3_BUCKET_PATH = "${local.s3_base_path}/api-tests/tests",
       POSTMAN_COLLECTION_FILE = "time.postman_collection.json"
       POSTMAN_ENVIRONMENT_FILE = substr(lower(var.environment), 0, 7) == "preview" ? "preview.postman_environment.json" : "${var.environment}.postman_environment.json"
       POSTMAN_VARIABLE_baseUrl = "https://${local.api_url}:8443"
@@ -620,7 +620,7 @@ resource "aws_lambda_function" "load_tests" {
   environment {
     variables = {
       S3_BUCKET = var.codedeploy_bucket_name,
-      S3_BUCKET_PATH = "time/${var.build_identifier}/${lower(var.environment)}/load-tests",
+      S3_BUCKET_PATH = "${local.s3_base_path}/load-tests/tests",
       UPLOAD_TO_S3 = true
     }
   }
@@ -1911,7 +1911,7 @@ resource "aws_cloudwatch_log_metric_filter" "request_time" {
 
   metric_transformation {
     name = "RequestTime"
-    namespace = "Time/${var.environment}/API"
+    namespace = "${var.application_name}/${var.environment}/API"
     value = "$.Properties.ElapsedMilliseconds"
     unit = "Milliseconds"
     dimensions = {
