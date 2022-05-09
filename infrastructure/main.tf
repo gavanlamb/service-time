@@ -398,6 +398,7 @@ resource "aws_alb_target_group" "api_blue" {
   protocol = "HTTP"
   vpc_id = data.aws_vpc.vpc.id
   target_type = "instance"
+  load_balancing_algorithm_type = "least_outstanding_requests"
 
   health_check {
     enabled = true
@@ -413,7 +414,7 @@ resource "aws_alb_target_group" "api_green" {
   protocol = aws_alb_target_group.api_blue.protocol
   vpc_id = aws_alb_target_group.api_blue.vpc_id
   target_type = aws_alb_target_group.api_blue.target_type
-
+  load_balancing_algorithm_type = aws_alb_target_group.api_blue.load_balancing_algorithm_type
 
   health_check {
     enabled = aws_alb_target_group.api_blue.health_check[0].enabled
