@@ -609,7 +609,7 @@ resource "aws_lambda_function" "load_tests" {
   package_type = "Image"
   publish = true
 
-  image_uri = "${data.aws_ecr_repository.load_tests.repository_url}:1.0.2388-1"
+  image_uri = "${data.aws_ecr_repository.load_tests.repository_url}:1.0.2390-1"
 
   memory_size = 10240
 
@@ -659,7 +659,7 @@ resource "aws_iam_role_policy_attachment" "load_tests_codedeploy" {
   policy_arn = aws_iam_policy.codedeploy.arn
 }
 resource "aws_iam_role_policy_attachment" "load_tests_bucket_upload" {
-  role = aws_iam_role.api_tests.name
+  role = aws_iam_role.load_tests.name
   policy_arn = data.aws_iam_policy.codedeploy_bucket.arn
 }
 
