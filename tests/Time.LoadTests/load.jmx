@@ -19,7 +19,7 @@
           </elementProp>
           <elementProp name="users_file_path" elementType="Argument">
             <stringProp name="Argument.name">users_file_path</stringProp>
-            <stringProp name="Argument.value">/jmeter/users.csv</stringProp>
+            <stringProp name="Argument.value">/tmp/users.csv</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -136,10 +136,10 @@ log.info(&quot;number_of_users&quot; + &quot; : &quot; + numberOfUsers);
       <com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup guiclass="com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroupGui" testclass="com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup" testname="Create &amp; Update" enabled="true">
         <elementProp name="ThreadGroup.main_controller" elementType="com.blazemeter.jmeter.control.VirtualUserController"/>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-        <stringProp name="TargetLevel">10</stringProp>
-        <stringProp name="RampUp">10</stringProp>
-        <stringProp name="Steps">10</stringProp>
-        <stringProp name="Hold">10</stringProp>
+        <stringProp name="TargetLevel">${__groovy(props.get(&quot;number_of_users&quot;))}</stringProp>
+        <stringProp name="RampUp">300</stringProp>
+        <stringProp name="Steps">${__groovy(props.get(&quot;number_of_users&quot;))}</stringProp>
+        <stringProp name="Hold">300</stringProp>
         <stringProp name="LogFilename"></stringProp>
         <stringProp name="Iterations"></stringProp>
         <stringProp name="Unit">S</stringProp>
@@ -253,7 +253,7 @@ log.info(&quot;number_of_users&quot; + &quot; : &quot; + numberOfUsers);
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <intProp name="LoopController.loops">-1</intProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${__P(number_of_users)}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__groovy(props.get(&quot;number_of_users&quot;))}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>

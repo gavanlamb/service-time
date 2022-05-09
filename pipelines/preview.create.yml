@@ -174,9 +174,6 @@ stages:
                     showWarnings: true
                     pwsh: true
                     workingDirectory: $(Build.SourcesDirectory)/Time.LoadTests
-                    
-                    
-                    
                 - template: terraform/apply.yml@templates
                   parameters:
                     artifactName: ${{ variables.TF_ARTIFACT_NAME }}
