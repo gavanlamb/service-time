@@ -544,7 +544,7 @@ resource "aws_lambda_function" "api_tests" {
   package_type = "Image"
   publish = true
 
-  image_uri = "${data.aws_ecr_repository.lambda_postman.repository_url}:1.0.2375-1"
+  image_uri = "${data.aws_ecr_repository.lambda_postman.repository_url}:1.0.2380-1"
 
   memory_size = 10240
 
@@ -555,7 +555,7 @@ resource "aws_lambda_function" "api_tests" {
   environment {
     variables = {
       S3_BUCKET = var.codedeploy_bucket_name,
-      S3_BUCKET_PATH = "${local.s3_base_path}/api-tests/tests",
+      S3_BUCKET_PATH = "${local.s3_base_path}/api-tests",
       POSTMAN_COLLECTION_FILE = "time.postman_collection.json"
       POSTMAN_ENVIRONMENT_FILE = substr(lower(var.environment), 0, 7) == "preview" ? "preview.postman_environment.json" : "${var.environment}.postman_environment.json"
       POSTMAN_VARIABLE_baseUrl = "https://${local.api_url}:8443"
@@ -609,7 +609,7 @@ resource "aws_lambda_function" "load_tests" {
   package_type = "Image"
   publish = true
 
-  image_uri = "${data.aws_ecr_repository.lambda_postman.repository_url}:1.0.2375-1"
+  image_uri = "${data.aws_ecr_repository.lambda_postman.repository_url}:1.0.2381-1"
 
   memory_size = 10240
 
@@ -620,8 +620,9 @@ resource "aws_lambda_function" "load_tests" {
   environment {
     variables = {
       S3_BUCKET = var.codedeploy_bucket_name,
-      S3_BUCKET_PATH = "${local.s3_base_path}/load-tests/tests",
-      UPLOAD_TO_S3 = true
+      S3_BUCKET_PATH = "${local.s3_base_path}/load-tests",
+      JMETER_LOADTEST_FILE = "load.jmx",
+      JMETER_USERS_FILE = "users.csv"
     }
   }
 }
