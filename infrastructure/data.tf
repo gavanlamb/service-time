@@ -3,7 +3,7 @@ data "aws_vpc" "vpc" {
     Name = var.vpc_name
   }
 }
-data "aws_subnet_ids" "private" {
+data "aws_subnets" "private" {
   vpc_id = data.aws_vpc.vpc.id
 
   tags = {

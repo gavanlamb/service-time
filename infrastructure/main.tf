@@ -64,14 +64,14 @@ resource "local_file" "api_app_spec" {
   filename = "deploy.yaml"
 }
 data "template_file" "api_app_spec" {
-  template = isProduction ? file("./templates/codedeploy.production.yml") : file("./templates/codedeploy.yml")
+  template = local.isProduction ? file("./templates/codedeploy.production.yml") : file("./templates/codedeploy.yml")
 
   vars = {
     application_task_definition = aws_ecs_task_definition.api.arn
     application_container_name = local.api_name
     migrator_lambda_arn = aws_lambda_function.migrator.qualified_arn
-    api_tests_lambda_arn = isProduction ? null : aws_lambda_function.api_tests[0].qualified_arn
-    load_tests_lambda_arn = isProduction ? null : aws_lambda_function.load_tests[0].qualified_arn
+    api_tests_lambda_arn = local.isProduction ? null : aws_lambda_function.api_tests[0].qualified_arn
+    load_tests_lambda_arn = local.isProduction ? null : aws_lambda_function.load_tests[0].qualified_arn
   }
 }
 
@@ -112,7 +112,7 @@ resource "aws_lambda_function" "migrator" {
     security_group_ids = [
       aws_security_group.postgres_client.id,
       data.aws_security_group.external.id]
-    subnet_ids = data.aws_subnet_ids.private.ids
+    subnet_ids = data.aws_subnets.private.ids
   }
   
   environment {
