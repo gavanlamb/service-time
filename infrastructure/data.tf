@@ -4,7 +4,10 @@ data "aws_vpc" "vpc" {
   }
 }
 data "aws_subnets" "private" {
-  vpc_id = data.aws_vpc.vpc.id
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.vpc.id]
+  }
 
   tags = {
     Tier = "private"
