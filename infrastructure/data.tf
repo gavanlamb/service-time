@@ -49,9 +49,11 @@ data "aws_ecr_repository" "migrator" {
   name = "${lower(var.application_name)}-migrator"
 }
 data "aws_ecr_repository" "lambda_postman" {
+  count = local.isProduction ? 0 : 1
   name = "lambda-postman"
 }
 data "aws_ecr_repository" "load_tests" {
+  count = local.isProduction ? 0 : 1
   name = "lambda-jmeter"
 }
 

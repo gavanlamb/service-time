@@ -64,14 +64,14 @@ resource "local_file" "api_app_spec" {
   filename = "deploy.yaml"
 }
 data "template_file" "api_app_spec" {
-  template = file("./templates/codedeploy.yml")
+  template = isProduction ? file("./templates/codedeploy.production.yml") : file("./templates/codedeploy.yml")
 
   vars = {
     application_task_definition = aws_ecs_task_definition.api.arn
     application_container_name = local.api_name
     migrator_lambda_arn = aws_lambda_function.migrator.qualified_arn
-    api_tests_lambda_arn = aws_lambda_function.api_tests.qualified_arn
-    load_tests_lambda_arn = aws_lambda_function.load_tests.qualified_arn
+    api_tests_lambda_arn = isProduction ? null : aws_lambda_function.api_tests[0].qualified_arn
+    load_tests_lambda_arn = isProduction ? null : aws_lambda_function.load_tests[0].qualified_arn
   }
 }
 
@@ -538,16 +538,20 @@ resource "aws_iam_role_policy_attachment" "api_execution_parameters" {
 // API tests
 /// lambda
 resource "aws_lambda_function" "api_tests" {
+  count = local.isProduction ? 0 : 1
   function_name = local.api_tests_name
-  role = aws_iam_role.api_tests.arn
+  role = aws_iam_role.api_tests[0].arn
   description = "Time API tests"
 
   package_type = "Image"
   publish = true
 
-  image_uri = "${data.aws_ecr_repository.lambda_postman.repository_url}:1.0.2380-1"
+  image_uri = "${data.aws_ecr_repository.lambda_postman[0].repository_url}:1.0.2380-1"
 
   memory_size = 10240
+  ephemeral_storage {
+    size = 2048
+  }
 
   reserved_concurrent_executions = 1
 
@@ -565,11 +569,13 @@ resource "aws_lambda_function" "api_tests" {
 }
 /// cloudwatch
 resource "aws_cloudwatch_log_group" "api_tests" {
-  name = "/aws/lambda/${aws_lambda_function.api_tests.function_name}"
+  count = local.isProduction ? 0 : 1
+  name = "/aws/lambda/${aws_lambda_function.api_tests[0].function_name}"
   retention_in_days = 14
 }
 /// IAM
 resource "aws_iam_role" "api_tests" {
+  count = local.isProduction ? 0 : 1
   name = local.api_tests_name
 
   assume_role_policy = <<EOF
@@ -588,29 +594,33 @@ resource "aws_iam_role" "api_tests" {
 EOF
 }
 resource "aws_iam_role_policy_attachment" "api_tests_vpc" {
-  role = aws_iam_role.api_tests.name
+  count = local.isProduction ? 0 : 1
+  role = aws_iam_role.api_tests[0].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 resource "aws_iam_role_policy_attachment" "api_tests_codedeploy" {
-  role = aws_iam_role.api_tests.name
+  count = local.isProduction ? 0 : 1
+  role = aws_iam_role.api_tests[0].name
   policy_arn = aws_iam_policy.codedeploy.arn
 }
 resource "aws_iam_role_policy_attachment" "api_tests_bucket_upload" {
-  role = aws_iam_role.api_tests.name
+  count = local.isProduction ? 0 : 1
+  role = aws_iam_role.api_tests[0].name
   policy_arn = data.aws_iam_policy.codedeploy_bucket.arn
 }
 
 // API tests
 /// lambda
 resource "aws_lambda_function" "load_tests" {
+  count = local.isProduction ? 0 : 1
   function_name = local.load_tests_name
-  role = aws_iam_role.load_tests.arn
+  role = aws_iam_role.load_tests[0].arn
   description = "Time Load tests"
 
   package_type = "Image"
   publish = true
 
-  image_uri = "${data.aws_ecr_repository.load_tests.repository_url}:1.0.2403-1"
+  image_uri = "${data.aws_ecr_repository.load_tests[0].repository_url}:1.0.2403-1"
 
   memory_size = 10240
 
@@ -629,11 +639,13 @@ resource "aws_lambda_function" "load_tests" {
 }
 /// cloudwatch
 resource "aws_cloudwatch_log_group" "load_tests" {
-  name = "/aws/lambda/${aws_lambda_function.load_tests.function_name}"
+  count = local.isProduction ? 0 : 1
+  name = "/aws/lambda/${aws_lambda_function.load_tests[0].function_name}"
   retention_in_days = 14
 }
 /// IAM
 resource "aws_iam_role" "load_tests" {
+  count = local.isProduction ? 0 : 1
   name = local.load_tests_name
 
   assume_role_policy = <<EOF
@@ -652,15 +664,18 @@ resource "aws_iam_role" "load_tests" {
 EOF
 }
 resource "aws_iam_role_policy_attachment" "load_tests_vpc" {
-  role = aws_iam_role.load_tests.name
+  count = local.isProduction ? 0 : 1
+  role = aws_iam_role.load_tests[0].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 resource "aws_iam_role_policy_attachment" "load_tests_codedeploy" {
-  role = aws_iam_role.load_tests.name
+  count = local.isProduction ? 0 : 1
+  role = aws_iam_role.load_tests[0].name
   policy_arn = aws_iam_policy.codedeploy.arn
 }
 resource "aws_iam_role_policy_attachment" "load_tests_bucket_upload" {
-  role = aws_iam_role.load_tests.name
+  count = local.isProduction ? 0 : 1
+  role = aws_iam_role.load_tests[0].name
   policy_arn = data.aws_iam_policy.codedeploy_bucket.arn
 }
 
@@ -1679,7 +1694,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${aws_cloudwatch_log_group.api_tests.name}' | fields @message\n| sort @timestamp desc",
+                "query": "SOURCE '${aws_cloudwatch_log_group.api_tests[0].name}' | fields @message\n| sort @timestamp desc",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Top log templates",
@@ -1694,7 +1709,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.api_tests.function_name}" ]
+                    [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.api_tests[0].function_name}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1725,7 +1740,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Errors", "FunctionName", "${aws_lambda_function.api_tests.function_name}" ]
+                    [ "AWS/Lambda", "Errors", "FunctionName", "${aws_lambda_function.api_tests[0].function_name}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1756,7 +1771,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.api_tests.function_name}" ]
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.api_tests[0].function_name}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,

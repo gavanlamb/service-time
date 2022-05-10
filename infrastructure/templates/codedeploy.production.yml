@@ -1,0 +1,11 @@
+version: 0.0
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: "${application_task_definition}"
+        LoadBalancerInfo:
+          ContainerName: "${application_container_name}"
+          ContainerPort: 80
+Hooks:
+  - AfterInstall : "${migrator_lambda_arn}"

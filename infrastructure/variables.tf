@@ -121,6 +121,8 @@ locals {
   
   s3_base_path = "${lower(var.application_name)}/${var.build_identifier}/${lower(var.environment)}"
 
+  isProduction = var.environment == "Production"
+  
   default_tags = {
     Service = var.application_name
     Application = "Tracker"
