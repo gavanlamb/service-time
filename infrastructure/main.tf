@@ -550,7 +550,7 @@ resource "aws_lambda_function" "api_tests" {
 
   memory_size = 10240
   ephemeral_storage {
-    size = 2048
+    size = 4096
   }
 
   reserved_concurrent_executions = 1
@@ -624,6 +624,10 @@ resource "aws_lambda_function" "load_tests" {
 
   memory_size = 10240
 
+  ephemeral_storage {
+    size = 4096
+  }
+  
   reserved_concurrent_executions = 1
 
   timeout = 900
