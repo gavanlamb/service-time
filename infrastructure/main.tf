@@ -4,12 +4,6 @@ resource "aws_codedeploy_deployment_group" "api" {
   deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
   service_role_arn = data.aws_iam_role.codedeploy.arn
 
-  auto_rollback_configuration {
-    enabled = true
-    events = [
-      "DEPLOYMENT_FAILURE"]
-  }
-
   blue_green_deployment_config {
     deployment_ready_option {
       action_on_timeout = "CONTINUE_DEPLOYMENT"
