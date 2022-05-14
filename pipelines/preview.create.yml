@@ -189,7 +189,7 @@ stages:
                     testRunTitle: API
                 - task: PowerShell@2
                   displayName: Download html report
-                  condition: succeededOrFailed()
+                  condition: or(and(always(), eq(variables['deploy.DEPLOYMENT_STATUS'], 'STARTED')), and(always(), eq(variables['deploy.DEPLOYMENT_STATUS'], 'COMPLETED')))
                   inputs:
                     targetType: inline
                     script: aws s3 sync s3://$(CODEDEPLOY_BUCKET_NAME)/time/$(Build.BuildNumber)/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/load-tests/report $(Build.SourcesDirectory)/html-report
@@ -198,7 +198,7 @@ stages:
                     pwsh: true
                 - task: publishhtmlreport@1
                   displayName: Publish HTMl report
-                  condition: succeededOrFailed()
+                  condition: or(and(always(), eq(variables['deploy.DEPLOYMENT_STATUS'], 'STARTED')), and(always(), eq(variables['deploy.DEPLOYMENT_STATUS'], 'COMPLETED')))
                   inputs:
                     htmlType: Jmeter
                     JmeterReportsPath: $(Build.SourcesDirectory)/html-report/
