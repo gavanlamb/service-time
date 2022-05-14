@@ -183,7 +183,7 @@ stages:
         displayName: Publish API Tests Results
         variables:
           DEPLOYMENT_STATUS: $[ dependencies.deploy.outputs['deploy.DEPLOYMENT_STATUS'] ]
-        condition: or(and(always(), eq(variables.DEPLOYMENT_STATUS, 'STARTED')), and(always(), eq(variables.DEPLOYMENT_STATUS, 'COMPLETED')))
+        condition: or(and(always(), eq($[variables.DEPLOYMENT_STATUS], 'STARTED')), and(always(), eq($[variables.DEPLOYMENT_STATUS], 'COMPLETED')))
         dependsOn:
           - deploy
         steps:
@@ -197,7 +197,7 @@ stages:
         displayName: Publish Load Tests Results
         variables:
           DEPLOYMENT_STATUS: $[ dependencies.deploy.outputs['deploy.DEPLOYMENT_STATUS'] ]
-        condition: or(and(always(), eq(variables.DEPLOYMENT_STATUS, 'STARTED')), and(always(), eq(variables.DEPLOYMENT_STATUS, 'COMPLETED')))
+        condition: or(and(always(), eq($[variables.DEPLOYMENT_STATUS], 'STARTED')), and(always(), eq($[variables.DEPLOYMENT_STATUS], 'COMPLETED')))
         dependsOn:
           - deploy
         steps:
