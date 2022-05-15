@@ -540,7 +540,7 @@ resource "aws_lambda_function" "api_tests" {
   package_type = "Image"
   publish = true
 
-  image_uri = "${data.aws_ecr_repository.lambda_postman[0].repository_url}:1.0.2380-1"
+  image_uri = "${data.aws_ecr_repository.lambda_postman[0].repository_url}:1.0.2432-1"
 
   memory_size = 10240
   ephemeral_storage {
