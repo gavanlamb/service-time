@@ -26,7 +26,14 @@ stages:
         displayName: Setup
         steps:
           - checkout: none
-          - template: templates/build.numbers.yml
+          - task: PowerShell@2
+            displayName: Set build identifier
+            inputs:
+              targetType: inline
+              script: Write-Host "##vso[build.updatebuildnumber]1.0.$(build.buildid).$(System.StageAttempt)"
+              errorActionPreference: default
+              showWarnings: true
+              pwsh: true
       - job: api
         displayName: API
         dependsOn:
@@ -35,27 +42,11 @@ stages:
           - template: templates/build.api.yml
           - template: aws/iam/configure.yml@templates
           - template: templates/push.api.yml
-      - job: api_tests
-        displayName: API tests
-        dependsOn:
-          - setup
-        variables:
-          NPM_BUILD_NUMBER: $[ dependencies.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
-        steps:
-          - template: templates/build.api-tests.yml
-            parameters:
-              buildNumber: $(NPM_BUILD_NUMBER)
-          - template: aws/iam/configure.yml@templates
-          - template: templates/push.api-tests.yml
-            parameters:
-              buildNumber: $(NPM_BUILD_NUMBER)
 
   - stage: production
     displayName: Production
     variables:
       - template: variables/production.ap-southeast-2.yml@templates
-      - name: NPM_BUILD_NUMBER
-        value: $[ stageDependencies.build.setup.outputs['setNPMBuildIdentifier.NPMBuildNumber'] ]
     jobs:
       - job: plan
         displayName: Plan
@@ -66,7 +57,7 @@ stages:
               artifactName: ${{ variables.TF_ARTIFACT_NAME }}
               workspaceName: service-time-${{ variables.ENVIRONMENT }}
               version: 1.1.4
-              planAdditionalCommandOptions: '-var-file="variables/${{ variables.ENVIRONMENT }}.${{ variables.REGION }}.tfvars" -var="build_identifier=$(Build.BuildNumber)" -var="npm_build_identifier=$(NPM_BUILD_NUMBER)"'
+              planAdditionalCommandOptions: '-var-file="variables/${{ variables.ENVIRONMENT }}.${{ variables.REGION }}.tfvars" -var="build_identifier=$(Build.BuildNumber)"'
 
       - template: azure-devops/approve.yml@templates
         parameters:
@@ -92,8 +83,3 @@ stages:
                   parameters:
                     appSpecFileName: $(Build.BuildNumber).yaml
                     destinationPath: time/${{ variables.ENVIRONMENT }}
-                - template: aws/s3/publish-test-results.yml@templates
-                  parameters:
-                    sourcePath: time/${{ variables.ENVIRONMENT }}
-                    testResultsFileName: $(NPM_BUILD_NUMBER).xml
-                    testRunTitle: API
