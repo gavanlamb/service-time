@@ -858,7 +858,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 1,
             "width": 24,
-            "y": 96,
+            "y": 127,
             "x": 0,
             "type": "text",
             "properties": {
@@ -882,7 +882,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 128,
+            "y": 90,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -912,7 +912,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 1,
             "width": 24,
-            "y": 115,
+            "y": 77,
             "x": 0,
             "type": "text",
             "properties": {
@@ -1007,7 +1007,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 134,
+            "y": 96,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -1039,7 +1039,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 128,
+            "y": 90,
             "x": 12,
             "type": "metric",
             "properties": {
@@ -1069,7 +1069,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 134,
+            "y": 96,
             "x": 12,
             "type": "metric",
             "properties": {
@@ -1099,7 +1099,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 140,
+            "y": 102,
             "x": 12,
             "type": "metric",
             "properties": {
@@ -1405,7 +1405,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 122,
+            "y": 84,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -1432,7 +1432,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 122,
+            "y": 84,
             "x": 12,
             "type": "metric",
             "properties": {
@@ -1458,7 +1458,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 140,
+            "y": 102,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -1678,7 +1678,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 1,
             "width": 24,
-            "y": 77,
+            "y": 108,
             "x": 0,
             "type": "text",
             "properties": {
@@ -1688,7 +1688,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 24,
-            "y": 97,
+            "y": 128,
             "x": 0,
             "type": "log",
             "properties": {
@@ -1702,7 +1702,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 24,
-            "y": 109,
+            "y": 140,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -1733,7 +1733,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 103,
+            "y": 134,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -1764,7 +1764,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 103,
+            "y": 134,
             "x": 12,
             "type": "metric",
             "properties": {
@@ -1795,7 +1795,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 24,
-            "y": 78,
+            "y": 109,
             "x": 0,
             "type": "log",
             "properties": {
@@ -1809,7 +1809,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 84,
+            "y": 115,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -1840,7 +1840,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 84,
+            "y": 115,
             "x": 12,
             "type": "metric",
             "properties": {
@@ -1871,7 +1871,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 24,
-            "y": 90,
+            "y": 121,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -1902,7 +1902,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 24,
-            "y": 116,
+            "y": 78,
             "x": 0,
             "type": "log",
             "properties": {
@@ -1911,6 +1911,123 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "stacked": false,
                 "title": "Logs",
                 "view": "table"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 146,
+            "width": 24,
+            "height": 1,
+            "properties": {
+                "markdown": "# Load Tests"
+            }
+        },
+        {
+            "height": 6,
+            "width": 24,
+            "y": 147,
+            "x": 0,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '/aws/lambda/${aws_lambda_function.load_tests.function_name}' | fields @message\n| sort @timestamp desc",
+                "region": "${var.region}",
+                "stacked": false,
+                "title": "Top log templates",
+                "view": "table"
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 153,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Errors", "FunctionName", "${aws_lambda_function.load_tests.function_name}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${var.region}",
+                "title": "Errors",
+                "stat": "Sum",
+                "period": 60,
+                "yAxis": {
+                    "left": {
+                        "showUnits": false,
+                        "min": 0
+                    },
+                    "right": {
+                        "showUnits": false,
+                        "min": 0
+                    }
+                },
+                "legend": {
+                    "position": "hidden"
+                }
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 153,
+            "x": 12,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.load_tests.function_name}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${var.region}",
+                "title": "Invocations",
+                "stat": "Sum",
+                "period": 60,
+                "yAxis": {
+                    "left": {
+                        "showUnits": false,
+                        "min": 0
+                    },
+                    "right": {
+                        "showUnits": false,
+                        "min": 0
+                    }
+                },
+                "legend": {
+                    "position": "hidden"
+                }
+            }
+        },
+        {
+            "height": 6,
+            "width": 24,
+            "y": 159,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.load_tests.function_name}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${var.region}",
+                "title": "Duration",
+                "stat": "Sum",
+                "period": 60,
+                "yAxis": {
+                    "left": {
+                        "showUnits": false,
+                        "min": 0
+                    },
+                    "right": {
+                        "showUnits": false,
+                        "min": 0
+                    }
+                },
+                "legend": {
+                    "position": "hidden"
+                }
             }
         }
     ]
