@@ -33,8 +33,8 @@ public class UpdateRecordHandler : ICommandHandler<UpdateRecordCommand, Record>
             .FirstAsync(cancellationToken);
             
         record.Name = request.Name;
-        record.Start = request.Start;
-        record.End = request.End;
+        record.Start = request.Start.ToUniversalTime();
+        record.End = request.End?.ToUniversalTime();
         record.Modified = DateTimeOffset.UtcNow;
             
         if (record.End != null)

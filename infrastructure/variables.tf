@@ -38,6 +38,10 @@ variable "codedeploy_role_name" {
   type = string
   default = null
 }
+variable "codedeploy_bucket_policy_name" {
+  type = string
+  default = null
+}
 variable "codedeploy_bucket_name" {
   type = string
   default = null
@@ -76,15 +80,6 @@ variable "api_desired_count"{
   type = number
   default = 2
 }
-variable "npm_build_identifier"{
-  type = string
-}
-variable "test_results_bucket"{
-  type = string
-}
-variable "test_results_bucket_policy_name"{
-  type = string
-}
 variable "db_subnet_group_name"{
   type = string
 }
@@ -119,10 +114,17 @@ locals {
   api_name = "${lower(var.application_name)}-${lower(var.environment)}"
   migrator_name = "${lower(var.application_name)}-migrator-${lower(var.environment)}"
   api_tests_name = "${lower(var.application_name)}-api-tests-${lower(var.environment)}"
+  load_tests_name = "${lower(var.application_name)}-load-tests-${lower(var.environment)}"
   open_telemetry_name = "open-telemetry-${lower(var.environment)}"
 
   api_url = "${var.subdomain}.${trimsuffix(data.aws_route53_zone.expensely_io.name, ".")}"
+  
+  s3_base_path = "${lower(var.application_name)}/${var.build_identifier}/${lower(var.environment)}"
 
+  isProduction = var.environment == "Production"
+  
+  defaultDashboard = ""
+  
   default_tags = {
     Service = var.application_name
     Application = "Tracker"

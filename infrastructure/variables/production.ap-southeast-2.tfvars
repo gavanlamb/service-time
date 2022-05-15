@@ -12,6 +12,7 @@ capacity_provider_name="linux"
 
 codedeploy_role_name="expensely-code-deploy"
 codedeploy_bucket_name="expensely-code-deploy-production"
+codedeploy_bucket_policy_name="expensely-code-deploy"
 
 zone_name="expensely.io"
 subdomain="time"
@@ -24,9 +25,6 @@ api_max_capacity=10
 api_desired_count=2
 
 cognito_name="expensely"
-
-test_results_bucket="expensely-test-results-production"
-test_results_bucket_policy_name="expensely-test-results"
 
 rds_delete_protection=true
 rds_database_name="time_api"

@@ -3,8 +3,11 @@ data "aws_vpc" "vpc" {
     Name = var.vpc_name
   }
 }
-data "aws_subnet_ids" "private" {
-  vpc_id = data.aws_vpc.vpc.id
+data "aws_subnets" "private" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.vpc.id]
+  }
 
   tags = {
     Tier = "private"
@@ -48,12 +51,17 @@ data "aws_ecr_repository" "api" {
 data "aws_ecr_repository" "migrator" {
   name = "${lower(var.application_name)}-migrator"
 }
-data "aws_ecr_repository" "api_tests" {
-  name = "${lower(var.application_name)}-api-tests"
+data "aws_ecr_repository" "lambda_postman" {
+  count = local.isProduction ? 0 : 1
+  name = "lambda-postman"
+}
+data "aws_ecr_repository" "load_tests" {
+  count = local.isProduction ? 0 : 1
+  name = "lambda-jmeter"
 }
 
-data "aws_iam_policy" "test_results_bucket"{
-  name = var.test_results_bucket_policy_name
+data "aws_iam_policy" "codedeploy_bucket"{
+  name = var.codedeploy_bucket_policy_name
 }
 
 data "aws_caller_identity" "current" {}

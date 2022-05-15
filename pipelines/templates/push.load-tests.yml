@@ -1,0 +1,11 @@
+parameters:
+ - name: buildNumber
+   displayName: Build number
+   type: string
+
+steps:
+ - template: ./aws/ecr/push.yml@templates
+   parameters:
+    imageName: load-tests
+    repositoryName: time-load-tests
+    tag: ${{ parameters.buildNumber }}

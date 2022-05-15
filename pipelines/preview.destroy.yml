@@ -89,7 +89,7 @@ stages:
                     script: |
                       $formatText = @'
                       environment="Preview$(PULL_REQUEST_ID)"
-                      region="${{ variables.REGION }}"
+                      region="${{ variables.AWS_DEFAULT_REGION }}"
                       application_name="Time"
                       build_identifier="$(Build.BuildNumber)"
                       vpc_name="expensely"
@@ -97,7 +97,8 @@ stages:
                       capacity_provider_name="linux"
                       cognito_name="expensely-preview"
                       codedeploy_role_name="expensely-code-deploy"
-                      codedeploy_bucket_name="expensely-code-deploy-production"
+                      codedeploy_bucket_name="$(CODEDEPLOY_BUCKET_NAME)"
+                      codedeploy_bucket_policy_name="expensely-code-deploy"
                       zone_name="preview.expensely.io"
                       subdomain="time$(PULL_REQUEST_ID)"
                       alb_name="expensely"
@@ -106,19 +107,16 @@ stages:
                       api_min_capacity=2
                       api_max_capacity=10
                       api_desired_count=2
-                      npm_build_identifier="$(NPM_BUILD_NUMBER)"
-                      test_results_bucket="expensely-test-results-production"
-                      test_results_bucket_policy_name="expensely-test-results"
                       db_subnet_group_name="expensely"
                       rds_delete_protection=false
                       rds_database_name="time_api"
-                      '@ | Out-File -FilePath ${{ variables.ENVIRONMENT }}$(PULL_REQUEST_ID).${{ variables.REGION }}.tfvars
+                      '@ | Out-File -FilePath ${{ variables.ENVIRONMENT }}$(PULL_REQUEST_ID).${{ variables.AWS_DEFAULT_REGION }}.tfvars
                     errorActionPreference: default
                     showWarnings: true
                     pwsh: true
                     workingDirectory: $(Build.SourcesDirectory)/infrastructure/variables
                 - template: terraform/destroy.yml@templates 
                   parameters:
-                    destroyAdditionalArguments: -var-file="variables/${{ variables.ENVIRONMENT }}$(PULL_REQUEST_ID).${{ variables.REGION }}.tfvars"
+                    destroyAdditionalArguments: -var-file="variables/${{ variables.ENVIRONMENT }}$(PULL_REQUEST_ID).${{ variables.AWS_DEFAULT_REGION }}.tfvars"
                     workspaceName: service-time-${{ variables.ENVIRONMENT }}$(PULL_REQUEST_ID)
                     version: 1.1.4

@@ -28,7 +28,7 @@ public class GetRecordsHandler: IQueryHandler<GetRecordsQuery, Paged<Record>>
         GetRecordsQuery request,
         CancellationToken cancellationToken)
     {
-        var skip = (request.PageNumber - 1) * request.PageSize;
+        var skip = request.PageNumber > 0 ? (request.PageNumber - 1) * request.PageSize : 0; 
         var take = request.PageSize;
         var count = _context.Records.Count(r => r.UserId == request.UserId);
             

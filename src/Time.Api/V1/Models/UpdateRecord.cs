@@ -16,10 +16,12 @@ public class UpdateRecord
     /// <summary>
     /// Time the record started
     /// </summary>
+    /// <example>2021-03-27T01:37:40.123+11:00</example>
     public DateTimeOffset Start { get; init; }
         
     /// <summary>
     /// Time the record started
     /// </summary>
+    /// <example>2021-03-27T02:37:40.123+11:00</example>
     public DateTimeOffset? End { get; set; }
 }
