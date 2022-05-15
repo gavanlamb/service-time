@@ -2098,7 +2098,7 @@ EOF
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '/aws/lambda/${aws_lambda_function.load_tests.function_name}' | fields @message\n| sort @timestamp desc",
+                "query": "SOURCE '/aws/lambda/${aws_lambda_function.load_tests[0].function_name}' | fields @message\n| sort @timestamp desc",
                 "region": "${var.region}",
                 "stacked": false,
                 "title": "Top log templates",
@@ -2113,7 +2113,7 @@ EOF
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Errors", "FunctionName", "${aws_lambda_function.load_tests.function_name}" ]
+                    [ "AWS/Lambda", "Errors", "FunctionName", "${aws_lambda_function.load_tests[0].function_name}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -2144,7 +2144,7 @@ EOF
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.load_tests.function_name}" ]
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.load_tests[0].function_name}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -2175,7 +2175,7 @@ EOF
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.load_tests.function_name}" ]
+                    [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.load_tests[0].function_name}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
