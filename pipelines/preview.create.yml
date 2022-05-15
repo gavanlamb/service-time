@@ -70,8 +70,8 @@ stages:
     dependsOn:
       - build
     jobs:
-      - job: push_api_tests_files_to_s3
-        displayName: Push API Tests Files To S3
+      - job: push_tests_files_to_s3
+        displayName: Push Tests Files To S3
         steps:
           - template: aws/iam/configure.yml@templates
           - task: DownloadPipelineArtifact@2
@@ -92,12 +92,6 @@ stages:
               showWarnings: true
               pwsh: true
               workingDirectory: $(Build.SourcesDirectory)/Time.ApiTests
-      - job: push_load_tests_files_to_s3
-        displayName: Push Load Tests Files To S3
-        dependsOn:
-          - push_api_tests_files_to_s3
-        steps:
-          - template: aws/iam/configure.yml@templates
           - task: DownloadPipelineArtifact@2
             displayName: Download Time.LoadTests
             inputs:
@@ -118,7 +112,7 @@ stages:
       - job: plan
         displayName: Plan
         dependsOn:
-          - push_load_tests_files_to_s3
+          - push_tests_files_to_s3
         steps:
           - template: aws/iam/configure.yml@templates
           - task: PowerShell@2
@@ -179,8 +173,8 @@ stages:
                   parameters:
                     appSpecFileName: deploy.yaml
                     destinationPath: time/$(Build.BuildNumber)/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/code-deploy
-      - job: publish_api_tests_results
-        displayName: Publish API Tests Results
+      - job: publish_tests_results
+        displayName: Publish Tests Results
         condition: or(and(always(), eq(dependencies.deploy.outputs['deploy.deploy.DEPLOYMENT_STATUS'], 'STARTED')), and(always(), eq(dependencies.deploy.outputs['deploy.deploy.DEPLOYMENT_STATUS'], 'COMPLETED')))
         dependsOn:
           - deploy
@@ -191,13 +185,6 @@ stages:
               sourcePath: time/$(Build.BuildNumber)/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/api-tests/results
               testResultsFileName: results.xml
               testRunTitle: API
-      - job: publish_load_tests_results
-        displayName: Publish Load Tests Results
-        condition: or(and(always(), eq(dependencies.deploy.outputs['deploy.deploy.DEPLOYMENT_STATUS'], 'STARTED')), and(always(), eq(dependencies.deploy.outputs['deploy.deploy.DEPLOYMENT_STATUS'], 'COMPLETED')))
-        dependsOn:
-          - deploy
-        steps:
-          - template: aws/iam/configure.yml@templates
           - task: PowerShell@2
             displayName: Download html report
             inputs:
