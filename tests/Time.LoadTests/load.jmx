@@ -137,9 +137,9 @@ log.info(&quot;number_of_users&quot; + &quot; : &quot; + numberOfUsers);
         <elementProp name="ThreadGroup.main_controller" elementType="com.blazemeter.jmeter.control.VirtualUserController"/>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <stringProp name="TargetLevel">${__groovy(props.get(&quot;number_of_users&quot;))}</stringProp>
-        <stringProp name="RampUp">30</stringProp>
+        <stringProp name="RampUp">210</stringProp>
         <stringProp name="Steps">${__groovy(props.get(&quot;number_of_users&quot;))}</stringProp>
-        <stringProp name="Hold">30</stringProp>
+        <stringProp name="Hold">210</stringProp>
         <stringProp name="LogFilename"></stringProp>
         <stringProp name="Iterations"></stringProp>
         <stringProp name="Unit">S</stringProp>
