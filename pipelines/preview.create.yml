@@ -181,7 +181,7 @@ stages:
                     destinationPath: time/$(Build.BuildNumber)/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/code-deploy
       - job: publish_api_tests_results
         displayName: Publish API Tests Results
-        condition: $[or(and(always(), eq(dependencies.deploy.outputs['deploy.DEPLOYMENT_STATUS'], 'STARTED')), and(always(), eq(dependencies.deploy.outputs['deploy.DEPLOYMENT_STATUS'], 'COMPLETED')))]
+        condition: or(and(always(), eq(dependencies.deploy.outputs['deploy.deploy.DEPLOYMENT_STATUS'], 'STARTED')), and(always(), eq(dependencies.deploy.outputs['deploy.deploy.DEPLOYMENT_STATUS'], 'COMPLETED')))
         dependsOn:
           - deploy
         steps:
@@ -193,7 +193,7 @@ stages:
               testRunTitle: API
       - job: publish_load_tests_results
         displayName: Publish Load Tests Results
-        condition: $[or(and(always(), eq(dependencies.deploy.outputs['deploy.DEPLOYMENT_STATUS'], 'STARTED')), and(always(), eq(dependencies.deploy.outputs['deploy.DEPLOYMENT_STATUS'], 'COMPLETED')))]
+        condition: or(and(always(), eq(dependencies.deploy.outputs['deploy.deploy.DEPLOYMENT_STATUS'], 'STARTED')), and(always(), eq(dependencies.deploy.outputs['deploy.deploy.DEPLOYMENT_STATUS'], 'COMPLETED')))
         dependsOn:
           - deploy
         steps:
