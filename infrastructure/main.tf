@@ -824,8 +824,7 @@ resource "aws_cloudwatch_log_group" "rds" {
 /// Dashboard
 resource "aws_cloudwatch_dashboard" "main" {
   dashboard_name = local.api_name
-  dashboard_body = local.isProduction ?
-<<EOF
+  dashboard_body = local.isProduction ? <<EOF
 {
     "widgets": [
         {
