@@ -42,8 +42,8 @@ stages:
           - template: templates/build.api.yml
           - template: aws/iam/configure.yml@templates
           - template: templates/push.api.yml
-      - job: api_tests
-        displayName: Publish API Tests
+      - job: publish_tests
+        displayName: Publish Tests
         dependsOn:
           - api
         steps:
@@ -53,11 +53,6 @@ stages:
               PathtoPublish: $(Build.SourcesDirectory)/tests/Time.ApiTests/
               ArtifactName: Time.ApiTests
               publishLocation: Container
-      - job: load_tests
-        displayName: Publish Load Tests
-        dependsOn:
-          - api_tests
-        steps:
           - task: PublishBuildArtifacts@1
             displayName: Publish Time.LoadTests
             inputs:
