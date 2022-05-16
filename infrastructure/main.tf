@@ -704,7 +704,7 @@ data "aws_iam_policy_document" "codedeploy" {
 // RDS
 module "postgres" {
   source = "terraform-aws-modules/rds-aurora/aws"
-  version = "5.2.0"
+  version = "7.1.0"
 
   name = local.rds_name
   engine = "aurora-postgresql"
