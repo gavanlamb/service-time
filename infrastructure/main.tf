@@ -637,7 +637,8 @@ resource "aws_lambda_function" "load_tests" {
       S3_BUCKET = var.codedeploy_bucket_name,
       S3_BUCKET_PATH = "${local.s3_base_path}/load-tests",
       JMETER_LOADTEST_FILE = "load.jmx",
-      JMETER_USERS_FILE = "users.csv"
+      JMETER_USERS_FILE = "users.csv",
+      JMETER_VARIABLE_time_api_url = local.api_url
     }
   }
 }
