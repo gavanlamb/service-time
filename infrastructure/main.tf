@@ -707,7 +707,8 @@ module "postgres" {
 
   name = local.rds_name
   engine = "aurora-postgresql"
-  engine_mode = "serverless"
+  engine_mode = "provisioned"
+  engine_version = "13.6"
   storage_encrypted = true
 
   vpc_id = data.aws_vpc.vpc.id
@@ -715,10 +716,7 @@ module "postgres" {
   db_subnet_group_name = data.aws_db_subnet_group.database.name
   create_security_group = false
   vpc_security_group_ids = [aws_security_group.postgres_server.id]
-
-  replica_scale_enabled = false
-  replica_count = 0
-
+  
   monitoring_interval = 60
 
   apply_immediately = true
@@ -727,17 +725,21 @@ module "postgres" {
   db_parameter_group_name = aws_db_parameter_group.postgresql.id
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.postgresql.id
 
+  serverlessv2_scaling_configuration = {
+    min_capacity = 1
+    max_capacity = 10
+  }
+
+  instance_class = "db.serverless"
+  instances = {
+    one = {}
+    two = {}
+  }
+  
   deletion_protection = var.rds_delete_protection
   
   database_name = var.rds_database_name
 
-  scaling_configuration = {
-    auto_pause = true
-    min_capacity = 2
-    max_capacity = 4
-    seconds_until_auto_pause = 300
-    timeout_action = "ForceApplyCapacityChange"
-  }
   depends_on = [aws_cloudwatch_log_group.rds]
 }
 resource "aws_db_parameter_group" "postgresql" {
