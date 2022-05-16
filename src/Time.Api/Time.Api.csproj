@@ -17,7 +17,7 @@
         <PackageReference Include="Expensely.Authentication.Cognito.Jwt" Version="1.0.1354.1" />
         <PackageReference Include="Expensely.Swagger" Version="1.0.2166.1" />
         <PackageReference Include="Expensely.Tracing.OpenTelemetry" Version="1.0.2160.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.4" />
         <PackageReference Include="Amazon.Extensions.Configuration.SystemsManager" Version="3.0.0" />
     </ItemGroup>
 
