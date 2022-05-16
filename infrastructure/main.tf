@@ -625,7 +625,7 @@ resource "aws_lambda_function" "load_tests" {
   memory_size = 10240
 
   ephemeral_storage {
-    size = 4096
+    size = 10240
   }
   
   reserved_concurrent_executions = 1
