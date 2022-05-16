@@ -3,7 +3,7 @@ services:
   db:
     container_name: db
     restart: unless-stopped
-    image: postgis/postgis:10-3.0-alpine
+    image: postgres:13.6-alpine
     environment:
       POSTGRES_DB: time
       POSTGRES_USER: admin
@@ -33,59 +33,10 @@ services:
   open-telemetry-collector:
     image: public.ecr.aws/aws-observability/aws-otel-collector:latest
     environment:
-      - AWS_ACCESS_KEY_ID=AKIAVYHFAOJHDKWPXMNB
-      - AWS_SECRET_ACCESS_KEY=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
+      - AWS_ACCESS_KEY_ID=AKIAEXAMPLE123
+      - AWS_SECRET_ACCESS_KEY=AWSSECRETACCESSEY123
       - AWS_REGION=ap-southeast-2
     volumes:
       - ~/.aws:/root/.aws
     ports:
       - 7012:4317
-
-  localstack:
-    container_name: localstack
-    restart: unless-stopped
-    image: localstack/localstack
-    ports:
-      - 8020:8020
-    environment:
-      - DEFAULT_REGION=ap-southeast-2
-      - SERVICES=sns,sqs,iam,cloudformation,s3,dynamodb
-      - HOST_TMP_FOLDER="/tmp/localstack"
-      - EDGE_PORT=8020
-      - HOSTNAME_EXTERNAL=localstack
-      - DATA_DIR=/tmp/localstack/data
-    volumes:
-      - ../local/localstack:/tmp/localstack
-
-  localstack-setup:
-    container_name: localstack-setup
-    image: mesosphere/aws-cli
-    volumes:
-      - ../local/localstack-setup:/project/dev_env
-    environment:
-      - AWS_ACCESS_KEY_ID=AKIAEXAMPLE123
-      - AWS_SECRET_ACCESS_KEY=AWSSECRETACCESSEY123
-      - AWS_DEFAULT_REGION=ap-southeast-2
-    entrypoint: /bin/sh -c
-    command: >
-      "
-        sleep 20
-        aws --endpoint-url=http://localstack:8020 s3api create-bucket --bucket repair-documents-local
-      "
-    depends_on:
-      - localstack
-  
-  s3-client:
-    container_name: s3-client
-    image: mastertinner/s3manager
-    ports:
-      - 8042:8042
-    environment:
-      PORT: 8042
-      ACCESS_KEY_ID: AWS_ACCESS_KEY_ID
-      SECRET_ACCESS_KEY: AWS_SECRET_KEY_ID
-      ENDPOINT: localstack:8020
-      USE_SSL: 0
-  
-# Load tests
-# API tests
