@@ -756,7 +756,7 @@ resource "aws_rds_cluster_parameter_group" "postgresql" {
 
 resource "aws_secretsmanager_secret" "postgres_admin_password" {
   name = "Expensely/${var.environment}/DatabaseInstance/Postgres/User/Expensely"
-  description = "Admin password for RDS instance:${module.postgres.rds_cluster_id}"
+  description = "Admin password for RDS instance:${module.postgres.cluster_id}"
 }
 resource "aws_secretsmanager_secret_version" "postgres_admin_password" {
   secret_id = aws_secretsmanager_secret.postgres_admin_password.id
@@ -781,21 +781,21 @@ resource "aws_security_group_rule" "postgres_server" {
   security_group_id = aws_security_group.postgres_server.id
 
   type = "ingress"
-  from_port = module.postgres.rds_cluster_port
-  to_port = module.postgres.rds_cluster_port
+  from_port = module.postgres.cluster_port
+  to_port = module.postgres.cluster_port
   protocol = "tcp"
   source_security_group_id = aws_security_group.postgres_client.id
-  description = "Allow traffic from ${aws_security_group.postgres_client.name} on port ${module.postgres.rds_cluster_port}"
+  description = "Allow traffic from ${aws_security_group.postgres_client.name} on port ${module.postgres.cluster_port}"
 }
 resource "aws_security_group_rule" "external" {
   security_group_id = aws_security_group.postgres_server.id
 
   type = "ingress"
-  from_port = module.postgres.rds_cluster_port
-  to_port = module.postgres.rds_cluster_port
+  from_port = module.postgres.cluster_port
+  to_port = module.postgres.cluster_port
   protocol = "tcp"
   source_security_group_id = data.aws_security_group.external.id
-  description = "Allow traffic from ${data.aws_security_group.external.name} on port ${module.postgres.rds_cluster_port}"
+  description = "Allow traffic from ${data.aws_security_group.external.name} on port ${module.postgres.cluster_port}"
 }
 
 resource "aws_security_group" "postgres_client" {
@@ -811,11 +811,11 @@ resource "aws_security_group_rule" "postgres_client" {
   security_group_id = aws_security_group.postgres_client.id
 
   type = "egress"
-  from_port = module.postgres.rds_cluster_port
-  to_port = module.postgres.rds_cluster_port
+  from_port = module.postgres.cluster_port
+  to_port = module.postgres.cluster_port
   protocol = "tcp"
   source_security_group_id = aws_security_group.postgres_server.id
-  description = "Allow traffic to ${aws_security_group.postgres_server.name} on port ${module.postgres.rds_cluster_port}"
+  description = "Allow traffic to ${aws_security_group.postgres_server.name} on port ${module.postgres.cluster_port}"
 }
 
 resource "aws_ssm_parameter" "connection_string" {
@@ -1383,7 +1383,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "CPUUtilization", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Utilization" } ]
+                    [ "AWS/RDS", "CPUUtilization", "DBClusterIdentifier", "${module.postgres.cluster_id}", { "label": "Utilization" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1414,7 +1414,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "FreeableMemory", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Freeable" } ]
+                    [ "AWS/RDS", "FreeableMemory", "DBClusterIdentifier", "${module.postgres.cluster_id}", { "label": "Freeable" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1441,7 +1441,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "FreeLocalStorage", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Free Local" } ]
+                    [ "AWS/RDS", "FreeLocalStorage", "DBClusterIdentifier", "${module.postgres.cluster_id}", { "label": "Free Local" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1468,7 +1468,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "ReadIOPS", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "yAxis": "right", "label": "Read" } ],
+                    [ "AWS/RDS", "ReadIOPS", "DBClusterIdentifier", "${module.postgres.cluster_id}", { "yAxis": "right", "label": "Read" } ],
                     [ ".", "WriteIOPS", ".", ".", { "label": "Write" } ]
                 ],
                 "view": "timeSeries",
@@ -1498,7 +1498,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "DatabaseConnections", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Connections" } ]
+                    [ "AWS/RDS", "DatabaseConnections", "DBClusterIdentifier", "${module.postgres.cluster_id}", { "label": "Connections" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1530,7 +1530,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "Deadlocks", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}" ]
+                    [ "AWS/RDS", "Deadlocks", "DBClusterIdentifier", "${module.postgres.cluster_id}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,
@@ -1560,7 +1560,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "BufferCacheHitRatio", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Cache Hit Ratio" } ]
+                    [ "AWS/RDS", "BufferCacheHitRatio", "DBClusterIdentifier", "${module.postgres.cluster_id}", { "label": "Cache Hit Ratio" } ]
                 ],
                 "view": "timeSeries",
                 "region": "${var.region}",
@@ -1586,7 +1586,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "ServerlessDatabaseCapacity", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "ServerlessDatabaseCapacity" } ]
+                    [ "AWS/RDS", "ServerlessDatabaseCapacity", "DBClusterIdentifier", "${module.postgres.cluster_id}", { "label": "ServerlessDatabaseCapacity" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1616,7 +1616,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "AuroraReplicaLag", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}" ]
+                    [ "AWS/RDS", "AuroraReplicaLag", "DBClusterIdentifier", "${module.postgres.cluster_id}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
