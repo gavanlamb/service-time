@@ -743,6 +743,10 @@ module "postgres" {
   database_name = var.rds_database_name
 
   depends_on = [aws_cloudwatch_log_group.rds]
+
+  enabled_cloudwatch_logs_exports = ["postgresql"]
+
+  create_monitoring_role = true
 }
 resource "aws_db_parameter_group" "postgresql" {
   name = "${local.rds_name}-aurora-pg-parameter-group"
