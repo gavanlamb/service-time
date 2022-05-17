@@ -620,7 +620,7 @@ resource "aws_lambda_function" "load_tests" {
   package_type = "Image"
   publish = true
 
-  image_uri = "${data.aws_ecr_repository.load_tests[0].repository_url}:1.0.2403-1"
+  image_uri = "${data.aws_ecr_repository.load_tests[0].repository_url}:1.0.2471-1"
 
   memory_size = 10240
 
