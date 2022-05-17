@@ -713,6 +713,7 @@ module "postgres" {
   storage_encrypted = true
 
   vpc_id = data.aws_vpc.vpc.id
+  create_db_subnet_group = false
   subnets = data.aws_db_subnet_group.database.subnet_ids
   db_subnet_group_name = data.aws_db_subnet_group.database.name
   create_security_group = false
