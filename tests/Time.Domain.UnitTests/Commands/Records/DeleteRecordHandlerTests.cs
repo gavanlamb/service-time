@@ -12,16 +12,16 @@ namespace Time.Domain.UnitTests.Commands.Records;
 
 public class DeleteRecordHandlerTests
 {
-    private readonly TimeContext _context;
+    private readonly TimeCommandContext _context;
     private readonly DeleteRecordHandler _handler;
 
     public DeleteRecordHandlerTests()
     {
-        var options = new DbContextOptionsBuilder<TimeContext>()
+        var options = new DbContextOptionsBuilder<TimeCommandContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
             
-        _context = new TimeContext(options);
+        _context = new TimeCommandContext(options);
         _context.Records.Add(new RecordEntity
         {
             Id = 1,

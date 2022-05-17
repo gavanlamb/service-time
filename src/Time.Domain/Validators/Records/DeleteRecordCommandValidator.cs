@@ -9,9 +9,9 @@ namespace Time.Domain.Validators.Records;
 
 public class DeleteRecordCommandValidator : AbstractValidator<DeleteRecordCommand>
 {
-    private readonly TimeContext _context;
+    private readonly TimeQueryContext _context;
     public DeleteRecordCommandValidator(
-        TimeContext context)
+        TimeQueryContext context)
     {
         _context = context;
             

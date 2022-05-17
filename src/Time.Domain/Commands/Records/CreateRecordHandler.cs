@@ -10,11 +10,11 @@ namespace Time.Domain.Commands.Records;
 
 public class CreateRecordHandler : ICommandHandler<CreateRecordCommand, Record>
 {
-    private readonly TimeContext _context;
+    private readonly TimeCommandContext _context;
     private readonly IMapper _mapper;
         
     public CreateRecordHandler(
-        TimeContext context,
+        TimeCommandContext context,
         IMapper mapper)
     {
         _context = context;

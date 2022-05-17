@@ -7,7 +7,7 @@ namespace Time.Database;
 public class TimeContext : DbContext
 {
     public TimeContext(
-        DbContextOptions<TimeContext> options) : base(options)
+        DbContextOptions options) : base(options)
     {
     }
         

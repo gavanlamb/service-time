@@ -69,7 +69,7 @@ public class Program
         var host = CreateHostBuilder(args).Build();
 
         using var scope = host.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<TimeContext>();
+        var db = scope.ServiceProvider.GetRequiredService<TimeCommandContext>();
         db.Database.Migrate();
             
         var runner = scope.ServiceProvider.GetRequiredService<Seeds.Runner>();

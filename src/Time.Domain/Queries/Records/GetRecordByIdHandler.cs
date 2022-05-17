@@ -13,11 +13,11 @@ namespace Time.Domain.Queries.Records;
 
 public class GetRecordByIdHandler : IQueryHandler<GetRecordByIdQuery, Record>
 {
-    private readonly TimeContext _context;
+    private readonly TimeQueryContext _context;
     private readonly IMapper _mapper;
         
     public GetRecordByIdHandler(
-        TimeContext context,
+        TimeQueryContext context,
         IMapper mapper)
     {
         _context = context;

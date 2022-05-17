@@ -11,11 +11,11 @@ namespace Time.Domain.Commands.Records;
 
 public class UpdateRecordHandler : ICommandHandler<UpdateRecordCommand, Record>
 {
-    private readonly TimeContext _context;
+    private readonly TimeCommandContext _context;
     private readonly IMapper _mapper;
         
     public UpdateRecordHandler(
-        TimeContext context,
+        TimeCommandContext context,
         IMapper mapper)
     {
         _context = context;

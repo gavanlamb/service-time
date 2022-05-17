@@ -8,10 +8,10 @@ namespace Time.Domain.Commands.Records;
 
 public class DeleteRecordHandler : ICommandHandler<DeleteRecordCommand, bool>
 {
-    private readonly TimeContext _context;
+    private readonly TimeCommandContext _context;
         
     public DeleteRecordHandler(
-        TimeContext context)
+        TimeCommandContext context)
     {
         _context = context;
     }
