@@ -9,10 +9,10 @@ namespace Time.Domain.Behaviours;
 
 public class Transaction<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : ICommand<TResponse>
 {
-    private readonly TimeContext _timeContext;
+    private readonly TimeCommandContext _timeContext;
 
     public Transaction(
-        TimeContext timeContext)
+        TimeCommandContext timeContext)
     {
         _timeContext = timeContext;
     }
