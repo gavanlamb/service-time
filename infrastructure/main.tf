@@ -766,10 +766,10 @@ resource "aws_secretsmanager_secret" "postgres_admin_password" {
 resource "aws_secretsmanager_secret_version" "postgres_admin_password" {
   secret_id = aws_secretsmanager_secret.postgres_admin_password.id
   secret_string = jsonencode({
-    Username = local.rds_username,
-    Password = local.rds_password,
-    Port = local.rds_port,
-    Endpoint = local.rds_endpoint
+    Username = module.postgres.cluster_master_username,
+    Password = module.postgres.cluster_master_password,
+    Port = module.postgres.cluster_port,
+    Endpoint = module.postgres.cluster_endpoint
   })
 }
 
@@ -823,10 +823,15 @@ resource "aws_security_group_rule" "postgres_client" {
   description = "Allow traffic to ${aws_security_group.postgres_server.name} on port ${module.postgres.cluster_port}"
 }
 
-resource "aws_ssm_parameter" "connection_string" {
-  name  = "/${var.application_name}/${var.environment}/ConnectionStrings/Default"
+resource "aws_ssm_parameter" "command_connection_string" {
+  name  = "/${var.application_name}/${var.environment}/ConnectionStrings/Command"
   type  = "SecureString"
-  value = "Host=${local.rds_endpoint};Port=${local.rds_port};Database=${var.rds_database_name};Username=${local.rds_username};Password=${local.rds_password};Keepalive=300;CommandTimeout=300;Timeout=300"
+  value = "Host=${module.postgres.cluster_endpoint};Port=${module.postgres.cluster_port};Database=${var.rds_database_name};Username=${module.postgres.cluster_master_username};Password=${module.postgres.cluster_master_password};Keepalive=300;CommandTimeout=300;Timeout=300"
+}
+resource "aws_ssm_parameter" "query_connection_string" {
+  name  = "/${var.application_name}/${var.environment}/ConnectionStrings/Query"
+  type  = "SecureString"
+  value = "Host=${module.postgres.cluster_reader_endpoint};Port=${module.postgres.cluster_port};Database=${var.rds_database_name};Username=${module.postgres.cluster_master_username};Password=${module.postgres.cluster_master_password};Keepalive=300;CommandTimeout=300;Timeout=300"
 }
 
 resource "aws_cloudwatch_log_group" "rds" {
