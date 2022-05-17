@@ -746,12 +746,12 @@ module "postgres" {
 }
 resource "aws_db_parameter_group" "postgresql" {
   name = "${local.rds_name}-aurora-pg-parameter-group"
-  family = "aurora-postgresql10"
+  family = "aurora-postgresql13"
   description = "Parameter group for ${local.rds_name}"
 }
 resource "aws_rds_cluster_parameter_group" "postgresql" {
   name = "${local.rds_name}-aurora-pg-cluster-parameter-group"
-  family = "aurora-postgresql10"
+  family = "aurora-postgresql13"
   description = "Cluster parameter group for ${local.rds_name}"
 }
 
