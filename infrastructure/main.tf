@@ -1035,7 +1035,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "title": "Info by version",
                 "view": "pie"
             }
-        },        
+        },
         {
             "height": 6,
             "width": 18,
@@ -1218,7 +1218,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         },
         {
             "height": 6,
-            "width": 12,
+            "width": 24,
             "y": 52,
             "x": 0,
             "type": "metric",
@@ -1245,9 +1245,9 @@ resource "aws_cloudwatch_dashboard" "main" {
         },
         {
             "height": 6,
-            "width": 12,
-            "y": 52,
-            "x": 12,
+            "width": 24,
+            "y": 58,
+            "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
@@ -1272,7 +1272,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         },
         {
             "height": 6,
-            "width": 12,
+            "width": 24,
             "y": 64,
             "x": 0,
             "type": "metric",
@@ -1379,7 +1379,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 58,
+            "y": 84,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -1410,7 +1410,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 58,
+            "y": 84,
             "x": 12,
             "type": "metric",
             "properties": {
@@ -1432,33 +1432,6 @@ resource "aws_cloudwatch_dashboard" "main" {
                     }
                 },
                 "liveData": true
-            }
-        },
-        {
-            "height": 6,
-            "width": 12,
-            "y": 64,
-            "x": 12,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ "AWS/RDS", "FreeLocalStorage", "DBClusterIdentifier", "${module.postgres.cluster_id}", { "label": "Free Local" } ]
-                ],
-                "view": "timeSeries",
-                "stacked": false,
-                "region": "${var.region}",
-                "stat": "Average",
-                "period": 60,
-                "title": "Storage",
-                "liveData": true,
-                "yAxis": {
-                    "left": {
-                        "min": 0
-                    },
-                    "right": {
-                        "min": 0
-                    }
-                }
             }
         },
         {
@@ -1872,11 +1845,11 @@ resource "aws_cloudwatch_dashboard" "main" {
             }
         },
         {
-            "type": "text",
-            "x": 0,
-            "y": 146,
-            "width": 24,
             "height": 1,
+            "width": 24,
+            "y": 146,
+            "x": 0,
+            "type": "text",
             "properties": {
                 "markdown": "# Load Tests"
             }
