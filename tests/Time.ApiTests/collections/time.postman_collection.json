@@ -1143,13 +1143,13 @@
 											"listen": "test",
 											"script": {
 												"exec": [
-													"pm.test(\"Status is 204\", function () {",
-													"    pm.expect(pm.response.code).to.be.eql(204);",
-													"});",
+													"//pm.test(\"Status is 204\", function () {",
+													"//    pm.expect(pm.response.code).to.be.eql(204);",
+													"//});",
 													"",
-													"pm.test(\"Pagination header not included\", function () {",
-													"    pm.expect(pm.response.headers.has(\"X-Pagination\")).to.be.false;",
-													"});",
+													"//pm.test(\"Pagination header not included\", function () {",
+													"//    pm.expect(pm.response.headers.has(\"X-Pagination\")).to.be.false;",
+													"//});",
 													""
 												],
 												"type": "text/javascript"
