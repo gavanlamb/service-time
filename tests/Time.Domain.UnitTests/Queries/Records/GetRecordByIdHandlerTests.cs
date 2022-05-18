@@ -15,17 +15,17 @@ namespace Time.Domain.UnitTests.Queries.Records;
 public class GetRecordByIdHandlerTests 
 {
     private readonly IMapper _mapper;
-    private readonly TimeContext _context;
+    private readonly TimeQueryContext _context;
     private readonly GetRecordByIdHandler _handler;
     public GetRecordByIdHandlerTests()
     {
         _mapper = new MapperConfiguration(opts => opts.AddProfile(typeof(RecordProfile))).CreateMapper();
 
-        var options = new DbContextOptionsBuilder<TimeContext>()
+        var options = new DbContextOptionsBuilder<TimeQueryContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
-        _context = new TimeContext(options);
+        _context = new TimeQueryContext(options);
         _context.Records.Add(new RecordEntity
         {
             Id = 1,

@@ -8,10 +8,10 @@ namespace Time.Database.Seeds;
 
 public class RecordSeeds
 {
-    private readonly TimeContext _db;
+    private readonly TimeCommandContext _db;
     private readonly Seed _seedOptions;
     public RecordSeeds(
-        TimeContext db,
+        TimeCommandContext db,
         IOptions<Seed> seedOptions)
     {
         _db = db;

@@ -56,7 +56,7 @@ stages:
             parameters:
               artifactName: ${{ variables.TF_ARTIFACT_NAME }}
               workspaceName: service-time-${{ variables.ENVIRONMENT }}
-              version: 1.1.4
+              version: 1.1.9
               planAdditionalCommandOptions: '-var-file="variables/${{ variables.ENVIRONMENT }}.${{ variables.AWS_DEFAULT_REGION }}.tfvars" -var="build_identifier=$(Build.BuildNumber)"'
 
       - template: azure-devops/approve.yml@templates
@@ -78,7 +78,7 @@ stages:
                 - template: terraform/apply.yml@templates
                   parameters:
                     artifactName: ${{ variables.TF_ARTIFACT_NAME }}
-                    version: 1.1.4
+                    version: 1.1.9
                 - template: aws/codedeploy/deploy.yml@templates
                   parameters:
                     appSpecFileName: deploy.yaml

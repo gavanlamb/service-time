@@ -546,7 +546,7 @@ resource "aws_lambda_function" "api_tests" {
   package_type = "Image"
   publish = true
 
-  image_uri = "${data.aws_ecr_repository.lambda_postman[0].repository_url}:1.0.2432-1"
+  image_uri = "${data.aws_ecr_repository.lambda_postman[0].repository_url}:1.0.2466-1"
 
   memory_size = 10240
   ephemeral_storage {
@@ -620,12 +620,12 @@ resource "aws_lambda_function" "load_tests" {
   package_type = "Image"
   publish = true
 
-  image_uri = "${data.aws_ecr_repository.load_tests[0].repository_url}:1.0.2403-1"
+  image_uri = "${data.aws_ecr_repository.load_tests[0].repository_url}:1.0.2473-1"
 
   memory_size = 10240
 
   ephemeral_storage {
-    size = 4096
+    size = 10240
   }
   
   reserved_concurrent_executions = 1
@@ -637,7 +637,9 @@ resource "aws_lambda_function" "load_tests" {
       S3_BUCKET = var.codedeploy_bucket_name,
       S3_BUCKET_PATH = "${local.s3_base_path}/load-tests",
       JMETER_LOADTEST_FILE = "load.jmx",
-      JMETER_USERS_FILE = "users.csv"
+      JMETER_USERS_FILE = "users.csv",
+      JMETER_VARIABLE_time_api_url = local.api_url
+      JMETER_VARIABLE_time_api_port = "8443"
     }
   }
 }
@@ -703,22 +705,21 @@ data "aws_iam_policy_document" "codedeploy" {
 // RDS
 module "postgres" {
   source = "terraform-aws-modules/rds-aurora/aws"
-  version = "5.2.0"
+  version = "7.1.0"
 
   name = local.rds_name
   engine = "aurora-postgresql"
-  engine_mode = "serverless"
+  engine_mode = "provisioned"
+  engine_version = "13.6"
   storage_encrypted = true
 
   vpc_id = data.aws_vpc.vpc.id
+  create_db_subnet_group = false
   subnets = data.aws_db_subnet_group.database.subnet_ids
   db_subnet_group_name = data.aws_db_subnet_group.database.name
   create_security_group = false
   vpc_security_group_ids = [aws_security_group.postgres_server.id]
-
-  replica_scale_enabled = false
-  replica_count = 0
-
+  
   monitoring_interval = 60
 
   apply_immediately = true
@@ -727,41 +728,49 @@ module "postgres" {
   db_parameter_group_name = aws_db_parameter_group.postgresql.id
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.postgresql.id
 
+  serverlessv2_scaling_configuration = {
+    min_capacity = 1
+    max_capacity = 10
+  }
+
+  instance_class = "db.serverless"
+  instances = {
+    one = {}
+    two = {}
+  }
+  
   deletion_protection = var.rds_delete_protection
   
   database_name = var.rds_database_name
 
-  scaling_configuration = {
-    auto_pause = true
-    min_capacity = 2
-    max_capacity = 4
-    seconds_until_auto_pause = 300
-    timeout_action = "ForceApplyCapacityChange"
-  }
   depends_on = [aws_cloudwatch_log_group.rds]
+
+  enabled_cloudwatch_logs_exports = ["postgresql"]
+
+  create_monitoring_role = true
 }
 resource "aws_db_parameter_group" "postgresql" {
   name = "${local.rds_name}-aurora-pg-parameter-group"
-  family = "aurora-postgresql10"
+  family = "aurora-postgresql13"
   description = "Parameter group for ${local.rds_name}"
 }
 resource "aws_rds_cluster_parameter_group" "postgresql" {
   name = "${local.rds_name}-aurora-pg-cluster-parameter-group"
-  family = "aurora-postgresql10"
+  family = "aurora-postgresql13"
   description = "Cluster parameter group for ${local.rds_name}"
 }
 
 resource "aws_secretsmanager_secret" "postgres_admin_password" {
   name = "Expensely/${var.environment}/DatabaseInstance/Postgres/User/Expensely"
-  description = "Admin password for RDS instance:${module.postgres.rds_cluster_id}"
+  description = "Admin password for RDS instance:${module.postgres.cluster_id}"
 }
 resource "aws_secretsmanager_secret_version" "postgres_admin_password" {
   secret_id = aws_secretsmanager_secret.postgres_admin_password.id
   secret_string = jsonencode({
-    Username = local.rds_username,
-    Password = local.rds_password,
-    Port = local.rds_port,
-    Endpoint = local.rds_endpoint
+    Username = module.postgres.cluster_master_username,
+    Password = module.postgres.cluster_master_password,
+    Port = module.postgres.cluster_port,
+    Endpoint = module.postgres.cluster_endpoint
   })
 }
 
@@ -778,21 +787,21 @@ resource "aws_security_group_rule" "postgres_server" {
   security_group_id = aws_security_group.postgres_server.id
 
   type = "ingress"
-  from_port = module.postgres.rds_cluster_port
-  to_port = module.postgres.rds_cluster_port
+  from_port = module.postgres.cluster_port
+  to_port = module.postgres.cluster_port
   protocol = "tcp"
   source_security_group_id = aws_security_group.postgres_client.id
-  description = "Allow traffic from ${aws_security_group.postgres_client.name} on port ${module.postgres.rds_cluster_port}"
+  description = "Allow traffic from ${aws_security_group.postgres_client.name} on port ${module.postgres.cluster_port}"
 }
 resource "aws_security_group_rule" "external" {
   security_group_id = aws_security_group.postgres_server.id
 
   type = "ingress"
-  from_port = module.postgres.rds_cluster_port
-  to_port = module.postgres.rds_cluster_port
+  from_port = module.postgres.cluster_port
+  to_port = module.postgres.cluster_port
   protocol = "tcp"
   source_security_group_id = data.aws_security_group.external.id
-  description = "Allow traffic from ${data.aws_security_group.external.name} on port ${module.postgres.rds_cluster_port}"
+  description = "Allow traffic from ${data.aws_security_group.external.name} on port ${module.postgres.cluster_port}"
 }
 
 resource "aws_security_group" "postgres_client" {
@@ -808,17 +817,22 @@ resource "aws_security_group_rule" "postgres_client" {
   security_group_id = aws_security_group.postgres_client.id
 
   type = "egress"
-  from_port = module.postgres.rds_cluster_port
-  to_port = module.postgres.rds_cluster_port
+  from_port = module.postgres.cluster_port
+  to_port = module.postgres.cluster_port
   protocol = "tcp"
   source_security_group_id = aws_security_group.postgres_server.id
-  description = "Allow traffic to ${aws_security_group.postgres_server.name} on port ${module.postgres.rds_cluster_port}"
+  description = "Allow traffic to ${aws_security_group.postgres_server.name} on port ${module.postgres.cluster_port}"
 }
 
-resource "aws_ssm_parameter" "connection_string" {
-  name  = "/${var.application_name}/${var.environment}/ConnectionStrings/Default"
+resource "aws_ssm_parameter" "command_connection_string" {
+  name  = "/${var.application_name}/${var.environment}/ConnectionStrings/Command"
   type  = "SecureString"
-  value = "Host=${local.rds_endpoint};Port=${local.rds_port};Database=${var.rds_database_name};Username=${local.rds_username};Password=${local.rds_password};Keepalive=300;CommandTimeout=300;Timeout=300"
+  value = "Host=${module.postgres.cluster_endpoint};Port=${module.postgres.cluster_port};Database=${var.rds_database_name};Username=${module.postgres.cluster_master_username};Password=${module.postgres.cluster_master_password};Keepalive=300;CommandTimeout=300;Timeout=300"
+}
+resource "aws_ssm_parameter" "query_connection_string" {
+  name  = "/${var.application_name}/${var.environment}/ConnectionStrings/Query"
+  type  = "SecureString"
+  value = "Host=${module.postgres.cluster_reader_endpoint};Port=${module.postgres.cluster_port};Database=${var.rds_database_name};Username=${module.postgres.cluster_master_username};Password=${module.postgres.cluster_master_password};Keepalive=300;CommandTimeout=300;Timeout=300"
 }
 
 resource "aws_cloudwatch_log_group" "rds" {
@@ -1031,7 +1045,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "title": "Info by version",
                 "view": "pie"
             }
-        },        
+        },
         {
             "height": 6,
             "width": 18,
@@ -1214,7 +1228,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         },
         {
             "height": 6,
-            "width": 12,
+            "width": 24,
             "y": 52,
             "x": 0,
             "type": "metric",
@@ -1241,9 +1255,9 @@ resource "aws_cloudwatch_dashboard" "main" {
         },
         {
             "height": 6,
-            "width": 12,
-            "y": 52,
-            "x": 12,
+            "width": 24,
+            "y": 58,
+            "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
@@ -1268,7 +1282,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         },
         {
             "height": 6,
-            "width": 12,
+            "width": 24,
             "y": 64,
             "x": 0,
             "type": "metric",
@@ -1375,12 +1389,12 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 58,
+            "y": 84,
             "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "CPUUtilization", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Utilization" } ]
+                    [ "AWS/RDS", "CPUUtilization", "DBClusterIdentifier", "${module.postgres.cluster_id}", { "label": "Utilization" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1406,12 +1420,12 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 58,
+            "y": 84,
             "x": 12,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "FreeableMemory", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Freeable" } ]
+                    [ "AWS/RDS", "FreeableMemory", "DBClusterIdentifier", "${module.postgres.cluster_id}", { "label": "Freeable" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1433,39 +1447,12 @@ resource "aws_cloudwatch_dashboard" "main" {
         {
             "height": 6,
             "width": 12,
-            "y": 64,
-            "x": 12,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ "AWS/RDS", "FreeLocalStorage", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Free Local" } ]
-                ],
-                "view": "timeSeries",
-                "stacked": false,
-                "region": "${var.region}",
-                "stat": "Average",
-                "period": 60,
-                "title": "Storage",
-                "liveData": true,
-                "yAxis": {
-                    "left": {
-                        "min": 0
-                    },
-                    "right": {
-                        "min": 0
-                    }
-                }
-            }
-        },
-        {
-            "height": 6,
-            "width": 12,
             "y": 90,
             "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "ReadIOPS", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "yAxis": "right", "label": "Read" } ],
+                    [ "AWS/RDS", "ReadIOPS", "DBClusterIdentifier", "${module.postgres.cluster_id}", { "yAxis": "right", "label": "Read" } ],
                     [ ".", "WriteIOPS", ".", ".", { "label": "Write" } ]
                 ],
                 "view": "timeSeries",
@@ -1495,7 +1482,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "DatabaseConnections", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Connections" } ]
+                    [ "AWS/RDS", "DatabaseConnections", "DBClusterIdentifier", "${module.postgres.cluster_id}", { "label": "Connections" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1527,7 +1514,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "Deadlocks", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}" ]
+                    [ "AWS/RDS", "Deadlocks", "DBClusterIdentifier", "${module.postgres.cluster_id}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,
@@ -1557,7 +1544,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "BufferCacheHitRatio", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "Cache Hit Ratio" } ]
+                    [ "AWS/RDS", "BufferCacheHitRatio", "DBClusterIdentifier", "${module.postgres.cluster_id}", { "label": "Cache Hit Ratio" } ]
                 ],
                 "view": "timeSeries",
                 "region": "${var.region}",
@@ -1583,7 +1570,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "ServerlessDatabaseCapacity", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}", { "label": "ServerlessDatabaseCapacity" } ]
+                    [ "AWS/RDS", "ServerlessDatabaseCapacity", "DBClusterIdentifier", "${module.postgres.cluster_id}", { "label": "ServerlessDatabaseCapacity" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1613,7 +1600,7 @@ resource "aws_cloudwatch_dashboard" "main" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "AuroraReplicaLag", "DBClusterIdentifier", "${module.postgres.rds_cluster_id}" ]
+                    [ "AWS/RDS", "AuroraReplicaLag", "DBClusterIdentifier", "${module.postgres.cluster_id}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -1868,11 +1855,11 @@ resource "aws_cloudwatch_dashboard" "main" {
             }
         },
         {
-            "type": "text",
-            "x": 0,
-            "y": 146,
-            "width": 24,
             "height": 1,
+            "width": 24,
+            "y": 146,
+            "x": 0,
+            "type": "text",
             "properties": {
                 "markdown": "# Load Tests"
             }

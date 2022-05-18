@@ -22,6 +22,11 @@
             <stringProp name="Argument.value">/tmp/users.csv</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="time_api_port" elementType="Argument">
+            <stringProp name="Argument.name">time_api_port</stringProp>
+            <stringProp name="Argument.value">443</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
         </collectionProp>
       </elementProp>
       <stringProp name="TestPlan.user_define_classpath"></stringProp>
@@ -160,7 +165,7 @@ log.info(&quot;number_of_users&quot; + &quot; : &quot; + numberOfUsers);
             </collectionProp>
           </elementProp>
           <stringProp name="HTTPSampler.domain">${time_api_url}</stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.port">${time_api_port}</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
           <stringProp name="HTTPSampler.path">/v1/Records</stringProp>
@@ -214,7 +219,7 @@ log.info(&quot;number_of_users&quot; + &quot; : &quot; + numberOfUsers);
             </collectionProp>
           </elementProp>
           <stringProp name="HTTPSampler.domain">${time_api_url}</stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.port">${time_api_port}</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
           <stringProp name="HTTPSampler.path">/v1/Records/${new_record_id}</stringProp>
@@ -266,7 +271,7 @@ log.info(&quot;number_of_users&quot; + &quot; : &quot; + numberOfUsers);
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
           <stringProp name="HTTPSampler.domain">${time_api_url}</stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.port">${time_api_port}</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
           <stringProp name="HTTPSampler.path">/v1/Records?pageSize=100</stringProp>
@@ -348,7 +353,7 @@ log.info(&quot;number_of_users&quot; + &quot; : &quot; + numberOfUsers);
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
             <stringProp name="HTTPSampler.domain">${time_api_url}</stringProp>
-            <stringProp name="HTTPSampler.port"></stringProp>
+            <stringProp name="HTTPSampler.port">${time_api_port}</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
             <stringProp name="HTTPSampler.path">/v1/Records/${__V(user_record_id_${i})}</stringProp>

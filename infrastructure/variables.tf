@@ -106,10 +106,6 @@ variable "placement_strategies"{
 ###################################################
 locals {
   rds_name = "${lower(var.application_name)}-${lower(var.environment)}"
-  rds_username = module.postgres.rds_cluster_master_username
-  rds_password = module.postgres.rds_cluster_master_password
-  rds_port = module.postgres.rds_cluster_port
-  rds_endpoint = replace(module.postgres.rds_cluster_endpoint, ":${module.postgres.rds_cluster_port}", "")
   
   api_name = "${lower(var.application_name)}-${lower(var.environment)}"
   migrator_name = "${lower(var.application_name)}-migrator-${lower(var.environment)}"

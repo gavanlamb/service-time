@@ -119,4 +119,4 @@ stages:
                   parameters:
                     destroyAdditionalArguments: -var-file="variables/${{ variables.ENVIRONMENT }}$(PULL_REQUEST_ID).${{ variables.AWS_DEFAULT_REGION }}.tfvars"
                     workspaceName: service-time-${{ variables.ENVIRONMENT }}$(PULL_REQUEST_ID)
-                    version: 1.1.4
+                    version: 1.1.9

@@ -24,12 +24,17 @@ public class Validation<TRequest, TResponse> : IPipelineBehavior<TRequest, TResp
     {
         var context = new ValidationContext<TRequest>(request);
 
-        var validationErrors = _validators
-            .Select(x => x.Validate(context))
-            .SelectMany(x => x.Errors)
-            .Where(x => x != null)
+        var validationTasks = _validators
+            .Select(validator => validator.ValidateAsync(context, cancellationToken))
             .ToList();
-
+        
+        var validationResults = await Task.WhenAll(validationTasks);
+        
+        var validationErrors = validationResults
+            .SelectMany(vr => vr.Errors)
+            .Where(e => e != null)
+            .ToList();
+        
         if (validationErrors.Any())
         {
             throw new ValidationException(validationErrors);

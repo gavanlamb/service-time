@@ -17,17 +17,17 @@ public class GetRecordsHandlerTests
 {
     private const string UserId = "user-id";
     private readonly IMapper _mapper;
-    private readonly TimeContext _context;
+    private readonly TimeQueryContext _context;
     private readonly GetRecordsHandler _handler;
     public GetRecordsHandlerTests()
     {
         _mapper = new MapperConfiguration(opts => opts.AddProfile(typeof(RecordProfile))).CreateMapper();
 
-        var options = new DbContextOptionsBuilder<TimeContext>()
+        var options = new DbContextOptionsBuilder<TimeQueryContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
-        _context = new TimeContext(options);
+        _context = new TimeQueryContext(options);
         for (var i = 1; i <= 100; i++) {
             _context.Records.Add(new RecordEntity
             {

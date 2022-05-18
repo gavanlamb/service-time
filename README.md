@@ -34,3 +34,4 @@ Run the migration from the `src` folder
 cd src
 dotnet ef migrations add { migration name } --output-dir Migrations --startup-project ./Time.Database.Migrator --project ./Time.Database
 ```
+

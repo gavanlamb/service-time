@@ -13,10 +13,18 @@ public static class ServiceCollection
         IConfiguration configuration,
         ServiceLifetime contextLifeCycle = ServiceLifetime.Scoped)
     {
-        services.AddDbContext<TimeContext>(
+        services.AddDbContext<TimeCommandContext>(
             options =>
             {
-                options.UseNpgsql(configuration.GetConnectionString("Default"));
+                options.UseNpgsql(configuration.GetConnectionString("Command"));
+                options.EnableSensitiveDataLogging();
+                options.UseSnakeCaseNamingConvention();
+            }, 
+            contextLifeCycle);
+        services.AddDbContext<TimeQueryContext>(
+            options =>
+            {
+                options.UseNpgsql(configuration.GetConnectionString("Query"));
                 options.EnableSensitiveDataLogging();
                 options.UseSnakeCaseNamingConvention();
             }, 
