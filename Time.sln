@@ -42,6 +42,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{
 ProjectSection(SolutionItems) = preProject
 	infrastructure\templates\codedeploy.yml = infrastructure\templates\codedeploy.yml
 	infrastructure\templates\create-deployment.json = infrastructure\templates\create-deployment.json
+	infrastructure\templates\codedeploy.production.yml = infrastructure\templates\codedeploy.production.yml
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{E4546580-5FDF-4205-BDC4-B0690ABC0D28}"

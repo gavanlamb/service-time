@@ -40,7 +40,7 @@ public class Program
                 {
                     configureSource.Path = $"/Time/{environmentName}";
                     configureSource.ReloadAfter = TimeSpan.FromMinutes(5);
-                    configureSource.Optional = true;
+                    configureSource.Optional = false;
                 });
             })
             .UseSerilog()
