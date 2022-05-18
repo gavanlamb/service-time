@@ -64,14 +64,14 @@ resource "local_file" "api_app_spec" {
   filename = "deploy.yaml"
 }
 data "template_file" "api_app_spec" {
-  template = file("./templates/codedeploy.production.yml") //local.isProduction ? file("./templates/codedeploy.production.yml") : file("./templates/codedeploy.yml")
+  template = local.isProduction ? file("./templates/codedeploy.production.yml") : file("./templates/codedeploy.yml")
 
   vars = {
     application_task_definition = aws_ecs_task_definition.api.arn
     application_container_name = local.api_name
     migrator_lambda_arn = aws_lambda_function.migrator.qualified_arn
-    api_tests_lambda_arn = null //local.isProduction ? null : aws_lambda_function.api_tests[0].qualified_arn
-    load_tests_lambda_arn = null //local.isProduction ? null : aws_lambda_function.load_tests[0].qualified_arn
+    api_tests_lambda_arn = local.isProduction ? null : aws_lambda_function.api_tests[0].qualified_arn
+    load_tests_lambda_arn = local.isProduction ? null : aws_lambda_function.load_tests[0].qualified_arn
   }
 }
 
@@ -639,6 +639,7 @@ resource "aws_lambda_function" "load_tests" {
       JMETER_LOADTEST_FILE = "load.jmx",
       JMETER_USERS_FILE = "users.csv",
       JMETER_VARIABLE_time_api_url = local.api_url
+      JMETER_VARIABLE_time_api_port = "8443"
     }
   }
 }
