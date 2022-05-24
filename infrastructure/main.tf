@@ -729,7 +729,7 @@ module "postgres" {
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.postgresql.id
 
   serverlessv2_scaling_configuration = {
-    min_capacity = 1
+    min_capacity = 0.5
     max_capacity = 10
   }
 
