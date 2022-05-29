@@ -12,6 +12,6 @@ public class CreateRecordValidator : AbstractValidator<CreateRecordCommand>
             .MinimumLength(2).WithMessage("The name needs to be 2 characters or more");
             
         RuleFor(r => r.Start)
-            .Must(DateTimeOffsetValidator.BeInThePast).WithMessage("The start time must be in the past");
+            .Must(DateTimeOffsetValidator.IsInThePast).WithMessage("The start time must be in the past");
     }
 }
