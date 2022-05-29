@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -51,5 +52,24 @@ public class DeleteRecordHandlerTests
 
         Assert.True(hasDeleted);
         Assert.Empty(_context.Records);
+    }
+        
+    [Fact]
+    public async Task Failure()
+    {
+        _context.Records.RemoveRange(_context.Records.ToList());
+        _context.SaveChanges();
+
+        var t = _context.Records.ToList();
+        
+        var command = new DeleteRecordCommand
+        {
+            Id = 1,
+            UserId = "user-id0"
+        };
+            
+        var hasDeleted = await _handler.Handle(command, CancellationToken.None);
+
+        Assert.False(hasDeleted);
     }
 }

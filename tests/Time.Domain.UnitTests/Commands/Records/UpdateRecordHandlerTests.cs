@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -58,5 +59,26 @@ public class UpdateRecordHandlerTests
         Assert.Equal(command.Start, record.Start);
         Assert.Equal(command.End, record.End);
         Assert.Equal(command.End-command.Start, record.Duration);
+    }
+
+    [Fact]
+    public async Task SetDuration_Success()
+    {
+        var command = new UpdateRecordCommand
+        {
+            Id = 1,
+            Name = "Next",
+            UserId = "user-id0",
+            Start = DateTimeOffset.UtcNow.AddDays(-3),
+            End = null
+        };
+            
+        var record = await _handler.Handle(command, CancellationToken.None);
+            
+        Assert.Equal(command.Id, record.Id);
+        Assert.Equal(command.Name, record.Name);
+        Assert.Equal(command.Start, record.Start);
+        Assert.Equal(command.End, record.End);
+        Assert.Null(record.Duration);
     }
 }

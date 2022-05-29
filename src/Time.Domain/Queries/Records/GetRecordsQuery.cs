@@ -10,7 +10,7 @@ public class GetRecordsQuery : IQuery<Paged<Record>>
 
     public string UserId { get; set; }
 
-    public RecordType? Type { get; set; }
+    public RecordType Type { get; set; }
 }
 
 public enum RecordType
