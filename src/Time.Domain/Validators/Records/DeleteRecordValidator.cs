@@ -7,10 +7,10 @@ using Time.Domain.Commands.Records;
 
 namespace Time.Domain.Validators.Records;
 
-public class DeleteRecordCommandValidator : AbstractValidator<DeleteRecordCommand>
+public class DeleteRecordValidator : AbstractValidator<DeleteRecordCommand>
 {
     private readonly TimeQueryContext _context;
-    public DeleteRecordCommandValidator(
+    public DeleteRecordValidator(
         TimeQueryContext context)
     {
         _context = context;

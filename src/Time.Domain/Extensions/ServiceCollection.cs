@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using FluentValidation;
 using MediatR;
@@ -8,6 +9,7 @@ using Time.Domain.Behaviours;
 
 namespace Time.Domain.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class ServiceCollection
 {
     public static IServiceCollection AddTimeDomain(
