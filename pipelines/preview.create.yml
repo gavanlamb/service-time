@@ -104,6 +104,13 @@ stages:
               showWarnings: true
               pwsh: true
               workingDirectory: $(Build.SourcesDirectory)/Time.LoadTests
+
+      - template: azure-devops/approve.yml@templates
+        parameters:
+          dependsOn: plan
+          timeoutInMinutes: 60
+          userToNotify: '[Expensely]\Expensely Team'
+
       - job: plan
         displayName: Plan
         dependsOn:
