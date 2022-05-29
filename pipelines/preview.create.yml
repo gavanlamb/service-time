@@ -105,12 +105,6 @@ stages:
               pwsh: true
               workingDirectory: $(Build.SourcesDirectory)/Time.LoadTests
 
-      - template: azure-devops/approve.yml@templates
-        parameters:
-          dependsOn: plan
-          timeoutInMinutes: 60
-          userToNotify: '[Expensely]\Expensely Team'
-
       - job: plan
         displayName: Plan
         dependsOn:
@@ -156,10 +150,17 @@ stages:
               workspaceName: service-time-${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
               version: 1.1.9
               planAdditionalCommandOptions: -var-file="variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars"
+
+      - template: azure-devops/approve.yml@templates
+        parameters:
+          dependsOn: plan
+          timeoutInMinutes: 60
+          userToNotify: '[Expensely]\Expensely Team'
+
       - deployment: deploy
         displayName: Deploy
         dependsOn:
-          - plan
+          - approve
         environment: preview
         strategy:
           runOnce:
