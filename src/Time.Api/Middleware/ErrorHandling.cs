@@ -51,7 +51,7 @@ public class ErrorHandling
         }
         catch (Exception exception)
         {
-            _logger.Error(exception, $"${nameof(Exception)} occurred while executing the request");
+            _logger.Error(exception, $"{nameof(Exception)} occurred while executing the request");
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             var response = new GeneralException
