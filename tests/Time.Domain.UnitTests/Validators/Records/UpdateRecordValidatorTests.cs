@@ -138,4 +138,21 @@ public class UpdateRecordValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.End)
             .WithErrorMessage("The end time must be in the past");
     }
+    
+    [Fact]
+    public async Task End_IsBeforeStart_Failure()
+    {
+        var validator = new UpdateRecordValidator();
+        var command = new UpdateRecordCommand
+        {
+            Name = "Name",
+            Start = DateTimeOffset.Now.AddMinutes(-1),
+            End = DateTimeOffset.Now.AddMinutes(-5),
+        };
+        
+        var result = await validator.TestValidateAsync(command);
+        
+        result.ShouldHaveValidationErrorFor(x => x.End)
+            .WithErrorMessage("The end time must be greater than or equal to start time");
+    }
 }

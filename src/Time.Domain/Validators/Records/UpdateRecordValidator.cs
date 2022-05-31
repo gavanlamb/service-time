@@ -15,8 +15,7 @@ public class UpdateRecordValidator : AbstractValidator<UpdateRecordCommand>
             .Must(DateTimeOffsetValidator.IsInThePast).WithMessage("The start time must be in the past");
             
         RuleFor(r => r.End)
-            .Must(DateTimeOffsetValidator.IsInThePast).WithMessage("The end time must be in the past");
-            
-        // TODO Check Start < End
+            .Must(DateTimeOffsetValidator.IsInThePast).WithMessage("The end time must be in the past")
+            .Must((command, endDateTime) => command.Start < endDateTime).When(endDateTime => endDateTime.End != null).WithMessage("The end time must be greater than or equal to start time");
     }
 }
