@@ -36,10 +36,12 @@ public class UpdateRecordHandler : ICommandHandler<UpdateRecordCommand, Record>
         record.Start = request.Start.ToUniversalTime();
         record.End = request.End?.ToUniversalTime();
         record.Modified = DateTimeOffset.UtcNow;
-            
+
         if (record.End != null)
             record.Duration = request.End - request.Start;
-            
+        else
+            record.Duration = null;
+
         var result = await _context.SaveChangesAsync(
             cancellationToken);
             
