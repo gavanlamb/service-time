@@ -4,10 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Time.Database;
 using Time.Domain.Models;
+using RecordEntity = Time.Database.Entities.Record;
 
 namespace Time.Domain.Queries.Records;
 
@@ -30,10 +30,14 @@ public class GetRecordsHandler: IQueryHandler<GetRecordsQuery, Paged<Record>>
     {
         var skip = request.PageNumber > 0 ? (request.PageNumber - 1) * request.PageSize : 0; 
         var take = request.PageSize;
-        var count = _context.Records.Count(r => r.UserId == request.UserId);
-            
-        var records = await _context
-            .Records
+        var count = GetTypeClause(
+                _context.Records.AsQueryable(), 
+                request.Type)
+            .Count(r => r.UserId == request.UserId);
+
+        var records = await GetTypeClause(
+                _context.Records, 
+                request.Type)
             .Where(r => r.UserId == request.UserId)
             .OrderByDescending(r => r.Start)
             .Skip(skip)
@@ -48,6 +52,17 @@ public class GetRecordsHandler: IQueryHandler<GetRecordsQuery, Paged<Record>>
             TotalItems = count,
             TotalPages = (int)Math.Ceiling(count / (double)request.PageSize),
             Items = records
+        };
+    }
+
+    private static IQueryable<RecordEntity> GetTypeClause(
+        IQueryable<RecordEntity> record,
+        RecordType type)
+    {
+        return type switch {
+            RecordType.All => record.OrderBy(r => r.Duration),
+            RecordType.Closed => record.Where(r => r.Duration != null),
+            RecordType.Open => record.Where(r => r.Duration == null)
         };
     }
 }

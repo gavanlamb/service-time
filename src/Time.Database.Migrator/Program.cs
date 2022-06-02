@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Amazon.CodeDeploy;
 using Amazon.CodeDeploy.Model;
@@ -14,6 +15,7 @@ using Time.Database.Extensions;
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 namespace Time.Database.Migrator;
 
+[ExcludeFromCodeCoverage]
 public class Program
 {
     public static void Main(string[] args)

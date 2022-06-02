@@ -1,8 +1,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Serilog;
 using Time.Domain.Commands;
+using ILogger = Serilog.ILogger;
 
 namespace Time.Domain.Behaviours;
 
@@ -30,7 +30,7 @@ public class Logging<TRequest, TResponse> : IPipelineBehavior<TRequest, TRespons
             
         _logger.Information(
             "Handled:{Name} with value:{@Response}", 
-            typeof(TRequest).Name,
+            typeof(TResponse).Name,
             response);
 
         return response;

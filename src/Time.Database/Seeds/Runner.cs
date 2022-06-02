@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Options;
 using Time.Database.Options;
 
 namespace Time.Database.Seeds;
 
+[ExcludeFromCodeCoverage]
 public class Runner
 {
     private readonly RecordSeeds _recordSeeds;

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -69,5 +70,22 @@ public class CreateRecordHandlerTests
         Assert.Equal(command.Name, record.Name);
         Assert.Equal(command.UserId, record.UserId);
         Assert.Equal(command.Start, record.Start);
+    }
+
+    [Fact]
+    public async Task Failure()
+    {
+        _context.Records.RemoveRange(_context.Records.ToList());
+        
+        var command = new CreateRecordCommand
+        {
+            Name = "Next",
+            UserId = "user-id0",
+            Start = DateTimeOffset.UtcNow
+        };
+        
+        var record = await _handler.Handle(command, CancellationToken.None);
+        
+        Assert.Null(record);
     }
 }

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,6 +7,7 @@ using Time.Database.Seeds;
 
 namespace Time.Database.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class ServiceCollection
 {
     public static IServiceCollection AddTimeContext(

@@ -9,4 +9,13 @@ public class GetRecordsQuery : IQuery<Paged<Record>>
     public int PageSize { get; init; }
 
     public string UserId { get; set; }
+
+    public RecordType Type { get; set; }
+}
+
+public enum RecordType
+{
+    All,
+    Open,
+    Closed
 }

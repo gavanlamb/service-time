@@ -33,7 +33,7 @@ public class ErrorHandling
         }
         catch (ValidationException exception)
         {
-            _logger.Error(exception, "ValidationException occured while executing the request");
+            _logger.Error(exception, $"{nameof(ValidationException)} occurred while executing the request");
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             var response = exception.Errors
@@ -51,12 +51,12 @@ public class ErrorHandling
         }
         catch (Exception exception)
         {
-            _logger.Error(exception, "Exception occured while executing the request");
+            _logger.Error(exception, $"{nameof(Exception)} occurred while executing the request");
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             var response = new GeneralException
             {
-                Message = "Exception occured while executing the request"
+                Message = $"${nameof(Exception)} occurred while executing the request"
             };
             var serialisedResponse = JsonSerializer.Serialize(
                 response,

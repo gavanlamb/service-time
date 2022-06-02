@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 using Time.Api.V1.Models;
 using Time.Domain.Commands.Records;
 using Time.Domain.Queries.Records;
+using RecordType = Time.Api.V1.Models.RecordType;
+using RecordTypeDomain = Time.Domain.Queries.Records.RecordType;
 
 namespace Time.Api.V1.Controllers;
 
@@ -163,13 +165,14 @@ public class RecordsController : ControllerBase
             
         return Ok(record);
     }
-        
+    
     /// <summary>
     /// Get records
     /// </summary>
     /// <param name="pageNumber">Page number to retrieve</param>
     /// <param name="pageSize">Amount of items to retrieve</param>
     /// <param name="cancellationToken">Cancellation token</param>
+    /// <param name="type" example="All"></param>
     /// <returns>A collection of records</returns>
     [HttpGet]
     [Authorize("read")]
@@ -178,6 +181,7 @@ public class RecordsController : ControllerBase
     public async Task<ActionResult<IEnumerable<Record>>> Fetch(
         [FromQuery] int pageNumber,
         [FromQuery] int pageSize,
+        [FromQuery] RecordType type,
         CancellationToken cancellationToken)
     {
         var userId = HttpContext.User.GetSubject();
@@ -186,7 +190,8 @@ public class RecordsController : ControllerBase
         {
             PageNumber = pageNumber,
             PageSize = pageSize,
-            UserId = userId
+            UserId = userId,
+            Type = (RecordTypeDomain) System.Enum.Parse(typeof(RecordTypeDomain), type.ToString())
         };
             
         var result = await _mediatr.Send(

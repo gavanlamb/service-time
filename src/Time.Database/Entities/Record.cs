@@ -1,7 +1,9 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Time.Database.Entities;
 
+[ExcludeFromCodeCoverage]
 public class Record
 {
     public long Id { get; set; }

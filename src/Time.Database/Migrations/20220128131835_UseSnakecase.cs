@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Time.Database.Migrations
 {
+    [ExcludeFromCodeCoverage]
     public partial class UseSnakecase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

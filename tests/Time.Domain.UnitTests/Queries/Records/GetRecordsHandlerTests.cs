@@ -28,7 +28,7 @@ public class GetRecordsHandlerTests
             .Options;
 
         _context = new TimeQueryContext(options);
-        for (var i = 1; i <= 100; i++) {
+        for (var i = 1; i <= 50; i++) {
             _context.Records.Add(new RecordEntity
             {
                 Id = i,
@@ -39,6 +39,16 @@ public class GetRecordsHandlerTests
                 Created = DateTimeOffset.UtcNow.AddDays(-3),
                 Modified = DateTimeOffset.UtcNow,
                 Duration = DateTimeOffset.UtcNow - DateTimeOffset.UtcNow.AddDays(-3)
+            });
+        }
+        for (var i = 1; i <= 50; i++) {
+            _context.Records.Add(new RecordEntity
+            {
+                Id = i+50,
+                Name = $"Record name {i+50}",
+                UserId = UserId,
+                Start = DateTimeOffset.UtcNow.AddDays(-3),
+                Created = DateTimeOffset.UtcNow.AddDays(-3)
             });
         }
         _context.SaveChanges();
@@ -66,7 +76,7 @@ public class GetRecordsHandlerTests
     }
         
     [Fact]
-    public async Task Success_OutOfBounds()
+    public async Task OutOfBounds_Success()
     {
         var command = new GetRecordsQuery
         {
@@ -85,7 +95,7 @@ public class GetRecordsHandlerTests
     }
         
     [Fact]
-    public async Task Success_LastPagePartialSize()
+    public async Task LastPagePartialSize_Success()
     {
         var command = new GetRecordsQuery
         {
@@ -101,5 +111,31 @@ public class GetRecordsHandlerTests
         Assert.Equal(10, records.Items.Count());
         Assert.Equal(100, records.TotalItems);
         Assert.Equal(4, records.TotalPages);
+    }
+    
+    [Theory]
+    [InlineData(RecordType.All, 100, 10)]
+    [InlineData(RecordType.Closed, 50, 5)]
+    [InlineData(RecordType.Open, 50, 5)]
+    public async Task RecordType_Success(
+        RecordType type,
+        int expectedNumberOfRecords,
+        int totalNumberOfPages)
+    {
+        var command = new GetRecordsQuery
+        {
+            PageNumber = 1,
+            PageSize = 10,
+            UserId = UserId,
+            Type = type
+        };
+            
+        var records = await _handler.Handle(command, CancellationToken.None);
+            
+        Assert.Equal(command.PageNumber, records.PageNumber);
+        Assert.Equal(10, records.PageSize);
+        Assert.Equal(10, records.Items.Count());
+        Assert.Equal(expectedNumberOfRecords, records.TotalItems);
+        Assert.Equal(totalNumberOfPages, records.TotalPages);
     }
 }
