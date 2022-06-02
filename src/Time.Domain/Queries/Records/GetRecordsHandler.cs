@@ -59,9 +59,8 @@ public class GetRecordsHandler: IQueryHandler<GetRecordsQuery, Paged<Record>>
         IQueryable<RecordEntity> record,
         RecordType type)
     {
-        return type switch
-        {
-            RecordType.All => record,
+        return type switch {
+            RecordType.All => record.OrderBy(r => r.Duration),
             RecordType.Closed => record.Where(r => r.Duration != null),
             RecordType.Open => record.Where(r => r.Duration == null)
         };
