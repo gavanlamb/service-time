@@ -30,7 +30,6 @@ public class ValidationTests
     [Fact]
     public async Task Handle_ValidatorReturnsNoError_CallsNext()
     {
-        //var validator = new Mock<IValidator>().Setup(x => x.Validate(It.IsAny<IValidationContext>())).Returns(new ValidationResult());
         IEnumerable<IValidator<ValidationTestsRequest>> validators = new List<IValidator<ValidationTestsRequest>>
         {
             new Validator()
