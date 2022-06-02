@@ -5,9 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Time.Database;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Time.Database.Migrations
 {
+    [ExcludeFromCodeCoverage]
     [DbContext(typeof(TimeContext))]
     partial class TimeContextModelSnapshot : ModelSnapshot
     {
