@@ -126,6 +126,7 @@ resource "aws_lambda_function" "migrator" {
 resource "aws_cloudwatch_log_group" "migrator" {
   name = "/aws/lambda/${aws_lambda_function.migrator.function_name}"
   retention_in_days = 14
+  kms_key_id = data.aws_kms_alias.cloudwatch.id
 }
 
 /// IAM 
@@ -433,6 +434,7 @@ resource "aws_cloudwatch_log_group" "api" {
 resource "aws_cloudwatch_log_group" "open_telemetry" {
   name = "/${lower(var.application_name)}/${lower(var.environment)}/open-telemetry"
   retention_in_days = 14
+  kms_key_id = data.aws_kms_alias.cloudwatch.id
 }
 resource "aws_iam_policy" "api_logs" {
   name = "${local.api_name}-logs"
@@ -572,6 +574,7 @@ resource "aws_cloudwatch_log_group" "api_tests" {
   count = local.isProduction ? 0 : 1
   name = "/aws/lambda/${aws_lambda_function.api_tests[0].function_name}"
   retention_in_days = 14
+  kms_key_id = data.aws_kms_alias.cloudwatch.id
 }
 /// IAM
 resource "aws_iam_role" "api_tests" {
@@ -648,6 +651,7 @@ resource "aws_cloudwatch_log_group" "load_tests" {
   count = local.isProduction ? 0 : 1
   name = "/aws/lambda/${aws_lambda_function.load_tests[0].function_name}"
   retention_in_days = 14
+  kms_key_id = data.aws_kms_alias.cloudwatch.id
 }
 /// IAM
 resource "aws_iam_role" "load_tests" {
@@ -763,6 +767,7 @@ resource "aws_rds_cluster_parameter_group" "postgresql" {
 resource "aws_secretsmanager_secret" "postgres_admin_password" {
   name = "Expensely/${var.environment}/DatabaseInstance/Postgres/User/Expensely"
   description = "Admin password for RDS instance:${module.postgres.cluster_id}"
+  kms_key_id = data.aws_kms_alias.ssm_default_key.id
 }
 resource "aws_secretsmanager_secret_version" "postgres_admin_password" {
   secret_id = aws_secretsmanager_secret.postgres_admin_password.id
@@ -838,6 +843,7 @@ resource "aws_ssm_parameter" "query_connection_string" {
 resource "aws_cloudwatch_log_group" "rds" {
   name = "/aws/rds/cluster/${local.rds_name}/postgresql"
   retention_in_days = 14
+  kms_key_id = data.aws_kms_alias.cloudwatch.id
 }
 
 // Cloudwatch

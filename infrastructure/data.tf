@@ -94,3 +94,7 @@ data "aws_iam_policy_document" "api_execution" {
     effect = "Allow"
   }
 }
+
+data "aws_kms_alias" "cloudwatch" {
+  name = "alias/expensely/production/cloudwatch"
+}
