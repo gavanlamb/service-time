@@ -108,6 +108,10 @@ resource "aws_lambda_function" "migrator" {
 
   timeout = 900
 
+  tracing_config {
+    mode = "Active"
+  }
+
   vpc_config {
     security_group_ids = [
       aws_security_group.postgres_client.id,
@@ -430,6 +434,7 @@ resource "aws_alb_target_group" "api_green" {
 resource "aws_cloudwatch_log_group" "api" {
   name = "/${lower(var.application_name)}/${lower(var.environment)}/api"
   retention_in_days = 14
+  kms_key_id = data.aws_kms_alias.cloudwatch.id
 }
 resource "aws_cloudwatch_log_group" "open_telemetry" {
   name = "/${lower(var.application_name)}/${lower(var.environment)}/open-telemetry"
@@ -558,6 +563,10 @@ resource "aws_lambda_function" "api_tests" {
   reserved_concurrent_executions = 1
 
   timeout = 900
+  
+  tracing_config {
+    mode = "Active"
+  }
 
   environment {
     variables = {
@@ -634,6 +643,10 @@ resource "aws_lambda_function" "load_tests" {
   reserved_concurrent_executions = 1
 
   timeout = 900
+
+  tracing_config {
+    mode = "Active"
+  }
 
   environment {
     variables = {
