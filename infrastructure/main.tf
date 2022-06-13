@@ -454,10 +454,15 @@ data "aws_iam_policy_document" "api_logs" {
       "logs:PutLogEvents",
       "logs:DescribeLogStreams",
       "logs:DescribeLogGroups",
-      "xray:*"
+      "xray:GetGroup",
+      "xray:UpdateGroup",
+      "xray:DeleteGroup",
+      "xray:CreateSamplingRule",
+      "xray:UpdateSamplingRule",
+      "xray:DeleteSamplingRule"
     ]
     resources = [
-      "arn:aws:logs:*:*:*"
+      "*"
     ]
   }
 }
