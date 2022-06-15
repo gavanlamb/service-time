@@ -462,7 +462,7 @@ data "aws_iam_policy_document" "api_logs" {
       "xray:DeleteSamplingRule"
     ]
     resources = [
-      "*"
+      "arn:aws:ecs:${var.region}:${data.aws_caller_identity.current.account_id}:service/${var.cluster_name}/${local.api_name}-service"
     ]
   }
 }
