@@ -785,7 +785,7 @@ resource "aws_rds_cluster_parameter_group" "postgresql" {
 resource "aws_secretsmanager_secret" "postgres_admin_password" {
   name = "Expensely/${var.environment}/DatabaseInstance/Postgres/User/Expensely"
   description = "Admin password for RDS instance:${module.postgres.cluster_id}"
-  kms_key_id = data.aws_kms_alias.ssm_default_key.id
+  kms_key_id = data.aws_kms_alias.secretsmanager.id
 }
 resource "aws_secretsmanager_secret_version" "postgres_admin_password" {
   secret_id = aws_secretsmanager_secret.postgres_admin_password.id
