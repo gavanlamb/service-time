@@ -108,10 +108,6 @@ resource "aws_lambda_function" "migrator" {
 
   timeout = 900
 
-  tracing_config {
-    mode = "Active"
-  }
-
   vpc_config {
     security_group_ids = [
       aws_security_group.postgres_client.id,
@@ -565,10 +561,6 @@ resource "aws_lambda_function" "api_tests" {
   reserved_concurrent_executions = 1
 
   timeout = 900
-  
-  tracing_config {
-    mode = "Active"
-  }
 
   environment {
     variables = {
@@ -645,10 +637,6 @@ resource "aws_lambda_function" "load_tests" {
   reserved_concurrent_executions = 1
 
   timeout = 900
-
-  tracing_config {
-    mode = "Active"
-  }
 
   environment {
     variables = {
