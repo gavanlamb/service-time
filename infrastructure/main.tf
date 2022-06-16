@@ -92,6 +92,7 @@ data "template_file" "code_deployment" {
 
 // Migrator
 /// Lambda
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "migrator" {
   function_name = local.migrator_name
   role = aws_iam_role.migrator.arn
@@ -542,6 +543,7 @@ resource "aws_iam_role_policy_attachment" "api_execution_parameters" {
 
 // API tests
 /// lambda
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "api_tests" {
   count = local.isProduction ? 0 : 1
   function_name = local.api_tests_name
@@ -617,6 +619,7 @@ resource "aws_iam_role_policy_attachment" "api_tests_bucket_upload" {
 
 // API tests
 /// lambda
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "load_tests" {
   count = local.isProduction ? 0 : 1
   function_name = local.load_tests_name
