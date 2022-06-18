@@ -30,7 +30,7 @@ stages:
             displayName: Set build identifier
             inputs:
               targetType: inline
-              script: Write-Host "##vso[build.updatebuildnumber]1.0.$(build.buildid).$(System.StageAttempt)"
+              script: Write-Host "##vso[build.updatebuildnumber]1.0.$(build.buildid).$(System.StageAttempt)"\
               errorActionPreference: default
               showWarnings: true
               pwsh: true
