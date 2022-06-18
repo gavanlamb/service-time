@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Amazon.CodeDeploy;
 using Amazon.CodeDeploy.Model;
 using Amazon.Lambda.Core;
+using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using Expensely.Logging.Serilog.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +30,7 @@ public class Program
     {
         try
         {
+            AWSSDKHandler.RegisterXRayForAllServices();
             Run(new string[0]);
                 
             await PutLifecycleEventHookExecutionStatusAsync(
