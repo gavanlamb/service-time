@@ -19,6 +19,10 @@ namespace Time.Database.Migrator;
 [ExcludeFromCodeCoverage]
 public class Program
 {
+    static Program() {
+        AWSSDKHandler.RegisterXRayForAllServices();
+    }
+    
     public static void Main(string[] args)
     {
         Run(args);
@@ -30,7 +34,6 @@ public class Program
     {
         try
         {
-            AWSSDKHandler.RegisterXRayForAllServices();
             Run(new string[0]);
                 
             await PutLifecycleEventHookExecutionStatusAsync(
