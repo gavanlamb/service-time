@@ -10,8 +10,8 @@ using System.Diagnostics.CodeAnalysis;
 namespace Time.Database.Migrations
 {
     [ExcludeFromCodeCoverage]
-    [DbContext(typeof(TimeContext))]
-    partial class TimeContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(TimeCommandContext))]
+    partial class TimeCommandContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

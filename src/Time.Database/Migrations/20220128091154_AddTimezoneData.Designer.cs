@@ -9,7 +9,7 @@ using Time.Database;
 
 namespace Time.Database.Migrations
 {
-    [DbContext(typeof(TimeContext))]
+    [DbContext(typeof(TimeCommandContext))]
     [Migration("20220128091154_AddTimezoneData")]
     partial class AddTimezoneData
     {
