@@ -1,0 +1,9 @@
+version: 0.1
+
+projects:
+  - path: ./
+    terraform_workspace: service-time-production
+    terraform_var_files:
+      - variables/production.ap-southeast-2.tfvars
+    terraform_vars:
+      build_identifier: 1.0.0.0
