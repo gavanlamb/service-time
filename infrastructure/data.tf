@@ -41,8 +41,8 @@ data "aws_lb_listener" "expensely_test" {
   port = 8443
 }
 
-data "aws_kms_alias" ssm_default_key{
-  name = "alias/aws/ssm"
+data "aws_kms_alias" secretsmanager {
+  name = "alias/expensely/production/secretsmanager"
 }
 
 data "aws_ecr_repository" "api" {
@@ -93,4 +93,8 @@ data "aws_iam_policy_document" "api_execution" {
     }
     effect = "Allow"
   }
+}
+
+data "aws_kms_alias" "cloudwatch" {
+  name = "alias/expensely/production/cloudwatch"
 }

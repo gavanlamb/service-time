@@ -20,6 +20,8 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+        <PackageReference Include="AWSXRayRecorder.Core" Version="2.6.2" />
+        <PackageReference Include="AWSXRayRecorder.Handlers.AwsSdk" Version="2.7.2" />
     </ItemGroup>
 
     <ItemGroup>

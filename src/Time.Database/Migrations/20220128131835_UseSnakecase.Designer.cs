@@ -9,7 +9,7 @@ using Time.Database;
 
 namespace Time.Database.Migrations
 {
-    [DbContext(typeof(TimeContext))]
+    [DbContext(typeof(TimeCommandContext))]
     [Migration("20220128131835_UseSnakecase")]
     partial class UseSnakecase
     {

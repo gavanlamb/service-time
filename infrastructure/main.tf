@@ -90,76 +90,6 @@ data "template_file" "code_deployment" {
   }
 }
 
-// Migrator
-/// Lambda
-resource "aws_lambda_function" "migrator" {
-  function_name = local.migrator_name
-  role = aws_iam_role.migrator.arn
-  description = "Time database migrations"
-
-  package_type = "Image"
-  publish = true
-
-  image_uri = "${data.aws_ecr_repository.migrator.repository_url}:${var.build_identifier}"
-
-  memory_size = 10240
-
-  reserved_concurrent_executions = 1
-
-  timeout = 900
-
-  vpc_config {
-    security_group_ids = [
-      aws_security_group.postgres_client.id,
-      data.aws_security_group.external.id]
-    subnet_ids = data.aws_subnets.private.ids
-  }
-  
-  environment {
-    variables = {
-      DOTNET_ENVIRONMENT = var.environment
-    }
-  }
-}
-
-/// Cloudwatch
-resource "aws_cloudwatch_log_group" "migrator" {
-  name = "/aws/lambda/${aws_lambda_function.migrator.function_name}"
-  retention_in_days = 14
-}
-
-/// IAM 
-resource "aws_iam_role" "migrator" {
-  name = local.migrator_name
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Effect": "Allow"
-    }
-  ]
-}
-EOF
-}
-resource "aws_iam_role_policy_attachment" "migrator_vpc" {
-  role = aws_iam_role.migrator.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
-}
-resource "aws_iam_role_policy_attachment" "migrator_codedeploy" {
-  role = aws_iam_role.migrator.name
-  policy_arn = aws_iam_policy.codedeploy.arn
-}
-resource "aws_iam_role_policy_attachment" "migrator_ssm_read" {
-  role = aws_iam_role.migrator.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
-}
-
 // API
 /// ROUTE53
 resource "aws_route53_record" "api" {
@@ -429,30 +359,12 @@ resource "aws_alb_target_group" "api_green" {
 resource "aws_cloudwatch_log_group" "api" {
   name = "/${lower(var.application_name)}/${lower(var.environment)}/api"
   retention_in_days = 14
+  kms_key_id = data.aws_kms_alias.cloudwatch.id
 }
 resource "aws_cloudwatch_log_group" "open_telemetry" {
   name = "/${lower(var.application_name)}/${lower(var.environment)}/open-telemetry"
   retention_in_days = 14
-}
-resource "aws_iam_policy" "api_logs" {
-  name = "${local.api_name}-logs"
-  policy = data.aws_iam_policy_document.api_logs.json
-}
-data "aws_iam_policy_document" "api_logs" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:PutLogEvents",
-      "logs:DescribeLogStreams",
-      "logs:DescribeLogGroups",
-      "xray:*"
-    ]
-    resources = [
-      "arn:aws:logs:*:*:*"
-    ]
-  }
+  kms_key_id = data.aws_kms_alias.cloudwatch.id
 }
 
 /// IAM
@@ -463,7 +375,7 @@ resource "aws_iam_role" "api_task" {
 }
 resource "aws_iam_role_policy_attachment" "api_task_logs_task" {
   role = aws_iam_role.api_task.name
-  policy_arn = aws_iam_policy.api_logs.arn
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 }
 resource "aws_iam_role_policy_attachment" "api_task_parameters" {
   role = aws_iam_role.api_task.name
@@ -528,11 +440,94 @@ resource "aws_iam_role_policy_attachment" "api_execution_role_policy" {
 }
 resource "aws_iam_role_policy_attachment" "api_execution_logs" {
   role = aws_iam_role.api_execution.name
-  policy_arn = aws_iam_policy.api_logs.arn
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 }
 resource "aws_iam_role_policy_attachment" "api_execution_parameters" {
   role = aws_iam_role.api_execution.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
+}
+resource "aws_iam_role_policy_attachment" "api_execution_open_telemetry_daemon" {
+  role = aws_iam_role.api_execution.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
+}
+
+// Migrator
+/// Lambda
+resource "aws_lambda_function" "migrator" {
+  function_name = local.migrator_name
+  role = aws_iam_role.migrator.arn
+  description = "Time database migrations"
+
+  package_type = "Image"
+  publish = true
+
+  image_uri = "${data.aws_ecr_repository.migrator.repository_url}:${var.build_identifier}"
+
+  memory_size = 10240
+
+  reserved_concurrent_executions = 1
+
+  timeout = 900
+
+  vpc_config {
+    security_group_ids = [
+      aws_security_group.postgres_client.id,
+      data.aws_security_group.external.id]
+    subnet_ids = data.aws_subnets.private.ids
+  }
+
+  tracing_config {
+    mode = "Active"
+  }
+
+  environment {
+    variables = {
+      DOTNET_ENVIRONMENT = var.environment
+    }
+  }
+}
+
+/// Cloudwatch
+resource "aws_cloudwatch_log_group" "migrator" {
+  name = "/aws/lambda/${aws_lambda_function.migrator.function_name}"
+  retention_in_days = 14
+  kms_key_id = data.aws_kms_alias.cloudwatch.id
+}
+
+/// IAM 
+resource "aws_iam_role" "migrator" {
+  name = local.migrator_name
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+resource "aws_iam_role_policy_attachment" "migrator_vpc" {
+  role = aws_iam_role.migrator.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+resource "aws_iam_role_policy_attachment" "migrator_codedeploy" {
+  role = aws_iam_role.migrator.name
+  policy_arn = aws_iam_policy.codedeploy.arn
+}
+resource "aws_iam_role_policy_attachment" "migrator_ssm_read" {
+  role = aws_iam_role.migrator.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
+}
+resource "aws_iam_role_policy_attachment" "migrator_xray_daemon_write" {
+  role = aws_iam_role.migrator.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
 }
 
 // API tests
@@ -557,6 +552,10 @@ resource "aws_lambda_function" "api_tests" {
 
   timeout = 900
 
+  tracing_config {
+    mode = "Active"
+  }
+
   environment {
     variables = {
       S3_BUCKET = var.codedeploy_bucket_name,
@@ -572,6 +571,7 @@ resource "aws_cloudwatch_log_group" "api_tests" {
   count = local.isProduction ? 0 : 1
   name = "/aws/lambda/${aws_lambda_function.api_tests[0].function_name}"
   retention_in_days = 14
+  kms_key_id = data.aws_kms_alias.cloudwatch.id
 }
 /// IAM
 resource "aws_iam_role" "api_tests" {
@@ -609,7 +609,7 @@ resource "aws_iam_role_policy_attachment" "api_tests_bucket_upload" {
   policy_arn = data.aws_iam_policy.codedeploy_bucket.arn
 }
 
-// API tests
+// Load tests
 /// lambda
 resource "aws_lambda_function" "load_tests" {
   count = local.isProduction ? 0 : 1
@@ -632,6 +632,10 @@ resource "aws_lambda_function" "load_tests" {
 
   timeout = 900
 
+  tracing_config {
+    mode = "Active"
+  }
+
   environment {
     variables = {
       S3_BUCKET = var.codedeploy_bucket_name,
@@ -648,6 +652,7 @@ resource "aws_cloudwatch_log_group" "load_tests" {
   count = local.isProduction ? 0 : 1
   name = "/aws/lambda/${aws_lambda_function.load_tests[0].function_name}"
   retention_in_days = 14
+  kms_key_id = data.aws_kms_alias.cloudwatch.id
 }
 /// IAM
 resource "aws_iam_role" "load_tests" {
@@ -763,6 +768,7 @@ resource "aws_rds_cluster_parameter_group" "postgresql" {
 resource "aws_secretsmanager_secret" "postgres_admin_password" {
   name = "Expensely/${var.environment}/DatabaseInstance/Postgres/User/Expensely"
   description = "Admin password for RDS instance:${module.postgres.cluster_id}"
+  kms_key_id = data.aws_kms_alias.secretsmanager.id
 }
 resource "aws_secretsmanager_secret_version" "postgres_admin_password" {
   secret_id = aws_secretsmanager_secret.postgres_admin_password.id
@@ -838,6 +844,7 @@ resource "aws_ssm_parameter" "query_connection_string" {
 resource "aws_cloudwatch_log_group" "rds" {
   name = "/aws/rds/cluster/${local.rds_name}/postgresql"
   retention_in_days = 14
+  kms_key_id = data.aws_kms_alias.cloudwatch.id
 }
 
 // Cloudwatch
