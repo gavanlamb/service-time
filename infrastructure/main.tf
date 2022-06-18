@@ -525,8 +525,8 @@ resource "aws_iam_role_policy_attachment" "migrator_ssm_read" {
   role = aws_iam_role.migrator.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
 }
-resource "aws_iam_role_policy_attachment" "migrator_open_telemetry_daemon" {
-  role = aws_iam_role.api_execution.name
+resource "aws_iam_role_policy_attachment" "migrator_xray_daemon_write" {
+  role = aws_iam_role.migrator.name
   policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
 }
 
