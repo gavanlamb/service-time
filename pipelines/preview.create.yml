@@ -30,7 +30,7 @@ stages:
             displayName: Set build identifier
             inputs:
               targetType: inline
-              script: Write-Host "##vso[build.updatebuildnumber]1.0.$(build.buildid).$(System.StageAttempt)"\
+              script: Write-Host "##vso[build.updatebuildnumber]1.0.$(build.buildid).$(System.StageAttempt)"
               errorActionPreference: default
               showWarnings: true
               pwsh: true
@@ -101,6 +101,10 @@ stages:
               showWarnings: true
               pwsh: true
               workingDirectory: $(Build.SourcesDirectory)/infrastructure/variables
+          - template: terraform/infracost.yml@templates
+            parameters:
+              apiKey: wChKa0T7Cxd619JUX14aatOkZQ9L6J4o
+              githubServiceConnectionName: gavanlamb
           - template: terraform/plan.yml@templates
             parameters:
               artifactName: ${{ variables.TF_ARTIFACT_NAME }}
@@ -109,11 +113,7 @@ stages:
               planAdditionalCommandOptions: -var-file="variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars"
           - template: terraform/tfsec.yml@templates
             parameters:
-              commandOptions: --tfvars-file="variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars"
-          - template: terraform/infracost.yml@templates
-            parameters:
-              apiKey: wChKa0T7Cxd619JUX14aatOkZQ9L6J4o
-              githubServiceConnectionName: gavanlamb
+              commandOptions: --tfvars-file="variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars"    
 
       - template: azure-devops/approve.yml@templates
         parameters:
@@ -201,7 +201,7 @@ stages:
               errorActionPreference: default
               showWarnings: true
               pwsh: true
-          - task: publishhtmlreport@1
+          - task: LakshayKaushik.PublishHTMLReports.publishhtmlreport.publishhtmlreport@1
             displayName: Publish HTMl report
             inputs:
               htmlType: Jmeter

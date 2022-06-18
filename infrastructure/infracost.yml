@@ -2,6 +2,7 @@ version: 0.1
 
 projects:
   - path: ./
+    usage_file: production.ap-southeast-2.yml
     terraform_workspace: service-time-production
     terraform_var_files:
       - variables/production.ap-southeast-2.tfvars
