@@ -8,3 +8,10 @@ projects:
       - variables/production.ap-southeast-2.tfvars
     terraform_vars:
       build_identifier: 1.0.0.0
+  - path: ./
+    usage_file: production.ap-southeast-2.yml
+    terraform_workspace: service-time-production
+    terraform_var_files:
+      - variables/production.ap-southeast-2.tfvars
+    terraform_vars:
+      build_identifier: 1.0.0.0
