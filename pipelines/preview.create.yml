@@ -101,16 +101,15 @@ stages:
               showWarnings: true
               pwsh: true
               workingDirectory: $(Build.SourcesDirectory)/infrastructure/variables
-          - template: terraform/infracost.yml@templates
-            parameters:
-              apiKey: wChKa0T7Cxd619JUX14aatOkZQ9L6J4o
-              githubServiceConnectionName: gavanlamb
           - template: terraform/plan.yml@templates
             parameters:
               artifactName: ${{ variables.TF_ARTIFACT_NAME }}
               workspaceName: service-time-${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
               version: 1.1.9
               planAdditionalCommandOptions: -var-file="variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars"
+          - template: terraform/infracost.yml@templates
+            parameters:
+              apiKey: wChKa0T7Cxd619JUX14aatOkZQ9L6J4o
           - template: terraform/tfsec.yml@templates
             parameters:
               commandOptions: --tfvars-file="variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars"    
