@@ -15,9 +15,6 @@ pr:
 pool:
   vmImage: ubuntu-latest
 
-variables:
-  - template: variables/preview.ap-southeast-2.yml@templates
-
 stages:
   - stage: build
     displayName: Build
@@ -63,6 +60,8 @@ stages:
   - stage: preview
     displayName: Preview
     dependsOn: build
+    variables:
+      - template: variables/preview.ap-southeast-2.yml@templates
     jobs:
       - job: plan
         displayName: Plan
@@ -160,7 +159,7 @@ stages:
               showWarnings: true
               pwsh: true
               workingDirectory: $(Build.SourcesDirectory)/Time.LoadTests
-      
+
       - deployment: deploy
         displayName: Deploy
         dependsOn:
@@ -180,6 +179,7 @@ stages:
                   parameters:
                     appSpecFileName: deploy.yaml
                     destinationPath: time/$(Build.BuildNumber)/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/code-deploy
+
       - job: publish_tests_results
         displayName: Publish Tests Results
         condition: or(and(always(), eq(dependencies.deploy.outputs['deploy.deploy.DEPLOYMENT_STATUS'], 'STARTED')), and(always(), eq(dependencies.deploy.outputs['deploy.deploy.DEPLOYMENT_STATUS'], 'COMPLETED')))
@@ -205,3 +205,26 @@ stages:
             inputs:
               htmlType: Jmeter
               JmeterReportsPath: $(Build.SourcesDirectory)/html-report
+
+  - stage: production
+    displayName: Production
+    dependsOn: build
+    variables:
+      - template: variables/production.ap-southeast-2.yml@templates
+    jobs:
+      - job: plan
+        displayName: Plan
+        steps:
+          - template: aws/iam/configure.yml@templates
+          - template: terraform/plan.yml@templates
+            parameters:
+              artifactName: ${{ variables.TF_ARTIFACT_NAME }}
+              workspaceName: service-time-${{ variables.ENVIRONMENT }}
+              version: 1.1.9
+              planAdditionalCommandOptions: -var-file="variables/${{ variables.ENVIRONMENT }}.${{ variables.AWS_DEFAULT_REGION }}.tfvars"
+          - template: terraform/infracost.yml@templates
+            parameters:
+              apiKey: wChKa0T7Cxd619JUX14aatOkZQ9L6J4o
+          - template: terraform/tfsec.yml@templates
+            parameters:
+              commandOptions: --tfvars-file="variables/${{ variables.ENVIRONMENT }}.${{ variables.AWS_DEFAULT_REGION }}.tfvars"    
