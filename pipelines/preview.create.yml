@@ -65,20 +65,8 @@ stages:
     variables:
       - template: variables/preview.ap-southeast-2.yml@templates
     jobs:
-      - job: infrastructure_validation
-        displayName: Infrastructure validation
-        steps:
-          - template: aws/iam/configure.yml@templates
-          - template: terraform/infracost.yml@templates
-            parameters:
-              apiKey: wChKa0T7Cxd619JUX14aatOkZQ9L6J4o
-              breakdownAdditionalCommandOptions: --terraform-var-file variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars
-          - template: terraform/tfsec.yml@templates
-            parameters:
-              commandOptions: --tfvars-file="variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars"
       - job: plan
         displayName: Plan
-        dependsOn: infrastructure_validation
         steps:
           - template: aws/iam/configure.yml@templates
           - task: PowerShell@2
@@ -120,6 +108,13 @@ stages:
               workspaceName: service-time-${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
               version: 1.1.9
               planAdditionalCommandOptions: -var-file="variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars"
+          - template: terraform/infracost.yml@templates
+            parameters:
+              apiKey: wChKa0T7Cxd619JUX14aatOkZQ9L6J4o
+              breakdownAdditionalCommandOptions: --terraform-var-file variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars
+          - template: terraform/tfsec.yml@templates
+            parameters:
+              commandOptions: --tfvars-file="variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars"
 
       - template: azure-devops/approve.yml@templates
         parameters:
