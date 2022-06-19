@@ -13,6 +13,7 @@ variable "application_name" {
 
 variable "build_identifier" {
   type = string
+  default = "1.0.0.0"
 }
 
 variable "vpc_name" {

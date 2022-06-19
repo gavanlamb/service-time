@@ -15,12 +15,11 @@ pr:
 pool:
   vmImage: ubuntu-latest
 
-variables:
-  - template: variables/preview.ap-southeast-2.yml@templates
-
 stages:
   - stage: build
     displayName: Build
+    variables:
+      - template: variables/preview.ap-southeast-2.yml@templates
     jobs:
       - job: setup
         displayName: Setup
@@ -63,6 +62,8 @@ stages:
   - stage: preview
     displayName: Preview
     dependsOn: build
+    variables:
+      - template: variables/preview.ap-southeast-2.yml@templates
     jobs:
       - job: plan
         displayName: Plan
@@ -107,13 +108,13 @@ stages:
               workspaceName: service-time-${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)
               version: 1.1.9
               planAdditionalCommandOptions: -var-file="variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars"
-          - template: terraform/tfsec.yml@templates
-            parameters:
-              commandOptions: --tfvars-file="variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars"
           - template: terraform/infracost.yml@templates
             parameters:
               apiKey: wChKa0T7Cxd619JUX14aatOkZQ9L6J4o
-              githubServiceConnectionName: gavanlamb
+              breakdownAdditionalCommandOptions: --terraform-var-file variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars
+          - template: terraform/tfsec.yml@templates
+            parameters:
+              commandOptions: --tfvars-file="variables/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber).${{ variables.AWS_DEFAULT_REGION }}.tfvars"
 
       - template: azure-devops/approve.yml@templates
         parameters:
@@ -161,7 +162,7 @@ stages:
               showWarnings: true
               pwsh: true
               workingDirectory: $(Build.SourcesDirectory)/Time.LoadTests
-      
+
       - deployment: deploy
         displayName: Deploy
         dependsOn:
@@ -181,6 +182,7 @@ stages:
                   parameters:
                     appSpecFileName: deploy.yaml
                     destinationPath: time/$(Build.BuildNumber)/${{ variables.ENVIRONMENT }}$(System.PullRequest.PullRequestNumber)/code-deploy
+
       - job: publish_tests_results
         displayName: Publish Tests Results
         condition: or(and(always(), eq(dependencies.deploy.outputs['deploy.deploy.DEPLOYMENT_STATUS'], 'STARTED')), and(always(), eq(dependencies.deploy.outputs['deploy.deploy.DEPLOYMENT_STATUS'], 'COMPLETED')))
@@ -201,8 +203,26 @@ stages:
               errorActionPreference: default
               showWarnings: true
               pwsh: true
-          - task: publishhtmlreport@1
+          - task: LakshayKaushik.PublishHTMLReports.publishhtmlreport.publishhtmlreport@1
             displayName: Publish HTMl report
             inputs:
               htmlType: Jmeter
               JmeterReportsPath: $(Build.SourcesDirectory)/html-report
+
+  - stage: production
+    displayName: Production
+    dependsOn: build
+    variables:
+      - template: variables/production.ap-southeast-2.yml@templates
+    jobs:
+      - job: infrastructure_validation
+        displayName: Infrastructure validation
+        steps:
+          - template: aws/iam/configure.yml@templates
+          - template: terraform/infracost.yml@templates
+            parameters:
+              apiKey: wChKa0T7Cxd619JUX14aatOkZQ9L6J4o
+              breakdownAdditionalCommandOptions: --terraform-var-file variables/${{ variables.ENVIRONMENT }}.${{ variables.AWS_DEFAULT_REGION }}.tfvars
+          - template: terraform/tfsec.yml@templates
+            parameters:
+              commandOptions: --tfvars-file="variables/${{ variables.ENVIRONMENT }}.${{ variables.AWS_DEFAULT_REGION }}.tfvars"    
