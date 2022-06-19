@@ -222,7 +222,7 @@ stages:
           - template: terraform/infracost.yml@templates
             parameters:
               apiKey: wChKa0T7Cxd619JUX14aatOkZQ9L6J4o
-              breakdownAdditionalCommandOptions: --terraform-var-file variables/${{ variables.ENVIRONMENT }}.${{ variables.AWS_DEFAULT_REGION }}.tfvars --log-level debug
+              breakdownAdditionalCommandOptions: --terraform-var-file variables/${{ variables.ENVIRONMENT }}.${{ variables.AWS_DEFAULT_REGION }}.tfvars
           - template: terraform/tfsec.yml@templates
             parameters:
               commandOptions: --tfvars-file="variables/${{ variables.ENVIRONMENT }}.${{ variables.AWS_DEFAULT_REGION }}.tfvars"    
