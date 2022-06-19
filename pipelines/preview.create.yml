@@ -18,6 +18,8 @@ pool:
 stages:
   - stage: build
     displayName: Build
+    variables:
+      - template: variables/preview.ap-southeast-2.yml@templates
     jobs:
       - job: setup
         displayName: Setup
@@ -212,19 +214,14 @@ stages:
     variables:
       - template: variables/production.ap-southeast-2.yml@templates
     jobs:
-      - job: plan
-        displayName: Plan
+      - job: infrastructure_validation
+        displayName: Infrastructure validation
         steps:
           - template: aws/iam/configure.yml@templates
-          - template: terraform/plan.yml@templates
-            parameters:
-              artifactName: ${{ variables.TF_ARTIFACT_NAME }}
-              workspaceName: service-time-${{ variables.ENVIRONMENT }}
-              version: 1.1.9
-              planAdditionalCommandOptions: -var-file="variables/${{ variables.ENVIRONMENT }}.${{ variables.AWS_DEFAULT_REGION }}.tfvars"
           - template: terraform/infracost.yml@templates
             parameters:
               apiKey: wChKa0T7Cxd619JUX14aatOkZQ9L6J4o
+              breakdownAdditionalCommandOptions: --terraform-var-file variables/${{ variables.ENVIRONMENT }}.${{ variables.AWS_DEFAULT_REGION }}.tfvars
           - template: terraform/tfsec.yml@templates
             parameters:
               commandOptions: --tfvars-file="variables/${{ variables.ENVIRONMENT }}.${{ variables.AWS_DEFAULT_REGION }}.tfvars"    
