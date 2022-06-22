@@ -764,17 +764,6 @@ resource "aws_rds_cluster_parameter_group" "postgresql" {
   description = "Cluster parameter group for ${local.rds_name}"
 }
 
-resource "aws_db_parameter_group" "postgresql" {
-  name = "${local.rds_name}-aurora-pg-parameter-group"
-  family = "aurora-postgresql10"
-  description = "Parameter group for ${local.rds_name}"
-}
-resource "aws_rds_cluster_parameter_group" "postgresql" {
-  name = "${local.rds_name}-aurora-pg-cluster-parameter-group"
-  family = "aurora-postgresql10"
-  description = "Cluster parameter group for ${local.rds_name}"
-}
-
 resource "aws_security_group" "postgres_server" {
   name = "${local.rds_name}-rds-server"
   description = "Allow traffic into RDS:expensely"
