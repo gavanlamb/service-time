@@ -3,7 +3,7 @@ services:
   db:
     container_name: db
     restart: unless-stopped
-    image: postgres:13.6-alpine
+    image: postgis/postgis:10-3.0-alpine
     environment:
       POSTGRES_DB: time
       POSTGRES_USER: admin
