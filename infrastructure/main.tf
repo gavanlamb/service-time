@@ -817,7 +817,7 @@ resource "aws_ssm_parameter" "command_connection_string" {
 resource "aws_ssm_parameter" "query_connection_string" {
   name  = "/${var.application_name}/${var.environment}/ConnectionStrings/Query"
   type  = "SecureString"
-  value = "Host=${module.postgres.cluster_reader_endpoint};Port=${module.postgres.cluster_port};Database=${var.rds_database_name};Username=${module.postgres.cluster_master_username};Password=${module.postgres.cluster_master_password};Keepalive=300;CommandTimeout=300;Timeout=300"
+  value = "Host=${module.postgres.cluster_endpoint};Port=${module.postgres.cluster_port};Database=${var.rds_database_name};Username=${module.postgres.cluster_master_username};Password=${module.postgres.cluster_master_password};Keepalive=300;CommandTimeout=300;Timeout=300"
 }
 
 resource "aws_cloudwatch_log_group" "rds" {
