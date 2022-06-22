@@ -724,9 +724,6 @@ module "postgres" {
   create_security_group = false
   vpc_security_group_ids = [aws_security_group.postgres_server.id]
   
-  replica_scale_enabled = false
-  replica_count = 0
-  
   monitoring_interval = 60
 
   apply_immediately = true
