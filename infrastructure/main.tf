@@ -714,8 +714,7 @@ module "postgres" {
 
   name = local.rds_name
   engine = "aurora-postgresql"
-  engine_mode = "provisioned"
-  engine_version = "13.6"
+  engine_mode = "serverless"
   storage_encrypted = true
 
   vpc_id = data.aws_vpc.vpc.id
@@ -725,6 +724,9 @@ module "postgres" {
   create_security_group = false
   vpc_security_group_ids = [aws_security_group.postgres_server.id]
   
+  replica_scale_enabled = false
+  replica_count = 0
+  
   monitoring_interval = 60
 
   apply_immediately = true
@@ -733,15 +735,12 @@ module "postgres" {
   db_parameter_group_name = aws_db_parameter_group.postgresql.id
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.postgresql.id
 
-  serverlessv2_scaling_configuration = {
-    min_capacity = 0.5
+  scaling_configuration = {
+    auto_pause = true
+    min_capacity = 2
     max_capacity = 10
-  }
-
-  instance_class = "db.serverless"
-  instances = {
-    one = {}
-    two = {}
+    seconds_until_auto_pause = 300
+    timeout_action = "ForceApplyCapacityChange"
   }
   
   deletion_protection = var.rds_delete_protection
@@ -756,28 +755,24 @@ module "postgres" {
 }
 resource "aws_db_parameter_group" "postgresql" {
   name = "${local.rds_name}-aurora-pg-parameter-group"
-  family = "aurora-postgresql13"
+  family = "aurora-postgresql10"
   description = "Parameter group for ${local.rds_name}"
 }
 resource "aws_rds_cluster_parameter_group" "postgresql" {
   name = "${local.rds_name}-aurora-pg-cluster-parameter-group"
-  family = "aurora-postgresql13"
+  family = "aurora-postgresql10"
   description = "Cluster parameter group for ${local.rds_name}"
 }
 
-resource "aws_secretsmanager_secret" "postgres_admin_password" {
-  name = "Expensely/${var.environment}/DatabaseInstance/Postgres/User/Expensely"
-  description = "Admin password for RDS instance:${module.postgres.cluster_id}"
-  kms_key_id = data.aws_kms_alias.secretsmanager.id
+resource "aws_db_parameter_group" "postgresql" {
+  name = "${local.rds_name}-aurora-pg-parameter-group"
+  family = "aurora-postgresql10"
+  description = "Parameter group for ${local.rds_name}"
 }
-resource "aws_secretsmanager_secret_version" "postgres_admin_password" {
-  secret_id = aws_secretsmanager_secret.postgres_admin_password.id
-  secret_string = jsonencode({
-    Username = module.postgres.cluster_master_username,
-    Password = module.postgres.cluster_master_password,
-    Port = module.postgres.cluster_port,
-    Endpoint = module.postgres.cluster_endpoint
-  })
+resource "aws_rds_cluster_parameter_group" "postgresql" {
+  name = "${local.rds_name}-aurora-pg-cluster-parameter-group"
+  family = "aurora-postgresql10"
+  description = "Cluster parameter group for ${local.rds_name}"
 }
 
 resource "aws_security_group" "postgres_server" {
