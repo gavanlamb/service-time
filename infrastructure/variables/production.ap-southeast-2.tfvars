@@ -20,9 +20,9 @@ alb_name="expensely"
 
 api_ecs_task_cpu=512
 api_ecs_task_memory=2042
-api_min_capacity=2
-api_max_capacity=10
-api_desired_count=2
+api_min_capacity=1
+api_max_capacity=2
+api_desired_count=1
 
 cognito_name="expensely"
 
